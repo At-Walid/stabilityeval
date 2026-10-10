@@ -1,0 +1,39 @@
+{
+  "status": "success",
+  "patch": "--- a/lib/matplotlib/colors.py\n+++ b/lib/matplotlib/colors.py\n@@ -727,9 +727,9 @@ class Colormap:\n         # Set up arrays of indices to handle over/under/bad mapping\n         with np.errstate(invalid=\"ignore\"):\n             xa[xa > self.N - 1] = self._i_over\n-        xa[xa > self.N - 1] = self._i_over\n-        xa[xa < 0] = self._i_under\n-        xa[mask_bad] = self._i_bad\n+        xa[xa > self.N - 1] = np.array(self._i_over).astype(xa.dtype)\n+        xa[xa < 0] = np.array(self._i_under).astype(xa.dtype)\n+        xa[mask_bad] = np.array(self._i_bad).astype(xa.dtype)\n \n         lut = self._lut\n         if bytes:",
+  "explanation": null,
+  "token_usage": {
+    "input": 1295,
+    "output": 274
+  },
+  "cost_usd": 0.007995,
+  "runtime_seconds": 4.062000000150874,
+  "error_message": null,
+  "raw_logs": "{\"diff\": \"--- a/lib/matplotlib/colors.py\\n+++ b/lib/matplotlib/colors.py\\n@@ -727,9 +727,9 @@ class Colormap:\\n         # Set up arrays of indices to handle over/under/bad mapping\\n         with np.errstate(invalid=\\\"ignore\\\"):\\n             xa[xa > self.N - 1] = self._i_over\\n-        xa[xa > self.N - 1] = self._i_over\\n-        xa[xa < 0] = self._i_under\\n-        xa[mask_bad] = self._i_bad\\n+        xa[xa > self.N - 1] = np.array(self._i_over).astype(xa.dtype)\\n+        xa[xa < 0] = np.array(self._i_under).astype(xa.dtype)\\n+        xa[mask_bad] = np.array(self._i_bad).astype(xa.dtype)\\n \\n         lut = self._lut\\n         if bytes:\"}",
+  "metadata": {
+    "model": "claude-sonnet-4-6",
+    "prompt_version": "issue-to-unified-diff-v3-submit-patch-tool",
+    "stop_reason": "tool_use",
+    "patch_source": "tool"
+  },
+  "variant": {
+    "transformed_text": "## Summary\nStarting NumPy 1.24 several deprecation warnings are observed.\n\n## Steps to Reproduce\n```python\r\nimport matplotlib.pyplot as plt\r\nimport numpy as np\r\n\r\nplt.get_cmap()(np.empty((0, ), dtype=np.uint8))\r\n```\n\n## Expected Behavior\nNo warnings.\n\n## Actual Behavior\n```\r\n/usr/lib/python3.10/site-packages/matplotlib/colors.py:730: DeprecationWarning: NumPy will stop allowing conversion of out-of-bound Python integers to integer arrays.  The conversion of 257 to uint8 will fail in the future.\r\nFor the old behavior, usually:\r\n    np.array(value).astype(dtype)`\r\nwill give the desired result (the cast overflows).\r\n  xa[xa > self.N - 1] = self._i_over\r\n/usr/lib/python3.10/site-packages/matplotlib/colors.py:731: DeprecationWarning: NumPy will stop allowing conversion of out-of-bound Python integers to integer arrays.  The conversion of 256 to uint8 will fail in the future.\r\nFor the old behavior, usually:\r\n    np.array(value).astype(dtype)`\r\nwill give the desired result (the cast overflows).\r\n  xa[xa < 0] = self._i_under\r\n/usr/lib/python3.10/site-packages/matplotlib/colors.py:732: DeprecationWarning: NumPy will stop allowing conversion of out-of-bound Python integers to integer arrays.  The conversion of 258 to uint8 will fail in the future.\r\nFor the old behavior, usually:\r\n    np.array(value).astype(dtype)`\r\nwill give the desired result (the cast overflows).\r\n  xa[mask_bad] = self._i_bad\r\n```\n\n## Environment\n- Operating system: ArchLinux\n- Matplotlib Version: 3.6.2\n- Matplotlib Backend: QtAgg\n- Python version: Python 3.10.9\n- Jupyter version: _No response_\n- Installation: Linux package manager",
+    "transformation_notes": "Reformatted the issue into the five required sections. The code placeholders [[CODE_1]] and [[CODE_2]] were preserved as provided. Environment details were extracted from the explicit fields, including Jupyter version which was stated as '_No response_' in the original. [quality check passed on attempt 2/2]",
+    "params": {},
+    "generator": "claude-haiku-4-5-20251001",
+    "transform_version": "5",
+    "generation_mode": "real",
+    "quality_warning": false,
+    "noop": false,
+    "exclusion_reason": null,
+    "generation_cost_usd": 0.004018,
+    "original_sha256": "5ae160cc5420b0587fc3a4d567fb1d76d86d4d20de526eaaaeb95759ea568dbf"
+  },
+  "recorded_from": {
+    "experiment_id": "bc6f1372-2088-45dd-907c-d741c0545d27",
+    "experiment_name": "icse_pilot_v1",
+    "run_id": "8f0d7157-92c8-4096-bb0c-0ae98d970919",
+    "agent_name": "llm_baseline",
+    "execution_mode": "real"
+  }
+}

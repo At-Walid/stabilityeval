@@ -1,0 +1,47 @@
+{
+  "status": "success",
+  "patch": "--- a/lib/matplotlib/colors.py\n+++ b/lib/matplotlib/colors.py\n@@ -727,9 +727,9 @@ class Colormap:\n         # Set up arrays of indices, set out-of-range values, and\n         # temporary storage for masked values.\n         xa = xa.astype(int)\n-        xa[xa > self.N - 1] = self._i_over\n-        xa[xa < 0] = self._i_under\n-        xa[mask_bad] = self._i_bad\n+        xa[xa > self.N - 1] = int(self._i_over)\n+        xa[xa < 0] = int(self._i_under)\n+        xa[mask_bad] = int(self._i_bad)\n",
+  "explanation": null,
+  "token_usage": {
+    "input": 1313,
+    "output": 224
+  },
+  "cost_usd": 0.007299,
+  "runtime_seconds": 3.5159999998286366,
+  "error_message": null,
+  "raw_logs": "{\"diff\": \"--- a/lib/matplotlib/colors.py\\n+++ b/lib/matplotlib/colors.py\\n@@ -727,9 +727,9 @@ class Colormap:\\n         # Set up arrays of indices, set out-of-range values, and\\n         # temporary storage for masked values.\\n         xa = xa.astype(int)\\n-        xa[xa > self.N - 1] = self._i_over\\n-        xa[xa < 0] = self._i_under\\n-        xa[mask_bad] = self._i_bad\\n+        xa[xa > self.N - 1] = int(self._i_over)\\n+        xa[xa < 0] = int(self._i_under)\\n+        xa[mask_bad] = int(self._i_bad)\\n\"}",
+  "metadata": {
+    "model": "claude-sonnet-4-6",
+    "prompt_version": "issue-to-unified-diff-v3-submit-patch-tool",
+    "stop_reason": "tool_use",
+    "patch_source": "tool"
+  },
+  "control_repeats": [
+    {
+      "status": "success",
+      "patch": "--- a/lib/matplotlib/colors.py\n+++ b/lib/matplotlib/colors.py\n@@ -727,9 +727,9 @@ class Colormap:\n         # Set up arrays of indices, set out-of-range values, and\n         # temporary storage for masked values.\n         xa = xa.astype(int)\n-        xa[xa > self.N - 1] = self._i_over\n-        xa[xa < 0] = self._i_under\n-        xa[mask_bad] = self._i_bad\n+        xa[xa > self.N - 1] = int(self._i_over)\n+        xa[xa < 0] = int(self._i_under)\n+        xa[mask_bad] = int(self._i_bad)\n",
+      "explanation": null,
+      "token_usage": {
+        "input": 1313,
+        "output": 224
+      },
+      "cost_usd": 0.007299,
+      "runtime_seconds": 3.6869999999180436,
+      "error_message": null,
+      "raw_logs": "{\"diff\": \"--- a/lib/matplotlib/colors.py\\n+++ b/lib/matplotlib/colors.py\\n@@ -727,9 +727,9 @@ class Colormap:\\n         # Set up arrays of indices, set out-of-range values, and\\n         # temporary storage for masked values.\\n         xa = xa.astype(int)\\n-        xa[xa > self.N - 1] = self._i_over\\n-        xa[xa < 0] = self._i_under\\n-        xa[mask_bad] = self._i_bad\\n+        xa[xa > self.N - 1] = int(self._i_over)\\n+        xa[xa < 0] = int(self._i_under)\\n+        xa[mask_bad] = int(self._i_bad)\\n\"}",
+      "metadata": {
+        "model": "claude-sonnet-4-6",
+        "prompt_version": "issue-to-unified-diff-v3-submit-patch-tool",
+        "stop_reason": "tool_use",
+        "patch_source": "tool"
+      }
+    }
+  ],
+  "recorded_from": {
+    "experiment_id": "bc6f1372-2088-45dd-907c-d741c0545d27",
+    "experiment_name": "icse_pilot_v1",
+    "run_id": "936b6bf8-98ce-465c-9095-4712ddc13669",
+    "agent_name": "llm_baseline",
+    "execution_mode": "real"
+  }
+}

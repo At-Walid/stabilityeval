@@ -1,0 +1,39 @@
+{
+  "status": "success",
+  "patch": "--- a/django/db/backends/base/schema.py\n+++ b/django/db/backends/base/schema.py\n@@ -374,7 +374,18 @@ class BaseDatabaseSchemaEditor:\n         columns = [model._meta.get_field(field).column for field in fields]\n         constraint_names = self._constraint_names(\n             model, columns, exclude=meta_constraint_names,\n-            **constraint_kwargs\n+            **{**constraint_kwargs, 'unique': False}\n+        )\n+        if not constraint_names:\n+            # If we didn't find any constraints with unique=False, try without\n+            # that restriction (handles the case where index_together and\n+            # unique_together share the same columns, meaning the unique\n+            # constraint also serves as the index).\n+            constraint_names = self._constraint_names(\n+                model, columns, exclude=meta_constraint_names,\n+                **constraint_kwargs\n+            )\n+            constraint_names = [\n+                name for name in constraint_names\n+                if name not in self._constraint_names(model, columns, unique=True)\n+            ]\n+        constraint_names = self._constraint_names(\n+            model, columns, exclude=meta_constraint_names,\n+            **constraint_kwargs\n         )\n         if len(constraint_names) != 1:\n             raise ValueError(\"Found wrong number (%s) of constraints for %s(%s)\" % (\n",
+  "explanation": null,
+  "token_usage": {
+    "input": 1062,
+    "output": 383
+  },
+  "cost_usd": 0.008931,
+  "runtime_seconds": 6.125,
+  "error_message": null,
+  "raw_logs": "{\"diff\": \"--- a/django/db/backends/base/schema.py\\n+++ b/django/db/backends/base/schema.py\\n@@ -374,7 +374,18 @@ class BaseDatabaseSchemaEditor:\\n         columns = [model._meta.get_field(field).column for field in fields]\\n         constraint_names = self._constraint_names(\\n             model, columns, exclude=meta_constraint_names,\\n-            **constraint_kwargs\\n+            **{**constraint_kwargs, 'unique': False}\\n+        )\\n+        if not constraint_names:\\n+            # If we didn't find any constraints with unique=False, try without\\n+            # that restriction (handles the case where index_together and\\n+            # unique_together share the same columns, meaning the unique\\n+            # constraint also serves as the index).\\n+            constraint_names = self._constraint_names(\\n+                model, columns, exclude=meta_constraint_names,\\n+                **constraint_kwargs\\n+            )\\n+            constraint_names = [\\n+                name for name in constraint_names\\n+                if name not in self._constraint_names(model, columns, unique=True)\\n+            ]\\n+        constraint_names = self._constraint_names(\\n+            model, columns, exclude=meta_constraint_names,\\n+            **constraint_kwargs\\n         )\\n         if len(constraint_names) != 1:\\n             raise ValueError(\\\"Found wrong number (%s) of constraints for %s(%s)\\\" % (\\n\"}",
+  "metadata": {
+    "model": "claude-sonnet-4-6",
+    "prompt_version": "issue-to-unified-diff-v3-submit-patch-tool",
+    "stop_reason": "tool_use",
+    "patch_source": "tool"
+  },
+  "variant": {
+    "transformed_text": "Migration operation fails when attempting to remove an index_together constraint in scenarios where a unique_together constraint exists on the identical set of fields\n\nAffected version: Django 1.11.10\n\nSteps to reproduce:\n1) Define models containing 2 columns, specify the same 2 columns in both unique_together and index_together\n2) Remove index_together -> Operation fails\n\nFailure occurs at django/db/backends/base/schema.py, line 378, within _delete_composed_index(). The error thrown is ValueError: Found wrong number (2) of constraints for because the function encounters two matching constraints—the _uniq and _idx variants. There is no viable resolution path in this situation.\n\nIn my particular scenario, this issue emerged while I was modernizing the codebase to leverage the recently introduced (Dj 1.11) Options.indexes capability. I am not actually removing the index itself, merely changing how it is specified within the model code.\n\nTwo concerns require addressing:\n1) The removal of index_together must either succeed independently or be synchronized (at the migrations level?) with unique_together configurations\n2) Relocating the index declaration should not trigger unnecessary index recreation",
+    "transformation_notes": "Restructured sentence phrasing and reorganized content hierarchy while maintaining all technical identifiers (django/db/backends/base/schema.py, _delete_composed_index(), _uniq, _idx, Options.indexes, unique_together, index_together, Django 1.11.10, ValueError message) and the exact semantic meaning of the bug report, reproduction steps, and issues identified. [identifier retention passed on attempt 1/3]",
+    "params": {},
+    "generator": "claude-haiku-4-5-20251001",
+    "transform_version": "3",
+    "generation_mode": "real",
+    "quality_warning": false,
+    "noop": false,
+    "exclusion_reason": null,
+    "generation_cost_usd": null,
+    "original_sha256": "773681998993eff75a3b69f04821e4e8683f89cfffdee38f19fe11cb3c7a98be"
+  },
+  "recorded_from": {
+    "experiment_id": "bc6f1372-2088-45dd-907c-d741c0545d27",
+    "experiment_name": "icse_pilot_v1",
+    "run_id": "d349aaf4-0087-48b3-a3f4-3aeb0150f7e7",
+    "agent_name": "llm_baseline",
+    "execution_mode": "real"
+  }
+}

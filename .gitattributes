@@ -1,0 +1,10 @@
+# Text files are stored with LF line endings.
+* text=auto
+
+# Exported results and selection outputs are stored byte for byte: the issue texts inside them
+# keep their original CRLF line breaks.
+data/pilot/exports/** -text
+scripts/output/** -text
+
+*.db binary
+*.png binary

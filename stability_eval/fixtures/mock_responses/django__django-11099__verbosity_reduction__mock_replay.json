@@ -1,0 +1,19 @@
+{
+  "status": "success",
+  "patch": "--- a/django/contrib/auth/validators.py\n+++ b/django/contrib/auth/validators.py\n@@ -11,7 +11,7 @@ class ASCIIUsernameValidator(validators.RegexValidator):\n-    regex = r'^[\\w.@+-]+$'\n+    regex = r'^[\\w.@+-]+\\Z'\n     message = _(\n         'Enter a valid username. This value may contain only English letters, '\n         'numbers, and @/./+/-/_ characters.'\n     )\n@@ -20,7 +20,7 @@ class UnicodeUsernameValidator(validators.RegexValidator):\n-    regex = r'^[\\w.@+-]+$'\n+    regex = r'^[\\w.@+-]+\\Z'\n     message = _(\n         'Enter a valid username. This value may contain only letters, '\n         'numbers, and @/./+/-/_ characters.'\n     )\n",
+  "explanation": "Replaced the trailing `$` anchor with `\\Z` in the username validator regexes so a trailing newline is no longer accepted.",
+  "token_usage": {
+    "input": 2492,
+    "output": 1158
+  },
+  "cost_usd": 0.0,
+  "runtime_seconds": 7.72,
+  "error_message": null,
+  "raw_logs": "[2026-07-05T09:00:00Z] INFO  agent='mock_replay' issue=django__django-11099 transform='verbosity_reduction'\n[2026-07-05T09:00:00Z] INFO  Loading fixture from disk\n[2026-07-05T09:00:00Z] INFO  Fixture deserialized (issue_id=django__django-11099, transform=verbosity_reduction)\n[2026-07-05T09:00:00Z] INFO  Patch extracted successfully (runtime=7.72s)\n[2026-07-05T09:00:00Z] INFO  Status: SUCCESS",
+  "metadata": {
+    "issue_id": "django__django-11099",
+    "transformation_name": "verbosity_reduction",
+    "agent": "mock_replay",
+    "fixture_version": "1.0"
+  }
+}

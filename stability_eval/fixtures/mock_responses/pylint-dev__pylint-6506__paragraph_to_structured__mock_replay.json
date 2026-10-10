@@ -1,0 +1,39 @@
+{
+  "status": "success",
+  "patch": "--- a/pylint/lint/run.py\n+++ b/pylint/lint/run.py\n@@ -1,6 +1,7 @@\n # Licensed under the GPL: https://www.gnu.org/licenses/old-licenses/gpl-2.0.html\n # For details: https://github.com/pylint-dev/pylint/blob/main/LICENSE\n # Copyright (c) https://github.com/pylint-dev/pylint/blob/main/CONTRIBUTORS.txt\n+import sys\n \n from pylint.config.config_initialization import _config_initialization\n from pylint.config.exceptions import _UnrecognizedOptionError\n--- a/pylint/config/config_initialization.py\n+++ b/pylint/config/config_initialization.py\n@@ -1,6 +1,7 @@\n # Licensed under the GPL: https://www.gnu.org/licenses/old-licenses/gpl-2.0.html\n # For details: https://github.com/pylint-dev/pylint/blob/main/LICENSE\n # Copyright (c) https://github.com/pylint-dev/pylint/blob/main/CONTRIBUTORS.txt\n+import sys\n \n from __future__ import annotations\n \n",
+  "explanation": null,
+  "token_usage": {
+    "input": 1400,
+    "output": 339
+  },
+  "cost_usd": 0.009285,
+  "runtime_seconds": 4.202999999979511,
+  "error_message": null,
+  "raw_logs": "{\"diff\": \"--- a/pylint/lint/run.py\\n+++ b/pylint/lint/run.py\\n@@ -1,6 +1,7 @@\\n # Licensed under the GPL: https://www.gnu.org/licenses/old-licenses/gpl-2.0.html\\n # For details: https://github.com/pylint-dev/pylint/blob/main/LICENSE\\n # Copyright (c) https://github.com/pylint-dev/pylint/blob/main/CONTRIBUTORS.txt\\n+import sys\\n \\n from pylint.config.config_initialization import _config_initialization\\n from pylint.config.exceptions import _UnrecognizedOptionError\\n--- a/pylint/config/config_initialization.py\\n+++ b/pylint/config/config_initialization.py\\n@@ -1,6 +1,7 @@\\n # Licensed under the GPL: https://www.gnu.org/licenses/old-licenses/gpl-2.0.html\\n # For details: https://github.com/pylint-dev/pylint/blob/main/LICENSE\\n # Copyright (c) https://github.com/pylint-dev/pylint/blob/main/CONTRIBUTORS.txt\\n+import sys\\n \\n from __future__ import annotations\\n \\n\"}",
+  "metadata": {
+    "model": "claude-sonnet-4-6",
+    "prompt_version": "issue-to-unified-diff-v3-submit-patch-tool",
+    "stop_reason": "tool_use",
+    "patch_source": "tool"
+  },
+  "variant": {
+    "transformed_text": "## Summary\nA traceback is printed when an unrecognized option is passed to pylint.\n\n## Steps to Reproduce\n1. Run:\n\n```shell\npylint -Q\n```\n\n## Expected Behavior\nWhen an unrecognized option is passed to pylint, display the error message without a traceback, optionally followed by a usage tip:\n\n```python\r\nmypy -Q\r\nusage: mypy [-h] [-v] [-V] [more options; see below]\r\n            [-m MODULE] [-p PACKAGE] [-c PROGRAM_TEXT] [files ...]\r\nmypy: error: unrecognized arguments: -Q\r\n```\n\n## Actual Behavior\nThe output includes:\n\n```shell\n************* Module Command line\r\nCommand line:1:0: E0015: Unrecognized option found: Q (unrecognized-option)\r\nTraceback (most recent call last):\r\n  File \"/Users/markbyrne/venv310/bin/pylint\", line 33, in <module>\r\n    sys.exit(load_entry_point('pylint', 'console_scripts', 'pylint')())\r\n  File \"/Users/markbyrne/programming/pylint/pylint/__init__.py\", line 24, in run_pylint\r\n    PylintRun(argv or sys.argv[1:])\r\n  File \"/Users/markbyrne/programming/pylint/pylint/lint/run.py\", line 135, in __init__\r\n    args = _config_initialization(\r\n  File \"/Users/markbyrne/programming/pylint/pylint/config/config_initialization.py\", line 85, in _config_initialization\r\n    raise _UnrecognizedOptionError(options=unrecognized_options)\r\npylint.config.exceptions._UnrecognizedOptionError\n```\n\nThe top part of the output is:\n\n`Command line:1:0: E0015: Unrecognized option found: Q (unrecognized-option)`\n\nFollowed by a traceback, which is not user-friendly.\n\n## Environment\nPylint version:\n```shell\npylint 2.14.0-dev0\r\nastroid 2.11.3\r\nPython 3.10.0b2 (v3.10.0b2:317314165a, May 31 2021, 10:02:22) [Clang 12.0.5 (clang-1205.0.22.9)]\n```\nOS / Environment: _No response_\nAdditional dependencies: _No response_",
+    "transformation_notes": "Reformatted the issue into the five required sections. Preserved the literal '_No response_' text from the original issue for Configuration, OS / Environment, and Additional dependencies fields. All code placeholders preserved in their original form and appear exactly once. [quality check passed on attempt 2/2]",
+    "params": {},
+    "generator": "claude-haiku-4-5-20251001",
+    "transform_version": "5",
+    "generation_mode": "real",
+    "quality_warning": false,
+    "noop": false,
+    "exclusion_reason": null,
+    "generation_cost_usd": 0.004607,
+    "original_sha256": "3875271c4f69f705627520a05192ae96a4299c27eca6b036b1a845ac79d687be"
+  },
+  "recorded_from": {
+    "experiment_id": "bc6f1372-2088-45dd-907c-d741c0545d27",
+    "experiment_name": "icse_pilot_v1",
+    "run_id": "25667a82-c76e-40a7-bf38-7804ea0d01ca",
+    "agent_name": "llm_baseline",
+    "execution_mode": "real"
+  }
+}

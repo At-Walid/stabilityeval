@@ -1,0 +1,19 @@
+{
+  "status": "success",
+  "patch": "--- a/django/db/migrations/serializer.py\n+++ b/django/db/migrations/serializer.py\n@@ -168,9 +168,9 @@ class FunctionTypeSerializer(BaseSerializer):\n         if getattr(self.value, \"__self__\", None) and isinstance(\n             self.value.__self__, type\n         ):\n             klass = self.value.__self__\n-            module = klass.__module__\n-            return \"%s.%s.%s\" % (module, klass.__name__, self.value.__name__), {\n-                \"import %s\" % module\n-            }\n+            module = klass.__module__\n+            qualname = \"%s.%s\" % (klass.__qualname__, self.value.__name__)\n+            return \"%s.%s\" % (module, qualname), {\"import %s\" % module}\n         # Further error checking\n",
+  "explanation": "Used `__qualname__` instead of `__name__` when serializing bound methods of inner classes so migrations reference the correct nested path.",
+  "token_usage": {
+    "input": 2167,
+    "output": 752
+  },
+  "cost_usd": 0.0,
+  "runtime_seconds": 5.9,
+  "error_message": null,
+  "raw_logs": "[2026-07-05T09:00:00Z] INFO  agent='mock_replay' issue=django__django-12125 transform='typo_injection'\n[2026-07-05T09:00:00Z] INFO  Loading fixture from disk\n[2026-07-05T09:00:00Z] INFO  Fixture deserialized (issue_id=django__django-12125, transform=typo_injection)\n[2026-07-05T09:00:00Z] INFO  Patch extracted successfully (runtime=5.90s)\n[2026-07-05T09:00:00Z] INFO  Status: SUCCESS",
+  "metadata": {
+    "issue_id": "django__django-12125",
+    "transformation_name": "typo_injection",
+    "agent": "mock_replay",
+    "fixture_version": "1.0"
+  }
+}

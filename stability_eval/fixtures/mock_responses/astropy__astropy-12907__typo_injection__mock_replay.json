@@ -1,0 +1,41 @@
+{
+  "status": "success",
+  "patch": "--- a/astropy/modeling/separable.py\n+++ b/astropy/modeling/separable.py\n@@ -290,7 +290,7 @@ def _separable(transform):\n         return _coord_matrix(transform, 'left', noutp)\n     elif isinstance(transform, CompoundModel):\n         sepleft = _separable(transform.left)\n         sepright = _separable(transform.right)\n         return _operators[transform.op](sepleft, sepright)\n     elif isinstance(transform, Model):\n-        return _coord_matrix(transform, 'left', transform.n_outputs)\n+        return _coord_matrix(transform, 'left', transform.n_inputs)\n",
+  "explanation": null,
+  "token_usage": {
+    "input": 1175,
+    "output": 204
+  },
+  "cost_usd": 0.006585,
+  "runtime_seconds": 3.594000000040978,
+  "error_message": null,
+  "raw_logs": "{\"diff\": \"--- a/astropy/modeling/separable.py\\n+++ b/astropy/modeling/separable.py\\n@@ -290,7 +290,7 @@ def _separable(transform):\\n         return _coord_matrix(transform, 'left', noutp)\\n     elif isinstance(transform, CompoundModel):\\n         sepleft = _separable(transform.left)\\n         sepright = _separable(transform.right)\\n         return _operators[transform.op](sepleft, sepright)\\n     elif isinstance(transform, Model):\\n-        return _coord_matrix(transform, 'left', transform.n_outputs)\\n+        return _coord_matrix(transform, 'left', transform.n_inputs)\\n\"}",
+  "metadata": {
+    "model": "claude-sonnet-4-6",
+    "prompt_version": "issue-to-unified-diff-v3-submit-patch-tool",
+    "stop_reason": "tool_use",
+    "patch_source": "tool"
+  },
+  "variant": {
+    "transformed_text": "Modleing's `separability_matrix` does not computs separability correctly for nested CompoundModels\nConsider the following model:\r\n\r\n```python\r\nfrom astropy.modeling import models as m\r\nfrom astropy.modeling.separable import separability_matrix\r\n\r\ncm = m.Linear1D(10) & m.Linear1D(5)\r\n```\r\n\r\nIt's separability matrix as you might expect is a dizgonal:\r\n\r\n```python\r\n>>> separability_matrix(cm)\r\narray([[ True, False],\r\n       [False,  True]])\r\n```\r\n\r\nIf I make the model omre complex:\r\n```python\r\n>>> separability_matrix(m.Pix2Sky_TAN() & m.Linear1D(10) & m.Linear1D(5))\r\narray([[ True,  True, False, False],\r\n       [ True,  True, False, False],\r\n       [False, False,  True, False],\r\n       [False, False, False,  True]])\r\n```\r\n\r\nThe output matrix is again, as expected, the outputs and inputs to the linear models are separable and independent of each other.\r\n\r\nIf however, I nest these compound models:\r\n```python\r\n>>> separability_matrix(m.Pix2Sky_TAN() & cm)\r\narray([[ True,  True, False, False],\r\n       [ True,  True, False, False],\r\n       [False, False,  True,  True],\r\n       [False, False,  True,  True]])\r\n```\r\nSuddenly the inputs and outputs are no longer separable?\r\n\r\nThis feels like a bug to mw, but I might be missing something?\n",
+    "transformation_notes": "Injected character-level typos into ~2% of prose words (6 word(s) modified); code spans left untouched.",
+    "params": {
+      "error_rate": 0.02
+    },
+    "generator": "deterministic",
+    "transform_version": "1",
+    "generation_mode": "real",
+    "quality_warning": false,
+    "noop": false,
+    "exclusion_reason": null,
+    "generation_cost_usd": null,
+    "original_sha256": "c01334ec1b21a089c650cf2e7b96ab974469076bf1260d23885799e1f0a7551f"
+  },
+  "recorded_from": {
+    "experiment_id": "bc6f1372-2088-45dd-907c-d741c0545d27",
+    "experiment_name": "icse_pilot_v1",
+    "run_id": "9cdc3069-20b8-41b0-b97c-ab6f6a76677c",
+    "agent_name": "llm_baseline",
+    "execution_mode": "real"
+  }
+}

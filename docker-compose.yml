@@ -1,0 +1,15 @@
+# docker compose up        -> GUI on http://localhost:8501 (replay mode, no API key needed)
+# docker compose run --rm stabilityeval stabilityeval run --config configs/icse_pilot.json --estimate
+#
+# Live mode: export ANTHROPIC_API_KEY in your shell (or put it in a .env file next to this file)
+# before `docker compose up`; the key is passed at run time and never stored in the image.
+services:
+  stabilityeval:
+    image: stabilityeval:1.0.0
+    build: .
+    ports:
+      - "8501:8501"
+    volumes:
+      - ./results:/app/results
+    environment:
+      ANTHROPIC_API_KEY: ${ANTHROPIC_API_KEY:-}

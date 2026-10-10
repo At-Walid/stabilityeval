@@ -1,0 +1,19 @@
+{
+  "status": "failure",
+  "patch": null,
+  "explanation": null,
+  "token_usage": {
+    "input": 2189,
+    "output": 121
+  },
+  "cost_usd": 0.0,
+  "runtime_seconds": 1.39,
+  "error_message": "Insufficient context in the issue description to locate the bug.",
+  "raw_logs": "[2026-07-05T09:00:00Z] INFO  agent='mock_replay' issue=astropy__astropy-6938 transform='verbosity_reduction'\n[2026-07-05T09:00:00Z] INFO  Loading fixture from disk\n[2026-07-05T09:00:00Z] INFO  Fixture deserialized (issue_id=astropy__astropy-6938, transform=verbosity_reduction)\n[2026-07-05T09:00:00Z] WARN  Patch extraction failed \u2014 response did not contain a valid diff\n[2026-07-05T09:00:00Z] ERROR Status: FAILURE (runtime=1.39s)",
+  "metadata": {
+    "issue_id": "astropy__astropy-6938",
+    "transformation_name": "verbosity_reduction",
+    "agent": "mock_replay",
+    "fixture_version": "1.0"
+  }
+}

@@ -1,0 +1,35 @@
+{
+  "experiment_name": "icse_demo",
+  "description": "ICSE 2027 demo: MockReplay agent, pre-recorded fixtures",
+  "execution_mode": "mock",
+  "agents": [
+    {
+      "name": "mock_replay",
+      "version": "1.0",
+      "params": {
+        "fixtures_dir": "stability_eval/fixtures/mock_responses"
+      }
+    }
+  ],
+  "issues": {
+    "source": "swebench_lite",
+    "issue_ids": [
+      "django__django-11099",
+      "django__django-12125",
+      "astropy__astropy-6938",
+      "sympy__sympy-20590",
+      "matplotlib__matplotlib-23299"
+    ]
+  },
+  "transformations": [
+    { "name": "paraphrase",              "enabled": true, "params": {} },
+    { "name": "verbosity_reduction",     "enabled": true, "params": { "target_ratio": 0.5 } },
+    { "name": "typo_injection",          "enabled": true, "params": { "error_rate": 0.02 } },
+    { "name": "reordering",              "enabled": true, "params": { "seed": 42 } },
+    { "name": "paragraph_to_structured", "enabled": true, "params": {} },
+    { "name": "neutralize_emotional",    "enabled": true, "params": {} }
+  ],
+  "runs_per_variant": 1,
+  "cost_limit_usd": 20.0,
+  "output_dir": "./results/icse_demo"
+}

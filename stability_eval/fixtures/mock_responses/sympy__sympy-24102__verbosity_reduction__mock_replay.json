@@ -1,0 +1,41 @@
+{
+  "status": "success",
+  "patch": "--- a/sympy/parsing/mathematica.py\n+++ b/sympy/parsing/mathematica.py\n@@ -1,6 +1,7 @@\n from __future__ import annotations\n \n import re\n+import unicodedata\n from itertools import product\n from typing import Any\n \n@@ -150,7 +151,7 @@ class MathematicaParser:\n     # Mathematica function name pattern\n     FM_PATTERN = re.compile(r'''\n         (?:\n-            [a-zA-Z][a-zA-Z0-9]*  # function name\n+            [^\\W\\d_][^\\W_]*  # function name (supports Unicode letters)\n         )\n         \\[  # opening bracket\n     ''', re.VERBOSE)\n@@ -159,7 +160,7 @@ class MathematicaParser:\n     ARGS_PATTERN_TEMPLATE = r'''\n         (?:\n             [a-zA-Z][a-zA-Z0-9]*  # function name\n-            |(?:[0-9]+(?:\\.[0-9]*)?|\\.[0-9]+)  # number\n+            |(?:[0-9]+(?:\\.[0-9]*)?|\\.[0-9]+)   # number\n             |\"[^\"]*\"  # string\n         )\n     '''\n@@ -536,7 +537,7 @@ class MathematicaParser:\n         TOKENIZER = re.compile(r\"\"\"\n         (?P<WHITESPACE>\\s+)\n         |(?P<FLOAT>(?:\\d+(?:\\.\\d*)?|\\.\\d+)(?:``?(?:\\+|-)?(?:\\d+(?:\\.\\d*)?|\\.\\d+))?(?:\\*\\^(?:\\+|-)?\\d+)?)\n-        |(?P<SYMBOL>[a-zA-Z$][a-zA-Z0-9$]*)\n+        |(?P<SYMBOL>[^\\W\\d][^\\W]*)\n         |(?P<LBRACE>\\{)\n         |(?P<RPAR>\\))\n         |(?P<LPAR>\\()\n",
+  "explanation": null,
+  "token_usage": {
+    "input": 1118,
+    "output": 556
+  },
+  "cost_usd": 0.011694,
+  "runtime_seconds": 8.609000000171363,
+  "error_message": null,
+  "raw_logs": "{\"diff\": \"--- a/sympy/parsing/mathematica.py\\n+++ b/sympy/parsing/mathematica.py\\n@@ -1,6 +1,7 @@\\n from __future__ import annotations\\n \\n import re\\n+import unicodedata\\n from itertools import product\\n from typing import Any\\n \\n@@ -150,7 +151,7 @@ class MathematicaParser:\\n     # Mathematica function name pattern\\n     FM_PATTERN = re.compile(r'''\\n         (?:\\n-            [a-zA-Z][a-zA-Z0-9]*  # function name\\n+            [^\\\\W\\\\d_][^\\\\W_]*  # function name (supports Unicode letters)\\n         )\\n         \\\\[  # opening bracket\\n     ''', re.VERBOSE)\\n@@ -159,7 +160,7 @@ class MathematicaParser:\\n     ARGS_PATTERN_TEMPLATE = r'''\\n         (?:\\n             [a-zA-Z][a-zA-Z0-9]*  # function name\\n-            |(?:[0-9]+(?:\\\\.[0-9]*)?|\\\\.[0-9]+)  # number\\n+            |(?:[0-9]+(?:\\\\.[0-9]*)?|\\\\.[0-9]+)   # number\\n             |\\\"[^\\\"]*\\\"  # string\\n         )\\n     '''\\n@@ -536,7 +537,7 @@ class MathematicaParser:\\n         TOKENIZER = re.compile(r\\\"\\\"\\\"\\n         (?P<WHITESPACE>\\\\s+)\\n         |(?P<FLOAT>(?:\\\\d+(?:\\\\.\\\\d*)?|\\\\.\\\\d+)(?:``?(?:\\\\+|-)?(?:\\\\d+(?:\\\\.\\\\d*)?|\\\\.\\\\d+))?(?:\\\\*\\\\^(?:\\\\+|-)?\\\\d+)?)\\n-        |(?P<SYMBOL>[a-zA-Z$][a-zA-Z0-9$]*)\\n+        |(?P<SYMBOL>[^\\\\W\\\\d][^\\\\W]*)\\n         |(?P<LBRACE>\\\\{)\\n         |(?P<RPAR>\\\\))\\n         |(?P<LPAR>\\\\()\\n\"}",
+  "metadata": {
+    "model": "claude-sonnet-4-6",
+    "prompt_version": "issue-to-unified-diff-v3-submit-patch-tool",
+    "stop_reason": "tool_use",
+    "patch_source": "tool"
+  },
+  "variant": {
+    "transformed_text": "`mathematica` in `sympy.parsing.mathematica` parsed Greek characters:\n```\r\nfrom sympy.parsing.mathematica import mathematica\r\nmathematica('λ')\r\nOut[]: \r\nλ\r\n```\n\nSymPy v. 1.11 deprecated `mathematica`, replacing it with `parse_mathematica`. The replacement fails on this example:\n```\r\nfrom sympy.parsing.mathematica import parse_mathematica\r\nparse_mathematica('λ')\r\nTraceback (most recent call last):\r\n...\r\nFile \"<string>\", line unknown\r\nSyntaxError: unable to create a single AST for the expression\r\n```\n\nThe issue appears to be a bug in `parse_mathematica`.\n\n`mathematica` in `sympy.parsing.mathematica` parsed Greek characters:\n```\r\nfrom sympy.parsing.mathematica import mathematica\r\nmathematica('λ')\r\nOut[]: \r\nλ\r\n```\n\nSymPy v. 1.11 deprecated `mathematica`, replacing it with `parse_mathematica`. The replacement fails:\n```\r\nfrom sympy.parsing.mathematica import parse_mathematica\r\nparse_mathematica('λ')\r\nTraceback (most recent call last):\r\n...\r\nFile \"<string>\", line unknown\r\nSyntaxError: unable to create a single AST for the expression\r\n```\n\nBug in `parse_mathematica`.",
+    "transformation_notes": "Removed redundant title repetition, pleasantries, and filler phrases while preserving all 14 code placeholders exactly as given. Condensed explanation from approximately 180 words to 90 words. [quality check passed on attempt 2/2]",
+    "params": {
+      "target_ratio": 0.5
+    },
+    "generator": "claude-haiku-4-5-20251001",
+    "transform_version": "4",
+    "generation_mode": "real",
+    "quality_warning": false,
+    "noop": false,
+    "exclusion_reason": null,
+    "generation_cost_usd": 0.003971,
+    "original_sha256": "1c59678bf32d77d45874aa931fa806c5f7f6e599c01ab7f93d144a48a84273ea"
+  },
+  "recorded_from": {
+    "experiment_id": "bc6f1372-2088-45dd-907c-d741c0545d27",
+    "experiment_name": "icse_pilot_v1",
+    "run_id": "6c5ec2a2-07ae-4595-98d7-35f00d2f2770",
+    "agent_name": "llm_baseline",
+    "execution_mode": "real"
+  }
+}

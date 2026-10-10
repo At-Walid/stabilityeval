@@ -1,0 +1,39 @@
+{
+  "status": "success",
+  "patch": "--- a/pylint/config/config_initialization.py\n+++ b/pylint/config/config_initialization.py\n@@ -80,9 +80,12 @@ def _config_initialization(\n     unrecognized_options_message = None\n     # Unrecognized options can be added to linter.config_from_file\n     if unrecognized_options:\n-        unrecognized_options_message = \", \".join(unrecognized_options)\n+        unrecognized_options_message = \", \".join(\n+            (f\"-{opt}\" if len(opt) == 1 else f\"--{opt}\") for opt in unrecognized_options\n+        )\n         linter.add_message(\n             \"unrecognized-option\",\n             line=0,\n             args=unrecognized_options_message,\n         )\n-        raise _UnrecognizedOptionError(options=unrecognized_options)\n+        print(f\"Usage: pylint [options]\")\n+        sys.exit(32)\n",
+  "explanation": null,
+  "token_usage": {
+    "input": 1385,
+    "output": 289
+  },
+  "cost_usd": 0.00849,
+  "runtime_seconds": 5.561999999918044,
+  "error_message": null,
+  "raw_logs": "{\"diff\": \"--- a/pylint/config/config_initialization.py\\n+++ b/pylint/config/config_initialization.py\\n@@ -80,9 +80,12 @@ def _config_initialization(\\n     unrecognized_options_message = None\\n     # Unrecognized options can be added to linter.config_from_file\\n     if unrecognized_options:\\n-        unrecognized_options_message = \\\", \\\".join(unrecognized_options)\\n+        unrecognized_options_message = \\\", \\\".join(\\n+            (f\\\"-{opt}\\\" if len(opt) == 1 else f\\\"--{opt}\\\") for opt in unrecognized_options\\n+        )\\n         linter.add_message(\\n             \\\"unrecognized-option\\\",\\n             line=0,\\n             args=unrecognized_options_message,\\n         )\\n-        raise _UnrecognizedOptionError(options=unrecognized_options)\\n+        print(f\\\"Usage: pylint [options]\\\")\\n+        sys.exit(32)\\n\"}",
+  "metadata": {
+    "model": "claude-sonnet-4-6",
+    "prompt_version": "issue-to-unified-diff-v3-submit-patch-tool",
+    "stop_reason": "tool_use",
+    "patch_source": "tool"
+  },
+  "variant": {
+    "transformed_text": "Traceback printed for unrecognized option\n### Bug description\n\nA traceback is printed when an unrecognized option is passed to pylint.\n\n### Configuration\n\n_No response_\n\n### Command used\n\n```shell\npylint -Q\n```\n\n\n### Pylint output\n\n```shell\n************* Module Command line\r\nCommand line:1:0: E0015: Unrecognized option found: Q (unrecognized-option)\r\nTraceback (most recent call last):\r\n  File \"/Users/markbyrne/venv310/bin/pylint\", line 33, in <module>\r\n    sys.exit(load_entry_point('pylint', 'console_scripts', 'pylint')())\r\n  File \"/Users/markbyrne/programming/pylint/pylint/__init__.py\", line 24, in run_pylint\r\n    PylintRun(argv or sys.argv[1:])\r\n  File \"/Users/markbyrne/programming/pylint/pylint/lint/run.py\", line 135, in __init__\r\n    args = _config_initialization(\r\n  File \"/Users/markbyrne/programming/pylint/pylint/config/config_initialization.py\", line 85, in _config_initialization\r\n    raise _UnrecognizedOptionError(options=unrecognized_options)\r\npylint.config.exceptions._UnrecognizedOptionError\n```\n\n\n### Expected behavior\n\nThe top part of the current output is useful:\n`Command line:1:0: E0015: Unrecognized option found: Q (unrecognized-option)`\n\nThe traceback is not expected and should not be displayed to users.\nA usage tip, for example:\n```python\r\nmypy -Q\r\nusage: mypy [-h] [-v] [-V] [more options; see below]\r\n            [-m MODULE] [-p PACKAGE] [-c PROGRAM_TEXT] [files ...]\r\nmypy: error: unrecognized arguments: -Q\r\n```\n\n### Pylint version\n\n```shell\npylint 2.14.0-dev0\r\nastroid 2.11.3\r\nPython 3.10.0b2 (v3.10.0b2:317314165a, May 31 2021, 10:02:22) [Clang 12.0.5 (clang-1205.0.22.9)]\n```\n\n\n### OS / Environment\n\n_No response_\n\n### Additional dependencies\n\n_No response_",
+    "transformation_notes": "Rewrote only the sentences with emotional or informal language. [quality check passed on attempt 1/2]",
+    "params": {},
+    "generator": "claude-haiku-4-5-20251001",
+    "transform_version": "4",
+    "generation_mode": "real",
+    "quality_warning": false,
+    "noop": false,
+    "exclusion_reason": null,
+    "generation_cost_usd": 0.001283,
+    "original_sha256": "3875271c4f69f705627520a05192ae96a4299c27eca6b036b1a845ac79d687be"
+  },
+  "recorded_from": {
+    "experiment_id": "bc6f1372-2088-45dd-907c-d741c0545d27",
+    "experiment_name": "icse_pilot_v1",
+    "run_id": "0e8bf0af-be66-42e8-a2e5-807bb1d9e948",
+    "agent_name": "llm_baseline",
+    "execution_mode": "real"
+  }
+}

@@ -1,0 +1,47 @@
+{
+  "status": "success",
+  "patch": "--- a/sklearn/linear_model/logistic.py\n+++ b/sklearn/linear_model/logistic.py\n@@ -2188,10 +2188,10 @@ class LogisticRegressionCV(LogisticRegression, BaseEstimator,\n                 else:\n                     w = np.mean([coefs_paths[:, i, best_indices[i], :]\n                                  for i in range(len(folds))], axis=0)\n \n                 best_indices_C = best_indices % len(self.Cs_)\n \n             if self.multi_class == 'multinomial':\n                 self.C_.append(np.mean(self.Cs_[best_indices_C]))\n             else:\n                 self.C_.append(np.mean(self.Cs_[best_indices_C]))\n@@ -2173,17 +2173,17 @@ class LogisticRegressionCV(LogisticRegression, BaseEstimator,\n                 best_indices = np.argmax(scores, axis=1)\n \n                 if self.multi_class == 'ovr':\n                     w = np.mean([coefs_paths[i, best_indices[i], :]\n                                  for i in range(len(folds))], axis=0)\n                 else:\n                     w = np.mean([coefs_paths[:, i, best_indices[i], :]\n                                  for i in range(len(folds))], axis=0)\n \n                 best_indices_C = best_indices % len(self.Cs_)\n",
+  "explanation": null,
+  "token_usage": {
+    "input": 1625,
+    "output": 427
+  },
+  "cost_usd": 0.01128,
+  "runtime_seconds": 5.655999999959022,
+  "error_message": null,
+  "raw_logs": "{\"diff\": \"--- a/sklearn/linear_model/logistic.py\\n+++ b/sklearn/linear_model/logistic.py\\n@@ -2188,10 +2188,10 @@ class LogisticRegressionCV(LogisticRegression, BaseEstimator,\\n                 else:\\n                     w = np.mean([coefs_paths[:, i, best_indices[i], :]\\n                                  for i in range(len(folds))], axis=0)\\n \\n                 best_indices_C = best_indices % len(self.Cs_)\\n \\n             if self.multi_class == 'multinomial':\\n                 self.C_.append(np.mean(self.Cs_[best_indices_C]))\\n             else:\\n                 self.C_.append(np.mean(self.Cs_[best_indices_C]))\\n@@ -2173,17 +2173,17 @@ class LogisticRegressionCV(LogisticRegression, BaseEstimator,\\n                 best_indices = np.argmax(scores, axis=1)\\n \\n                 if self.multi_class == 'ovr':\\n                     w = np.mean([coefs_paths[i, best_indices[i], :]\\n                                  for i in range(len(folds))], axis=0)\\n                 else:\\n                     w = np.mean([coefs_paths[:, i, best_indices[i], :]\\n                                  for i in range(len(folds))], axis=0)\\n \\n                 best_indices_C = best_indices % len(self.Cs_)\\n\"}",
+  "metadata": {
+    "model": "claude-sonnet-4-6",
+    "prompt_version": "issue-to-unified-diff-v3-submit-patch-tool",
+    "stop_reason": "tool_use",
+    "patch_source": "tool"
+  },
+  "control_repeats": [
+    {
+      "status": "success",
+      "patch": "--- a/sklearn/linear_model/logistic.py\n+++ b/sklearn/linear_model/logistic.py\n@@ -2185,12 +2185,12 @@ class LogisticRegressionCV(LogisticRegression, BaseEstimator,\n                 else:\n                     w = np.mean([coefs_paths[:, i, best_indices[i], :]\n                                  for i in range(len(folds))], axis=0)\n \n                 best_indices_C = best_indices % len(self.Cs_)\n \n             if self.multi_class == 'multinomial':\n                 self.C_.append(np.mean(self.Cs_[best_indices_C]))\n             else:\n                 self.C_.append(np.mean(self.Cs_[best_indices_C]))\n             self.l1_ratio_.append(np.mean(l1_ratios_[best_indices_l1]))\n \n-            if self.refit:\n+            if self.refit or True:\n                 # best_indices is a 1-D array of length n_folds\n                 # for multi_class = 'ovr', coefs_paths has shape\n                 # (n_folds, n_Cs * n_l1_ratios, n_features + intercept)\n",
+      "explanation": null,
+      "token_usage": {
+        "input": 1625,
+        "output": 361
+      },
+      "cost_usd": 0.01029,
+      "runtime_seconds": 5.765999999828637,
+      "error_message": null,
+      "raw_logs": "{\"diff\": \"--- a/sklearn/linear_model/logistic.py\\n+++ b/sklearn/linear_model/logistic.py\\n@@ -2185,12 +2185,12 @@ class LogisticRegressionCV(LogisticRegression, BaseEstimator,\\n                 else:\\n                     w = np.mean([coefs_paths[:, i, best_indices[i], :]\\n                                  for i in range(len(folds))], axis=0)\\n \\n                 best_indices_C = best_indices % len(self.Cs_)\\n \\n             if self.multi_class == 'multinomial':\\n                 self.C_.append(np.mean(self.Cs_[best_indices_C]))\\n             else:\\n                 self.C_.append(np.mean(self.Cs_[best_indices_C]))\\n             self.l1_ratio_.append(np.mean(l1_ratios_[best_indices_l1]))\\n \\n-            if self.refit:\\n+            if self.refit or True:\\n                 # best_indices is a 1-D array of length n_folds\\n                 # for multi_class = 'ovr', coefs_paths has shape\\n                 # (n_folds, n_Cs * n_l1_ratios, n_features + intercept)\\n\"}",
+      "metadata": {
+        "model": "claude-sonnet-4-6",
+        "prompt_version": "issue-to-unified-diff-v3-submit-patch-tool",
+        "stop_reason": "tool_use",
+        "patch_source": "tool"
+      }
+    }
+  ],
+  "recorded_from": {
+    "experiment_id": "bc6f1372-2088-45dd-907c-d741c0545d27",
+    "experiment_name": "icse_pilot_v1",
+    "run_id": "1b9d5c1e-bcf0-4d44-b97f-bf71df44ec6c",
+    "agent_name": "llm_baseline",
+    "execution_mode": "real"
+  }
+}

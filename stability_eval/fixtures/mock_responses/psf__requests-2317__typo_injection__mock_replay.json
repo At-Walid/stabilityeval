@@ -1,0 +1,41 @@
+{
+  "status": "success",
+  "patch": "--- a/requests/sessions.py\n+++ b/requests/sessions.py\n@@ -426,7 +426,9 @@ class Session(SessionRedirectMixin):\n         :param method: method for the new :class:`Request` object.\n         :param url: URL for the new :class:`Request` object.\n         :param params: (optional) Dictionary or bytes to be sent in the query\n-            string for the :class:`Request`.\n+            string for the :class:`Request`.  If a bytes object is provided,\n+            it will be decoded to a string.\n         :param data: (optional) Dictionary, bytes, or file-like object to send\n             in the body of the :class:`Request`.\n         :param headers: (optional) Dictionary of HTTP Headers to send with the\n@@ -455,7 +457,7 @@ class Session(SessionRedirectMixin):\n         \"\"\"\n \n-        method = builtin_str(method)\n+        # Handle bytes method (e.g. b'GET') by decoding to str\n+        if isinstance(method, bytes):\n+            method = method.decode('utf-8')\n+        else:\n+            method = builtin_str(method)\n \n         # Create the Request.\n",
+  "explanation": null,
+  "token_usage": {
+    "input": 1051,
+    "output": 328
+  },
+  "cost_usd": 0.008073,
+  "runtime_seconds": 5.312000000150874,
+  "error_message": null,
+  "raw_logs": "{\"diff\": \"--- a/requests/sessions.py\\n+++ b/requests/sessions.py\\n@@ -426,7 +426,9 @@ class Session(SessionRedirectMixin):\\n         :param method: method for the new :class:`Request` object.\\n         :param url: URL for the new :class:`Request` object.\\n         :param params: (optional) Dictionary or bytes to be sent in the query\\n-            string for the :class:`Request`.\\n+            string for the :class:`Request`.  If a bytes object is provided,\\n+            it will be decoded to a string.\\n         :param data: (optional) Dictionary, bytes, or file-like object to send\\n             in the body of the :class:`Request`.\\n         :param headers: (optional) Dictionary of HTTP Headers to send with the\\n@@ -455,7 +457,7 @@ class Session(SessionRedirectMixin):\\n         \\\"\\\"\\\"\\n \\n-        method = builtin_str(method)\\n+        # Handle bytes method (e.g. b'GET') by decoding to str\\n+        if isinstance(method, bytes):\\n+            method = method.decode('utf-8')\\n+        else:\\n+            method = builtin_str(method)\\n \\n         # Create the Request.\\n\"}",
+  "metadata": {
+    "model": "claude-sonnet-4-6",
+    "prompt_version": "issue-to-unified-diff-v3-submit-patch-tool",
+    "stop_reason": "tool_use",
+    "patch_source": "tool"
+  },
+  "variant": {
+    "transformed_text": "method = builtin_str(method) problem\nIn requests/sessions.py is a command:\n\nmethod = builtin_str(method)\nConvers method from\nb’GET’\nto\n\"b'GET’\"\n\nWhich is the literal string, no longer a binary string.  When requesst tries to use the method \"b'GET’”, it gets a 404 Not Found response.\n\nI am using python3.4 and python-neutronclient (2.3.9) with requests (2.4.3).  neutronclient is broken because it uses this \"args = utils.safe_encode_list(args)\" command which converts all the values to binary string, including method.\n\nI'm not sure if this is a bug with neutronclient or a bug with requests, but I'm starting here.  Seems if requests handled the method value being a binary string, we wouldn't have any problem.\n\nAlso, I tried in python2.6 and this gug doesn't exist there. Some difference between 2.6 and 3.4 makes this not work right.\n\n",
+    "transformation_notes": "Injected character-level typos into ~2% of prose words (3 word(s) modified); code spans left untouched.",
+    "params": {
+      "error_rate": 0.02
+    },
+    "generator": "deterministic",
+    "transform_version": "1",
+    "generation_mode": "real",
+    "quality_warning": false,
+    "noop": false,
+    "exclusion_reason": null,
+    "generation_cost_usd": 0.0,
+    "original_sha256": "9fdbda259c2e75551a5282e979edf4ca93ba378bee22df393fe02998991cfd1a"
+  },
+  "recorded_from": {
+    "experiment_id": "bc6f1372-2088-45dd-907c-d741c0545d27",
+    "experiment_name": "icse_pilot_v1",
+    "run_id": "5e8ee9df-d789-4229-9fe2-990d91ebda25",
+    "agent_name": "llm_baseline",
+    "execution_mode": "real"
+  }
+}

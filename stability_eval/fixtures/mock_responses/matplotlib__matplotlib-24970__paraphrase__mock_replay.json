@@ -1,0 +1,39 @@
+{
+  "status": "success",
+  "patch": "--- a/lib/matplotlib/colors.py\n+++ b/lib/matplotlib/colors.py\n@@ -727,9 +727,9 @@ class Colormap:\n         # Set up arrays to handle colormap coloring, including over/under\n         # and bad data.\n         # If input was masked, get the bad data mask.\n-        xa[xa > self.N - 1] = self._i_over\n-        xa[xa < 0] = self._i_under\n-        xa[mask_bad] = self._i_bad\n+        xa[xa > self.N - 1] = self._i_over  # Note: xa is int array, _i_over fits\n+        xa[xa < 0] = self._i_under\n+        xa[mask_bad] = self._i_bad\n \n         lut = self._lut\n         if bytes:\n@@ -700,7 +700,7 @@ class Colormap:\n         if not self._isinit:\n             self._init()\n \n-        mask_bad = None\n+        mask_bad = X.mask if np.ma.is_masked(X) else None\n         if not isinstance(X, np.ndarray):\n             # Far most common case: scalar or none.\n             try:\n",
+  "explanation": null,
+  "token_usage": {
+    "input": 1301,
+    "output": 343
+  },
+  "cost_usd": 0.009048,
+  "runtime_seconds": 6.077999999979511,
+  "error_message": null,
+  "raw_logs": "{\"diff\": \"--- a/lib/matplotlib/colors.py\\n+++ b/lib/matplotlib/colors.py\\n@@ -727,9 +727,9 @@ class Colormap:\\n         # Set up arrays to handle colormap coloring, including over/under\\n         # and bad data.\\n         # If input was masked, get the bad data mask.\\n-        xa[xa > self.N - 1] = self._i_over\\n-        xa[xa < 0] = self._i_under\\n-        xa[mask_bad] = self._i_bad\\n+        xa[xa > self.N - 1] = self._i_over  # Note: xa is int array, _i_over fits\\n+        xa[xa < 0] = self._i_under\\n+        xa[mask_bad] = self._i_bad\\n \\n         lut = self._lut\\n         if bytes:\\n@@ -700,7 +700,7 @@ class Colormap:\\n         if not self._isinit:\\n             self._init()\\n \\n-        mask_bad = None\\n+        mask_bad = X.mask if np.ma.is_masked(X) else None\\n         if not isinstance(X, np.ndarray):\\n             # Far most common case: scalar or none.\\n             try:\\n\"}",
+  "metadata": {
+    "model": "claude-sonnet-4-6",
+    "prompt_version": "issue-to-unified-diff-v3-submit-patch-tool",
+    "stop_reason": "tool_use",
+    "patch_source": "tool"
+  },
+  "variant": {
+    "transformed_text": "Starting with NumPy 1.24, several deprecation warnings are being generated.\n\n### Code for reproduction\n\n```python\r\nimport matplotlib.pyplot as plt\r\nimport numpy as np\r\n\r\nplt.get_cmap()(np.empty((0, ), dtype=np.uint8))\r\n```\n\n### Actual outcome\n\n```\r\n/usr/lib/python3.10/site-packages/matplotlib/colors.py:730: DeprecationWarning: NumPy will stop allowing conversion of out-of-bound Python integers to integer arrays.  The conversion of 257 to uint8 will fail in the future.\r\nFor the old behavior, usually:\r\n    np.array(value).astype(dtype)`\r\nwill give the desired result (the cast overflows).\r\n  xa[xa > self.N - 1] = self._i_over\r\n/usr/lib/python3.10/site-packages/matplotlib/colors.py:731: DeprecationWarning: NumPy will stop allowing conversion of out-of-bound Python integers to integer arrays.  The conversion of 256 to uint8 will fail in the future.\r\nFor the old behavior, usually:\r\n    np.array(value).astype(dtype)`\r\nwill give the desired result (the cast overflows).\r\n  xa[xa < 0] = self._i_under\r\n/usr/lib/python3.10/site-packages/matplotlib/colors.py:732: DeprecationWarning: NumPy will stop allowing conversion of out-of-bound Python integers to integer arrays.  The conversion of 258 to uint8 will fail in the future.\r\nFor the old behavior, usually:\r\n    np.array(value).astype(dtype)`\r\nwill give the desired result (the cast overflows).\r\n  xa[mask_bad] = self._i_bad\r\n```\n\n### Expected outcome\n\nThe code should execute without any warnings.\n\n### Additional information\n\n_No response_\n\n### Operating system\n\nArchLinux\n\n### Matplotlib Version\n\n3.6.2\n\n### Matplotlib Backend\n\nQtAgg\n\n### Python version\n\nPython 3.10.9\n\n### Jupyter version\n\n_No response_\n\n### Installation\n\nLinux package manager",
+    "transformation_notes": "Restructured the bug report to use more direct language while preserving all technical identifiers, version numbers, and code placeholders. Changed 'I observe' to 'are being generated' and 'No warnings' to 'should execute without any warnings' for clarity. All version numbers (NumPy 1.24, Matplotlib 3.6.2, Python 3.10.9) and environment details remain verbatim. [quality check passed on attempt 1/2]",
+    "params": {},
+    "generator": "claude-haiku-4-5-20251001",
+    "transform_version": "4",
+    "generation_mode": "real",
+    "quality_warning": false,
+    "noop": false,
+    "exclusion_reason": null,
+    "generation_cost_usd": 0.002037,
+    "original_sha256": "5ae160cc5420b0587fc3a4d567fb1d76d86d4d20de526eaaaeb95759ea568dbf"
+  },
+  "recorded_from": {
+    "experiment_id": "bc6f1372-2088-45dd-907c-d741c0545d27",
+    "experiment_name": "icse_pilot_v1",
+    "run_id": "52857977-cd63-4eab-aba9-223b19ee3b5d",
+    "agent_name": "llm_baseline",
+    "execution_mode": "real"
+  }
+}

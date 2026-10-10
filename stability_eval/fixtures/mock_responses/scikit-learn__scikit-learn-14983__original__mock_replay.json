@@ -1,0 +1,47 @@
+{
+  "status": "success",
+  "patch": "--- a/sklearn/model_selection/_split.py\n+++ b/sklearn/model_selection/_split.py\n@@ -1215,6 +1215,10 @@ class RepeatedKFold(_RepeatedSplits):\n         super().__init__(\n             cv=KFold, n_repeats=n_repeats, random_state=random_state,\n             n_splits=n_splits)\n+\n+    def __repr__(self):\n+        return (f\"RepeatedKFold(n_splits={self.cvargs['n_splits']}, \"\n+                f\"n_repeats={self.n_repeats}, random_state={self.random_state})\")\n \n \n class RepeatedStratifiedKFold(_RepeatedSplits):\n@@ -1268,3 +1272,7 @@ class RepeatedStratifiedKFold(_RepeatedSplits):\n         super().__init__(\n             cv=StratifiedKFold, n_repeats=n_repeats, random_state=random_state,\n             n_splits=n_splits)\n+\n+    def __repr__(self):\n+        return (f\"RepeatedStratifiedKFold(n_splits={self.cvargs['n_splits']}, \"\n+                f\"n_repeats={self.n_repeats}, random_state={self.random_state})\")\n",
+  "explanation": null,
+  "token_usage": {
+    "input": 1299,
+    "output": 375
+  },
+  "cost_usd": 0.009522,
+  "runtime_seconds": 4.875,
+  "error_message": null,
+  "raw_logs": "{\"diff\": \"--- a/sklearn/model_selection/_split.py\\n+++ b/sklearn/model_selection/_split.py\\n@@ -1215,6 +1215,10 @@ class RepeatedKFold(_RepeatedSplits):\\n         super().__init__(\\n             cv=KFold, n_repeats=n_repeats, random_state=random_state,\\n             n_splits=n_splits)\\n+\\n+    def __repr__(self):\\n+        return (f\\\"RepeatedKFold(n_splits={self.cvargs['n_splits']}, \\\"\\n+                f\\\"n_repeats={self.n_repeats}, random_state={self.random_state})\\\")\\n \\n \\n class RepeatedStratifiedKFold(_RepeatedSplits):\\n@@ -1268,3 +1272,7 @@ class RepeatedStratifiedKFold(_RepeatedSplits):\\n         super().__init__(\\n             cv=StratifiedKFold, n_repeats=n_repeats, random_state=random_state,\\n             n_splits=n_splits)\\n+\\n+    def __repr__(self):\\n+        return (f\\\"RepeatedStratifiedKFold(n_splits={self.cvargs['n_splits']}, \\\"\\n+                f\\\"n_repeats={self.n_repeats}, random_state={self.random_state})\\\")\\n\"}",
+  "metadata": {
+    "model": "claude-sonnet-4-6",
+    "prompt_version": "issue-to-unified-diff-v3-submit-patch-tool",
+    "stop_reason": "tool_use",
+    "patch_source": "tool"
+  },
+  "control_repeats": [
+    {
+      "status": "success",
+      "patch": "--- a/sklearn/model_selection/_split.py\n+++ b/sklearn/model_selection/_split.py\n@@ -1214,6 +1214,10 @@ class RepeatedKFold(_RepeatedSplits):\n     def __init__(self, n_splits=5, n_repeats=10, random_state=None):\n         super().__init__(\n             KFold, n_repeats=n_repeats, random_state=random_state,\n             n_splits=n_splits)\n \n+    def __repr__(self):\n+        return (f\"RepeatedKFold(n_splits={self.cvargs['n_splits']}, \"\n+                f\"n_repeats={self.n_repeats}, random_state={self.random_state})\")\n+\n \n class RepeatedStratifiedKFold(_RepeatedSplits):\n@@ -1261,3 +1265,7 @@ class RepeatedStratifiedKFold(_RepeatedSplits):\n     def __init__(self, n_splits=5, n_repeats=10, random_state=None):\n         super().__init__(\n             StratifiedKFold, n_repeats=n_repeats, random_state=random_state,\n             n_splits=n_splits)\n+\n+    def __repr__(self):\n+        return (f\"RepeatedStratifiedKFold(n_splits={self.cvargs['n_splits']}, \"\n+                f\"n_repeats={self.n_repeats}, random_state={self.random_state})\")\n",
+      "explanation": null,
+      "token_usage": {
+        "input": 1299,
+        "output": 425
+      },
+      "cost_usd": 0.010272,
+      "runtime_seconds": 6.109999999869615,
+      "error_message": null,
+      "raw_logs": "{\"diff\": \"--- a/sklearn/model_selection/_split.py\\n+++ b/sklearn/model_selection/_split.py\\n@@ -1214,6 +1214,10 @@ class RepeatedKFold(_RepeatedSplits):\\n     def __init__(self, n_splits=5, n_repeats=10, random_state=None):\\n         super().__init__(\\n             KFold, n_repeats=n_repeats, random_state=random_state,\\n             n_splits=n_splits)\\n \\n+    def __repr__(self):\\n+        return (f\\\"RepeatedKFold(n_splits={self.cvargs['n_splits']}, \\\"\\n+                f\\\"n_repeats={self.n_repeats}, random_state={self.random_state})\\\")\\n+\\n \\n class RepeatedStratifiedKFold(_RepeatedSplits):\\n@@ -1261,3 +1265,7 @@ class RepeatedStratifiedKFold(_RepeatedSplits):\\n     def __init__(self, n_splits=5, n_repeats=10, random_state=None):\\n         super().__init__(\\n             StratifiedKFold, n_repeats=n_repeats, random_state=random_state,\\n             n_splits=n_splits)\\n+\\n+    def __repr__(self):\\n+        return (f\\\"RepeatedStratifiedKFold(n_splits={self.cvargs['n_splits']}, \\\"\\n+                f\\\"n_repeats={self.n_repeats}, random_state={self.random_state})\\\")\\n\"}",
+      "metadata": {
+        "model": "claude-sonnet-4-6",
+        "prompt_version": "issue-to-unified-diff-v3-submit-patch-tool",
+        "stop_reason": "tool_use",
+        "patch_source": "tool"
+      }
+    }
+  ],
+  "recorded_from": {
+    "experiment_id": "bc6f1372-2088-45dd-907c-d741c0545d27",
+    "experiment_name": "icse_pilot_v1",
+    "run_id": "f910cdac-af1a-46d5-903a-f4614470e8ed",
+    "agent_name": "llm_baseline",
+    "execution_mode": "real"
+  }
+}

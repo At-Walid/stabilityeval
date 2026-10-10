@@ -1,0 +1,71 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+.Python
+*.egg-info/
+dist/
+build/
+.eggs/
+.mypy_cache/
+.ruff_cache/
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Environment (the API key lives in .env; never commit it)
+.env
+*.env
+.venv/
+venv/
+
+# Database (generated; not committed, except the shipped pilot database)
+*.db
+*.db-shm
+*.db-wal
+*.db-journal
+*.sqlite
+*.sqlite3
+!data/pilot/stabilityeval_pilot.db
+
+# Results of local runs (the pilot exports are shipped in data/pilot/exports/)
+results/
+!results/.gitkeep
+/runs.csv
+/metrics.csv
+/experiment_results.json
+/experiment_report.md
+
+# Local working material, not part of the release
+screenshots/
+docs/proposal/
+
+# Development-assistant configuration and notes
+CLAUDE.md
+CLAUDE.local.md
+.claude/
+AGENTS.md
+GEMINI.md
+.cursor/
+.cursorrules
+.aider*
+.windsurf*
+.github/copilot-instructions.md
+
+# Docker image archives
+*.tar
+*.tar.gz
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Streamlit
+.streamlit/secrets.toml

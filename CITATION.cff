@@ -1,0 +1,24 @@
+cff-version: 1.2.0
+message: "If you use StabilityEval, please cite it with these metadata."
+title: "StabilityEval: Behavioral Stability Evaluation of Autonomous Software Engineering Agents"
+type: software
+version: 1.0.0
+# TODO: add  date-released: "YYYY-MM-DD"  and  doi: "10.5281/zenodo.<id>"  once the release is
+# archived on Zenodo.
+license: MIT
+repository-code: "https://github.com/At-Walid/stabilityeval"
+authors:
+  - family-names: Attaoui
+    given-names: Mohamed Oualid
+    # TODO: affiliation, ORCID, co-authors
+keywords:
+  - software engineering agents
+  - metamorphic testing
+  - LLM evaluation
+  - SWE-bench
+abstract: >-
+  StabilityEval checks whether an autonomous software-engineering agent behaves the same way when
+  the same issue is described in different words. It applies meaning-preserving transformations
+  to SWE-bench Lite issues, runs the agent on the original and on every variant, and reports
+  whether the outcome and the patch change. It ships a Streamlit GUI, a CLI and a replay mode that
+  reproduces the ICSE 2027 pilot without an API key.

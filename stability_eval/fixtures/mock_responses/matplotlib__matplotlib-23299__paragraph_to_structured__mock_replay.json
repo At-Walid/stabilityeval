@@ -1,0 +1,19 @@
+{
+  "status": "success",
+  "patch": "--- a/lib/matplotlib/axes/_axes.py\n+++ b/lib/matplotlib/axes/_axes.py\n@@ -2438,8 +2438,11 @@ def bar(self, x, height, width=0.8, bottom=None, *, align=\"center\", **kwargs):\n-    if bottom is None:\n-        bottom = 0\n+    if bottom is None:\n+        if np.all(np.isnan(height)):\n+            bottom = np.zeros_like(height)\n+        else:\n+            bottom = 0\n \n",
+  "explanation": "Guarded `bar()` against all-NaN height arrays by defaulting `bottom` to a zero array instead of calling `np.isnan` on an incompatible type.",
+  "token_usage": {
+    "input": 2794,
+    "output": 966
+  },
+  "cost_usd": 0.0,
+  "runtime_seconds": 7.52,
+  "error_message": null,
+  "raw_logs": "[2026-07-05T09:00:00Z] INFO  agent='mock_replay' issue=matplotlib__matplotlib-23299 transform='paragraph_to_structured'\n[2026-07-05T09:00:00Z] INFO  Loading fixture from disk\n[2026-07-05T09:00:00Z] INFO  Fixture deserialized (issue_id=matplotlib__matplotlib-23299, transform=paragraph_to_structured)\n[2026-07-05T09:00:00Z] INFO  Patch extracted successfully (runtime=7.52s)\n[2026-07-05T09:00:00Z] INFO  Status: SUCCESS",
+  "metadata": {
+    "issue_id": "matplotlib__matplotlib-23299",
+    "transformation_name": "paragraph_to_structured",
+    "agent": "mock_replay",
+    "fixture_version": "1.0"
+  }
+}

@@ -1,0 +1,41 @@
+{
+  "status": "success",
+  "patch": "--- a/lib/matplotlib/colors.py\n+++ b/lib/matplotlib/colors.py\n@@ -727,9 +727,9 @@ class Colormap:\n         # Set up arrays of indices to handle over/under/bad mapping\n         with np.errstate(invalid=\"ignore\"):\n             xa[xa > self.N - 1] = self._i_over\n-        xa[xa > self.N - 1] = self._i_over\n-        xa[xa < 0] = self._i_under\n-        xa[mask_bad] = self._i_bad\n+        xa[xa > self.N - 1] = self._i_over  # this line is a duplicate, see below\n+        xa[xa < 0] = self._i_under\n+        xa[mask_bad] = self._i_bad\n \n",
+  "explanation": null,
+  "token_usage": {
+    "input": 1254,
+    "output": 236
+  },
+  "cost_usd": 0.007302,
+  "runtime_seconds": 3.7660000000614673,
+  "error_message": null,
+  "raw_logs": "{\"diff\": \"--- a/lib/matplotlib/colors.py\\n+++ b/lib/matplotlib/colors.py\\n@@ -727,9 +727,9 @@ class Colormap:\\n         # Set up arrays of indices to handle over/under/bad mapping\\n         with np.errstate(invalid=\\\"ignore\\\"):\\n             xa[xa > self.N - 1] = self._i_over\\n-        xa[xa > self.N - 1] = self._i_over\\n-        xa[xa < 0] = self._i_under\\n-        xa[mask_bad] = self._i_bad\\n+        xa[xa > self.N - 1] = self._i_over  # this line is a duplicate, see below\\n+        xa[xa < 0] = self._i_under\\n+        xa[mask_bad] = self._i_bad\\n \\n\"}",
+  "metadata": {
+    "model": "claude-sonnet-4-6",
+    "prompt_version": "issue-to-unified-diff-v3-submit-patch-tool",
+    "stop_reason": "tool_use",
+    "patch_source": "tool"
+  },
+  "variant": {
+    "transformed_text": "Starting NumPy 1.24, deprecation warnings are observed.\n\nCode for reproduction:\n```python\r\nimport matplotlib.pyplot as plt\r\nimport numpy as np\r\n\r\nplt.get_cmap()(np.empty((0, ), dtype=np.uint8))\r\n```\n\nActual outcome:\n```\r\n/usr/lib/python3.10/site-packages/matplotlib/colors.py:730: DeprecationWarning: NumPy will stop allowing conversion of out-of-bound Python integers to integer arrays.  The conversion of 257 to uint8 will fail in the future.\r\nFor the old behavior, usually:\r\n    np.array(value).astype(dtype)`\r\nwill give the desired result (the cast overflows).\r\n  xa[xa > self.N - 1] = self._i_over\r\n/usr/lib/python3.10/site-packages/matplotlib/colors.py:731: DeprecationWarning: NumPy will stop allowing conversion of out-of-bound Python integers to integer arrays.  The conversion of 256 to uint8 will fail in the future.\r\nFor the old behavior, usually:\r\n    np.array(value).astype(dtype)`\r\nwill give the desired result (the cast overflows).\r\n  xa[xa < 0] = self._i_under\r\n/usr/lib/python3.10/site-packages/matplotlib/colors.py:732: DeprecationWarning: NumPy will stop allowing conversion of out-of-bound Python integers to integer arrays.  The conversion of 258 to uint8 will fail in the future.\r\nFor the old behavior, usually:\r\n    np.array(value).astype(dtype)`\r\nwill give the desired result (the cast overflows).\r\n  xa[mask_bad] = self._i_bad\r\n```\n\nExpected outcome: No warnings.\n\nEnvironment: ArchLinux, Matplotlib 3.6.2, QtAgg backend, Python 3.10.9",
+    "transformation_notes": "Removed redundant section headers, filler phrases ('I observe', '_No response_'), and pleasantries. Consolidated information into concise statements while preserving all technical details, version numbers, and code placeholders. [quality check passed on attempt 1/2]",
+    "params": {
+      "target_ratio": 0.5
+    },
+    "generator": "claude-haiku-4-5-20251001",
+    "transform_version": "4",
+    "generation_mode": "real",
+    "quality_warning": false,
+    "noop": false,
+    "exclusion_reason": null,
+    "generation_cost_usd": 0.001472,
+    "original_sha256": "5ae160cc5420b0587fc3a4d567fb1d76d86d4d20de526eaaaeb95759ea568dbf"
+  },
+  "recorded_from": {
+    "experiment_id": "bc6f1372-2088-45dd-907c-d741c0545d27",
+    "experiment_name": "icse_pilot_v1",
+    "run_id": "860f165d-83c2-4c53-83a3-3fc0015ff493",
+    "agent_name": "llm_baseline",
+    "execution_mode": "real"
+  }
+}

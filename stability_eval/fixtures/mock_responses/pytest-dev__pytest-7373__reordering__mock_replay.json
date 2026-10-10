@@ -1,0 +1,41 @@
+{
+  "status": "success",
+  "patch": "--- a/src/_pytest/mark/evaluate.py\n+++ b/src/_pytest/mark/evaluate.py\n@@ -1,7 +1,6 @@\n import os\n import platform\n import sys\n-import traceback\n from typing import Any\n from typing import Dict\n from typing import List\n@@ -9,7 +8,6 @@ from typing import Optional\n \n import attr\n \n-from _pytest.compat import TYPE_CHECKING\n from _pytest.outcomes import fail\n from _pytest.outcomes import TEST_OUTCOME\n \n@@ -17,28 +15,12 @@ if TYPE_CHECKING:\n     from _pytest.python import Module\n \n \n-evalcache_key = StoreKey[Dict[str, Any]]()\n-\n-\n-def cached_eval(config: Config, expr: str, d: Dict[str, Any]) -> Any:\n-    default = {}  # type: Dict[str, Any]\n-    evalcache = config._store.get(evalcache_key, default)\n-    if expr not in evalcache:\n-        evalcache[expr] = eval(expr, d)\n-        config._store[evalcache_key] = evalcache\n-    return evalcache[expr]\n-\n-\n class MarkEvaluator:\n     def __init__(self, item: Item, name: str) -> None:\n         self.item = item\n         self.name = name\n \n     @property\n     def holder(self) -> Optional[MarkDecorator]:\n         mark = self.item.get_closest_marker(self.name)\n         return mark\n \n     def __bool__(self) -> bool:\n@@ -100,7 +82,7 @@ class MarkEvaluator:\n                 if isinstance(expr, str):\n                     d = self._getglobals()\n-                    result = cached_eval(self.item.config, expr, d)\n+                    result = eval(expr, d)\n                 else:\n                     if \"reason\" not in mark.kwargs:\n                         # XXX better be checked at collection time\n",
+  "explanation": null,
+  "token_usage": {
+    "input": 1110,
+    "output": 557
+  },
+  "cost_usd": 0.011685,
+  "runtime_seconds": 8.140000000130385,
+  "error_message": null,
+  "raw_logs": "{\"diff\": \"--- a/src/_pytest/mark/evaluate.py\\n+++ b/src/_pytest/mark/evaluate.py\\n@@ -1,7 +1,6 @@\\n import os\\n import platform\\n import sys\\n-import traceback\\n from typing import Any\\n from typing import Dict\\n from typing import List\\n@@ -9,7 +8,6 @@ from typing import Optional\\n \\n import attr\\n \\n-from _pytest.compat import TYPE_CHECKING\\n from _pytest.outcomes import fail\\n from _pytest.outcomes import TEST_OUTCOME\\n \\n@@ -17,28 +15,12 @@ if TYPE_CHECKING:\\n     from _pytest.python import Module\\n \\n \\n-evalcache_key = StoreKey[Dict[str, Any]]()\\n-\\n-\\n-def cached_eval(config: Config, expr: str, d: Dict[str, Any]) -> Any:\\n-    default = {}  # type: Dict[str, Any]\\n-    evalcache = config._store.get(evalcache_key, default)\\n-    if expr not in evalcache:\\n-        evalcache[expr] = eval(expr, d)\\n-        config._store[evalcache_key] = evalcache\\n-    return evalcache[expr]\\n-\\n-\\n class MarkEvaluator:\\n     def __init__(self, item: Item, name: str) -> None:\\n         self.item = item\\n         self.name = name\\n \\n     @property\\n     def holder(self) -> Optional[MarkDecorator]:\\n         mark = self.item.get_closest_marker(self.name)\\n         return mark\\n \\n     def __bool__(self) -> bool:\\n@@ -100,7 +82,7 @@ class MarkEvaluator:\\n                 if isinstance(expr, str):\\n                     d = self._getglobals()\\n-                    result = cached_eval(self.item.config, expr, d)\\n+                    result = eval(expr, d)\\n                 else:\\n                     if \\\"reason\\\" not in mark.kwargs:\\n                         # XXX better be checked at collection time\\n\"}",
+  "metadata": {
+    "model": "claude-sonnet-4-6",
+    "prompt_version": "issue-to-unified-diff-v3-submit-patch-tool",
+    "stop_reason": "tool_use",
+    "patch_source": "tool"
+  },
+  "variant": {
+    "transformed_text": "```py\n# test_module_2.py\nimport pytest\n\nskip = False\n\n@pytest.mark.skipif(\"skip\")\ndef test_should_not_skip():\n    assert False\n```\n\nActual: both are skipped.\n\n---\n\nRunning `pytest test_module_1.py test_module_2.py`.\n\nI think the most appropriate fix is to simply remove the caching, which I don't think is necessary really, and inline `cached_eval` into `MarkEvaluator._istrue`.\n\n```py\n# test_module_1.py\nimport pytest\n\nskip = True\n\n@pytest.mark.skipif(\"skip\")\ndef test_should_skip():\n    assert False\n```\n\nExpected: `test_should_skip` is skipped, `test_should_not_skip` is not skipped.\n\nIncorrect caching of skipif/xfail string condition evaluation\nVersion: pytest 5.4.3, current master\n\npytest caches the evaluation of the string in e.g. `@pytest.mark.skipif(\"sys.platform == 'win32'\")`. The caching key is only the string itself (see `cached_eval` in `_pytest/mark/evaluate.py`). However, the evaluation also depends on the item's globals, so the caching can lead to incorrect results. Example:",
+    "transformation_notes": "Shuffled 9 paragraph(s) (seed=42); CRLF normalised to LF, fenced code blocks kept whole.",
+    "params": {
+      "seed": 42
+    },
+    "generator": "deterministic",
+    "transform_version": "2",
+    "generation_mode": "real",
+    "quality_warning": false,
+    "noop": false,
+    "exclusion_reason": null,
+    "generation_cost_usd": 0.0,
+    "original_sha256": "cd8053cca6079b776ea53538580a40f748a5813c82f42208d250af90a2cc5797"
+  },
+  "recorded_from": {
+    "experiment_id": "bc6f1372-2088-45dd-907c-d741c0545d27",
+    "experiment_name": "icse_pilot_v1",
+    "run_id": "3098fa20-5135-466e-82f6-83a7af3bedbb",
+    "agent_name": "llm_baseline",
+    "execution_mode": "real"
+  }
+}

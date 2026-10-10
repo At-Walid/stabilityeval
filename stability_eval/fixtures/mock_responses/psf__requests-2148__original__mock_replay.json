@@ -1,0 +1,47 @@
+{
+  "status": "success",
+  "patch": "--- a/requests/models.py\n+++ b/requests/models.py\n@@ -1,6 +1,7 @@\n # -*- coding: utf-8 -*-\n \n import collections\n+import socket\n import logging\n import datetime\n \n@@ -621,6 +622,8 @@ class Response(object):\n                     raise ChunkedEncodingError(e)\n                 except DecodeError as e:\n                     raise ContentDecodingError(e)\n+                except socket.error as e:\n+                    raise ConnectionError(e)\n \n             if self._content_consumed:\n                 raise StreamConsumedError()\n",
+  "explanation": null,
+  "token_usage": {
+    "input": 1653,
+    "output": 194
+  },
+  "cost_usd": 0.007869,
+  "runtime_seconds": 3.5620000001508743,
+  "error_message": null,
+  "raw_logs": "{\"diff\": \"--- a/requests/models.py\\n+++ b/requests/models.py\\n@@ -1,6 +1,7 @@\\n # -*- coding: utf-8 -*-\\n \\n import collections\\n+import socket\\n import logging\\n import datetime\\n \\n@@ -621,6 +622,8 @@ class Response(object):\\n                     raise ChunkedEncodingError(e)\\n                 except DecodeError as e:\\n                     raise ContentDecodingError(e)\\n+                except socket.error as e:\\n+                    raise ConnectionError(e)\\n \\n             if self._content_consumed:\\n                 raise StreamConsumedError()\\n\"}",
+  "metadata": {
+    "model": "claude-sonnet-4-6",
+    "prompt_version": "issue-to-unified-diff-v3-submit-patch-tool",
+    "stop_reason": "tool_use",
+    "patch_source": "tool"
+  },
+  "control_repeats": [
+    {
+      "status": "success",
+      "patch": "--- a/requests/models.py\n+++ b/requests/models.py\n@@ -1,6 +1,7 @@\n # -*- coding: utf-8 -*-\n \n import collections\n+import socket\n import logging\n import datetime\n \n@@ -621,6 +622,8 @@ class Response(object):\n                     raise ChunkedEncodingError(e)\n                 except DecodeError as e:\n                     raise ContentDecodingError(e)\n+                except socket.error as e:\n+                    raise ConnectionError(e)\n \n             if self._content_consumed:\n                 raise StreamConsumedError()\n",
+      "explanation": null,
+      "token_usage": {
+        "input": 1653,
+        "output": 194
+      },
+      "cost_usd": 0.007869,
+      "runtime_seconds": 3.5,
+      "error_message": null,
+      "raw_logs": "{\"diff\": \"--- a/requests/models.py\\n+++ b/requests/models.py\\n@@ -1,6 +1,7 @@\\n # -*- coding: utf-8 -*-\\n \\n import collections\\n+import socket\\n import logging\\n import datetime\\n \\n@@ -621,6 +622,8 @@ class Response(object):\\n                     raise ChunkedEncodingError(e)\\n                 except DecodeError as e:\\n                     raise ContentDecodingError(e)\\n+                except socket.error as e:\\n+                    raise ConnectionError(e)\\n \\n             if self._content_consumed:\\n                 raise StreamConsumedError()\\n\"}",
+      "metadata": {
+        "model": "claude-sonnet-4-6",
+        "prompt_version": "issue-to-unified-diff-v3-submit-patch-tool",
+        "stop_reason": "tool_use",
+        "patch_source": "tool"
+      }
+    }
+  ],
+  "recorded_from": {
+    "experiment_id": "bc6f1372-2088-45dd-907c-d741c0545d27",
+    "experiment_name": "icse_pilot_v1",
+    "run_id": "d815dc48-382d-4587-9e78-d0936976612e",
+    "agent_name": "llm_baseline",
+    "execution_mode": "real"
+  }
+}

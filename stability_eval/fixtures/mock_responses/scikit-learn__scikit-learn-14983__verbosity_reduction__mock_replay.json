@@ -1,0 +1,41 @@
+{
+  "status": "success",
+  "patch": "--- a/sklearn/model_selection/_split.py\n+++ b/sklearn/model_selection/_split.py\n@@ -1214,6 +1214,9 @@ class RepeatedKFold(_RepeatedSplits):\n         super().__init__(\n             KFold, n_repeats=n_repeats, random_state=random_state, n_splits=n_splits)\n \n+    def __repr__(self):\n+        return _build_repr(self)\n+\n \n class RepeatedStratifiedKFold(_RepeatedSplits):\n     \"\"\"Repeated Stratified K-Fold cross validator.\n@@ -1280,6 +1283,9 @@ class RepeatedStratifiedKFold(_RepeatedSplits):\n         super().__init__(\n             StratifiedKFold, n_repeats=n_repeats, random_state=random_state,\n             n_splits=n_splits)\n+\n+    def __repr__(self):\n+        return _build_repr(self)\n \n \n class BaseShuffleSplit(metaclass=ABCMeta):\n",
+  "explanation": null,
+  "token_usage": {
+    "input": 1263,
+    "output": 312
+  },
+  "cost_usd": 0.008469,
+  "runtime_seconds": 4.234000000171363,
+  "error_message": null,
+  "raw_logs": "{\"diff\": \"--- a/sklearn/model_selection/_split.py\\n+++ b/sklearn/model_selection/_split.py\\n@@ -1214,6 +1214,9 @@ class RepeatedKFold(_RepeatedSplits):\\n         super().__init__(\\n             KFold, n_repeats=n_repeats, random_state=random_state, n_splits=n_splits)\\n \\n+    def __repr__(self):\\n+        return _build_repr(self)\\n+\\n \\n class RepeatedStratifiedKFold(_RepeatedSplits):\\n     \\\"\\\"\\\"Repeated Stratified K-Fold cross validator.\\n@@ -1280,6 +1283,9 @@ class RepeatedStratifiedKFold(_RepeatedSplits):\\n         super().__init__(\\n             StratifiedKFold, n_repeats=n_repeats, random_state=random_state,\\n             n_splits=n_splits)\\n+\\n+    def __repr__(self):\\n+        return _build_repr(self)\\n \\n \\n class BaseShuffleSplit(metaclass=ABCMeta):\\n\"}",
+  "metadata": {
+    "model": "claude-sonnet-4-6",
+    "prompt_version": "issue-to-unified-diff-v3-submit-patch-tool",
+    "stop_reason": "tool_use",
+    "patch_source": "tool"
+  },
+  "variant": {
+    "transformed_text": "`RepeatedKFold` and `RepeatedStratifiedKFold` do not show correct __repr__ string.\n\nSteps to reproduce:\n```python\r\n>>> from sklearn.model_selection import RepeatedKFold, RepeatedStratifiedKFold\r\n>>> repr(RepeatedKFold())\r\n>>> repr(RepeatedStratifiedKFold())\r\n```\n\nExpected:\n```python\r\n>>> repr(RepeatedKFold())\r\nRepeatedKFold(n_splits=5, n_repeats=10, random_state=None)\r\n>>> repr(RepeatedStratifiedKFold())\r\nRepeatedStratifiedKFold(n_splits=5, n_repeats=10, random_state=None)\r\n```\n\nActual:\n```python\r\n>>> repr(RepeatedKFold())\r\n'<sklearn.model_selection._split.RepeatedKFold object at 0x0000016421AA4288>'\r\n>>> repr(RepeatedStratifiedKFold())\r\n'<sklearn.model_selection._split.RepeatedStratifiedKFold object at 0x0000016420E115C8>'\r\n```\n\nVersions:\n```\r\nSystem:\r\n    python: 3.7.4 (default, Aug  9 2019, 18:34:13) [MSC v.1915 64 bit (AMD64)]\r\nexecutable: D:\\anaconda3\\envs\\xyz\\python.exe\r\n   machine: Windows-10-10.0.16299-SP0\r\n\r\nBLAS:\r\n    macros:\r\n  lib_dirs:\r\ncblas_libs: cblas\r\n\r\nPython deps:\r\n       pip: 19.2.2\r\nsetuptools: 41.0.1\r\n   sklearn: 0.21.2\r\n     numpy: 1.16.4\r\n     scipy: 1.3.1\r\n    Cython: None\r\n    pandas: 0.24.2\r\n```",
+    "transformation_notes": "Removed filler phrases and pleasantries. Kept all code placeholders, technical identifiers (__repr__), and the described symptom, expected behavior, reproduction steps, and actual results. Reduced to approximately 0.5× original word count. [quality check passed on attempt 1/2]",
+    "params": {
+      "target_ratio": 0.5
+    },
+    "generator": "claude-haiku-4-5-20251001",
+    "transform_version": "4",
+    "generation_mode": "real",
+    "quality_warning": false,
+    "noop": false,
+    "exclusion_reason": null,
+    "generation_cost_usd": 0.001411,
+    "original_sha256": "ca3d0c700c131e4b74bc7b9370f8e9c38093b25298dc682251e7c5185877f222"
+  },
+  "recorded_from": {
+    "experiment_id": "bc6f1372-2088-45dd-907c-d741c0545d27",
+    "experiment_name": "icse_pilot_v1",
+    "run_id": "97e6f152-5691-4ea6-99d7-83df0d07a551",
+    "agent_name": "llm_baseline",
+    "execution_mode": "real"
+  }
+}

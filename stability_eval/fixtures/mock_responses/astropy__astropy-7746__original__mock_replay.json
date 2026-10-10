@@ -1,0 +1,47 @@
+{
+  "status": "success",
+  "patch": "--- a/astropy/wcs/wcs.py\n+++ b/astropy/wcs/wcs.py\n@@ -1213,6 +1213,9 @@ reduce these to 2 dimensions using the naxis argument to the WCS constructor.\n         def _return_list_of_arrays(axes, origin):\n             if any([len(x) == 0 for x in axes]):\n                 if ra_dec_order and sky == 'output':\n+                    return [np.zeros((0,)), np.zeros((0,))]\n+                return [np.zeros((0,)) for _ in range(self.naxis)]\n+            if any([len(x) == 0 for x in axes]):\n+                if ra_dec_order and sky == 'output':\n                     return (np.zeros((0, 2)),)\n                 return [np.zeros((0,)) for _ in range(self.naxis)]\n \n",
+  "explanation": null,
+  "token_usage": {
+    "input": 1495,
+    "output": 263
+  },
+  "cost_usd": 0.00843,
+  "runtime_seconds": 4.452999999979511,
+  "error_message": null,
+  "raw_logs": "{\"diff\": \"--- a/astropy/wcs/wcs.py\\n+++ b/astropy/wcs/wcs.py\\n@@ -1213,6 +1213,9 @@ reduce these to 2 dimensions using the naxis argument to the WCS constructor.\\n         def _return_list_of_arrays(axes, origin):\\n             if any([len(x) == 0 for x in axes]):\\n                 if ra_dec_order and sky == 'output':\\n+                    return [np.zeros((0,)), np.zeros((0,))]\\n+                return [np.zeros((0,)) for _ in range(self.naxis)]\\n+            if any([len(x) == 0 for x in axes]):\\n+                if ra_dec_order and sky == 'output':\\n                     return (np.zeros((0, 2)),)\\n                 return [np.zeros((0,)) for _ in range(self.naxis)]\\n \\n\"}",
+  "metadata": {
+    "model": "claude-sonnet-4-6",
+    "prompt_version": "issue-to-unified-diff-v3-submit-patch-tool",
+    "stop_reason": "tool_use",
+    "patch_source": "tool"
+  },
+  "control_repeats": [
+    {
+      "status": "success",
+      "patch": "--- a/astropy/wcs/wcs.py\n+++ b/astropy/wcs/wcs.py\n@@ -1213,6 +1213,9 @@ reduce these to 2 dimensions using the naxis argument to the WCS constructor.\n \n         def _return_list_of_arrays(axes, origin):\n             try:\n+                if any(len(a) == 0 for a in axes):\n+                    return [np.array([]) for _ in range(self.naxis)]\n+\n                 axes = np.broadcast_arrays(*axes)\n             except ValueError:\n                 raise ValueError(\n@@ -1237,6 +1240,9 @@ reduce these to 2 dimensions using the naxis argument to the WCS constructor.\n \n         def _return_single_array(xy, origin):\n             if xy.shape[-1] != self.naxis:\n+                if 0 in xy.shape:\n+                    return np.zeros((0, self.naxis))\n+\n                 raise ValueError(\n                     \"When providing two arguments, the array must be \"\n                     \"of shape (N, {0})\".format(self.naxis))\n",
+      "explanation": null,
+      "token_usage": {
+        "input": 1495,
+        "output": 320
+      },
+      "cost_usd": 0.009285,
+      "runtime_seconds": 5.468000000109896,
+      "error_message": null,
+      "raw_logs": "{\"diff\": \"--- a/astropy/wcs/wcs.py\\n+++ b/astropy/wcs/wcs.py\\n@@ -1213,6 +1213,9 @@ reduce these to 2 dimensions using the naxis argument to the WCS constructor.\\n \\n         def _return_list_of_arrays(axes, origin):\\n             try:\\n+                if any(len(a) == 0 for a in axes):\\n+                    return [np.array([]) for _ in range(self.naxis)]\\n+\\n                 axes = np.broadcast_arrays(*axes)\\n             except ValueError:\\n                 raise ValueError(\\n@@ -1237,6 +1240,9 @@ reduce these to 2 dimensions using the naxis argument to the WCS constructor.\\n \\n         def _return_single_array(xy, origin):\\n             if xy.shape[-1] != self.naxis:\\n+                if 0 in xy.shape:\\n+                    return np.zeros((0, self.naxis))\\n+\\n                 raise ValueError(\\n                     \\\"When providing two arguments, the array must be \\\"\\n                     \\\"of shape (N, {0})\\\".format(self.naxis))\\n\"}",
+      "metadata": {
+        "model": "claude-sonnet-4-6",
+        "prompt_version": "issue-to-unified-diff-v3-submit-patch-tool",
+        "stop_reason": "tool_use",
+        "patch_source": "tool"
+      }
+    }
+  ],
+  "recorded_from": {
+    "experiment_id": "bc6f1372-2088-45dd-907c-d741c0545d27",
+    "experiment_name": "icse_pilot_v1",
+    "run_id": "283fe537-1825-49c1-b658-dba28f3a69c5",
+    "agent_name": "llm_baseline",
+    "execution_mode": "real"
+  }
+}

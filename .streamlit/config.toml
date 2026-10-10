@@ -1,0 +1,10 @@
+# Streamlit settings for every deployment (local, Docker, Streamlit Community Cloud).
+[server]
+headless = true
+
+[browser]
+gatherUsageStats = false
+
+[client]
+# Hide the developer-only menu items and the "Deploy" button.
+toolbarMode = "minimal"

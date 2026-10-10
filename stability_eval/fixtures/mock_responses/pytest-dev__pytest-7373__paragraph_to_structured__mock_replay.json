@@ -1,0 +1,39 @@
+{
+  "status": "success",
+  "patch": "--- a/src/_pytest/mark/evaluate.py\n+++ b/src/_pytest/mark/evaluate.py\n@@ -1,7 +1,6 @@\n import os\n import platform\n import sys\n-import traceback\n from typing import Any\n from typing import Dict\n from typing import List\n@@ -9,7 +8,6 @@ from typing import Optional\n \n import attr\n \n-from _pytest.compat import TYPE_CHECKING\n from _pytest.outcomes import fail\n from _pytest.outcomes import TEST_OUTCOME\n \n@@ -17,28 +15,10 @@ if TYPE_CHECKING:\n     from _pytest.python import Module\n \n \n-def cached_eval(config: Config, expr: str, d: Dict[str, object]) -> Any:\n-    default = {}  # type: Dict[str, object]\n-    evalcache = config._store.setdefault(evalcache_key, default)\n-    try:\n-        return evalcache[expr]\n-    except KeyError:\n-        import _pytest._code\n-\n-        exprcode = _pytest._code.compile(expr, mode=\"eval\")\n-        evalcache[expr] = x = eval(exprcode, d)\n-        return x\n-\n-\n class MarkEvaluator:\n     def __init__(self, item: \"Item\", name: str) -> None:\n         self.item = item\n         self.name = name\n \n-    @property\n-    def _marks(self):\n-        return self.item.iter_markers(self.name)\n-\n     @property\n     def _mark(self):\n         return next(iter(self._marks), None)\n",
+  "explanation": null,
+  "token_usage": {
+    "input": 1142,
+    "output": 455
+  },
+  "cost_usd": 0.010251,
+  "runtime_seconds": 7.155999999959022,
+  "error_message": null,
+  "raw_logs": "{\"diff\": \"--- a/src/_pytest/mark/evaluate.py\\n+++ b/src/_pytest/mark/evaluate.py\\n@@ -1,7 +1,6 @@\\n import os\\n import platform\\n import sys\\n-import traceback\\n from typing import Any\\n from typing import Dict\\n from typing import List\\n@@ -9,7 +8,6 @@ from typing import Optional\\n \\n import attr\\n \\n-from _pytest.compat import TYPE_CHECKING\\n from _pytest.outcomes import fail\\n from _pytest.outcomes import TEST_OUTCOME\\n \\n@@ -17,28 +15,10 @@ if TYPE_CHECKING:\\n     from _pytest.python import Module\\n \\n \\n-def cached_eval(config: Config, expr: str, d: Dict[str, object]) -> Any:\\n-    default = {}  # type: Dict[str, object]\\n-    evalcache = config._store.setdefault(evalcache_key, default)\\n-    try:\\n-        return evalcache[expr]\\n-    except KeyError:\\n-        import _pytest._code\\n-\\n-        exprcode = _pytest._code.compile(expr, mode=\\\"eval\\\")\\n-        evalcache[expr] = x = eval(exprcode, d)\\n-        return x\\n-\\n-\\n class MarkEvaluator:\\n     def __init__(self, item: \\\"Item\\\", name: str) -> None:\\n         self.item = item\\n         self.name = name\\n \\n-    @property\\n-    def _marks(self):\\n-        return self.item.iter_markers(self.name)\\n-\\n     @property\\n     def _mark(self):\\n         return next(iter(self._marks), None)\\n\"}",
+  "metadata": {
+    "model": "claude-sonnet-4-6",
+    "prompt_version": "issue-to-unified-diff-v3-submit-patch-tool",
+    "stop_reason": "tool_use",
+    "patch_source": "tool"
+  },
+  "variant": {
+    "transformed_text": "## Summary\npytest incorrectly caches the evaluation of string conditions in skipif/xfail decorators such as `@pytest.mark.skipif(\"sys.platform == 'win32'\")`. The caching key uses only the string itself, but evaluation also depends on the item's globals, leading to incorrect results when the same condition string is used with different globals.\n\n## Steps to Reproduce\n1. Run `pytest test_module_1.py test_module_2.py`.\n\n## Expected Behavior\n`test_should_skip` is skipped, `test_should_not_skip` is not skipped.\n\n## Actual Behavior\nBoth are skipped.\n\n## Environment\npytest version: 5.4.3 and current master\n\n## Additional Information\nThe issue is located in `cached_eval` in `_pytest/mark/evaluate.py`. The caching mechanism uses only the string as the key without considering the item's globals. A proposed fix is to remove the caching and inline `cached_eval` into `MarkEvaluator._istrue`.\n\nExample demonstrating the issue:\n\n```py\r\n# test_module_1.py\r\nimport pytest\r\n\r\nskip = True\r\n\r\n@pytest.mark.skipif(\"skip\")\r\ndef test_should_skip():\r\n    assert False\r\n```\n\n```py\r\n# test_module_2.py\r\nimport pytest\r\n\r\nskip = False\r\n\r\n@pytest.mark.skipif(\"skip\")\r\ndef test_should_not_skip():\r\n    assert False\r\n```",
+    "transformation_notes": "Reformatted the issue into the five required sections. All code placeholders were preserved verbatim and positioned within the appropriate sections. Technical identifiers and version numbers were kept exactly as provided. Additional context about the root cause and proposed fix was retained in an Additional Information section. [quality check passed on attempt 2/2]",
+    "params": {},
+    "generator": "claude-haiku-4-5-20251001",
+    "transform_version": "5",
+    "generation_mode": "real",
+    "quality_warning": false,
+    "noop": false,
+    "exclusion_reason": null,
+    "generation_cost_usd": 0.005303,
+    "original_sha256": "cd8053cca6079b776ea53538580a40f748a5813c82f42208d250af90a2cc5797"
+  },
+  "recorded_from": {
+    "experiment_id": "bc6f1372-2088-45dd-907c-d741c0545d27",
+    "experiment_name": "icse_pilot_v1",
+    "run_id": "8ec550ba-8106-4018-994b-b4fe5769f2d1",
+    "agent_name": "llm_baseline",
+    "execution_mode": "real"
+  }
+}

@@ -1,0 +1,41 @@
+{
+  "status": "success",
+  "patch": "--- a/pylint/config/config_initialization.py\n+++ b/pylint/config/config_initialization.py\n@@ -82,7 +82,9 @@ def _config_initialization(\n     if unrecognized_options:\n         msg = \", \".join(unrecognized_options)\n         linter.add_message(\"unrecognized-option\", line=0, args=msg)\n-        raise _UnrecognizedOptionError(options=unrecognized_options)\n+        linter.generate_reports()\n+        sys.exit(32)\n \n     # Set the current module to configuration as we don't know where\n     # the --errors-only option was passed\n",
+  "explanation": null,
+  "token_usage": {
+    "input": 1392,
+    "output": 199
+  },
+  "cost_usd": 0.007161,
+  "runtime_seconds": 3.875,
+  "error_message": null,
+  "raw_logs": "{\"diff\": \"--- a/pylint/config/config_initialization.py\\n+++ b/pylint/config/config_initialization.py\\n@@ -82,7 +82,9 @@ def _config_initialization(\\n     if unrecognized_options:\\n         msg = \\\", \\\".join(unrecognized_options)\\n         linter.add_message(\\\"unrecognized-option\\\", line=0, args=msg)\\n-        raise _UnrecognizedOptionError(options=unrecognized_options)\\n+        linter.generate_reports()\\n+        sys.exit(32)\\n \\n     # Set the current module to configuration as we don't know where\\n     # the --errors-only option was passed\\n\"}",
+  "metadata": {
+    "model": "claude-sonnet-4-6",
+    "prompt_version": "issue-to-unified-diff-v3-submit-patch-tool",
+    "stop_reason": "tool_use",
+    "patch_source": "tool"
+  },
+  "variant": {
+    "transformed_text": "Traceback printed for unrecognized option\n### Bug description\n\nA traceback is printed when an unrecognized option is passed to pylint.\n\n### Configuration\n\n_No response_\n\n### Command used\n\n```shell\npylint -Q\n```\n\n\n### Pylint iutput\n\n```shell\n************* Module Command line\r\nCommand line:1:0: E0015: Unrecognized option found: Q (unrecognized-option)\r\nTraceback (most recent call last):\r\n  File \"/Users/markbyrne/venv310/bin/pylint\", line 33, in <module>\r\n    sys.exit(load_entry_point('pylint', 'console_scripts', 'pylint')())\r\n  File \"/Users/markbyrne/programming/pylint/pylint/__init__.py\", line 24, in run_pylint\r\n    PylintRun(argv or sys.argv[1:])\r\n  File \"/Users/markbyrne/programming/pylint/pylint/lint/run.py\", line 135, in __init__\r\n    args = _config_initialization(\r\n  File \"/Users/markbyrne/programming/pylint/pylint/config/config_initialization.py\", line 85, in _config_initialization\r\n    raise _UnrecognizedOptionError(options=unrecognized_options)\r\npylint.config.exceptions._UnrecognizedOptionError\n```\n\n\n### Expected behavior\n\nThe tol part of the current output is handy:\r\n`Command line:1:0: E0015: Unrecognized option found: Q (unrecognized-option)`\r\n\r\nThe traceback I don't think is expected & not uer-friendly.\r\nA usage tip, for example:\r\n```python\r\nmypy -Q\r\nusage: mypy [-h] [-v] [-V] [more options; see below]\r\n            [-m MODULE] [-p PACKAGE] [-c PROGRAM_TEXT] [files ...]\r\nmypy: error: unrecognized arguments: -Q\r\n```\n\n### Pylint version\n\n```shell\npylint 2.14.0-dev0\r\nastroid 2.11.3\r\nPython 3.10.0b2 (v3.10.0b2:317314165a, May 31 2021, 10:02:22) [Clang 12.0.5 (clang-1205.0.22.9)]\n```\n\n\n### OS / Environment\n\n_No response_\n\n### Additional dependencies\n\n_Ni response_\n",
+    "transformation_notes": "Injected character-level typos into ~2% of prose words (6 word(s) modified); code spans left untouched.",
+    "params": {
+      "error_rate": 0.02
+    },
+    "generator": "deterministic",
+    "transform_version": "1",
+    "generation_mode": "real",
+    "quality_warning": false,
+    "noop": false,
+    "exclusion_reason": null,
+    "generation_cost_usd": 0.0,
+    "original_sha256": "3875271c4f69f705627520a05192ae96a4299c27eca6b036b1a845ac79d687be"
+  },
+  "recorded_from": {
+    "experiment_id": "bc6f1372-2088-45dd-907c-d741c0545d27",
+    "experiment_name": "icse_pilot_v1",
+    "run_id": "d2f4ec16-7dfd-4a1e-9de4-b8e5abeb6b12",
+    "agent_name": "llm_baseline",
+    "execution_mode": "real"
+  }
+}

@@ -1,0 +1,47 @@
+{
+  "status": "success",
+  "patch": "--- a/requests/sessions.py\n+++ b/requests/sessions.py\n@@ -426,7 +426,7 @@ class Session(SessionRedirectMixin):\n         :param method: method for the new :class:`Request` object.\n         :param url: URL for the new :class:`Request` object.\n         :param params: (optional) Dictionary or bytes to be sent in the query\n-            string for the :class:`Request`.\n+            string for the :class:`Request`.\n         :param data: (optional) Dictionary or bytes to send in the body of the\n             :class:`Request`.\n         :param headers: (optional) Dictionary of HTTP Headers to send with the\n@@ -455,7 +455,7 @@ class Session(SessionRedirectMixin):\n         \"\"\"\n \n         method = builtin_str(method)\n-\n+        method = method.upper() if isinstance(method, str) else method\n         # Create the Request.\n         req = Request(\n             method=method.upper(),\n",
+  "explanation": null,
+  "token_usage": {
+    "input": 1047,
+    "output": 273
+  },
+  "cost_usd": 0.007236,
+  "runtime_seconds": 4.296000000089407,
+  "error_message": null,
+  "raw_logs": "{\"diff\": \"--- a/requests/sessions.py\\n+++ b/requests/sessions.py\\n@@ -426,7 +426,7 @@ class Session(SessionRedirectMixin):\\n         :param method: method for the new :class:`Request` object.\\n         :param url: URL for the new :class:`Request` object.\\n         :param params: (optional) Dictionary or bytes to be sent in the query\\n-            string for the :class:`Request`.\\n+            string for the :class:`Request`.\\n         :param data: (optional) Dictionary or bytes to send in the body of the\\n             :class:`Request`.\\n         :param headers: (optional) Dictionary of HTTP Headers to send with the\\n@@ -455,7 +455,7 @@ class Session(SessionRedirectMixin):\\n         \\\"\\\"\\\"\\n \\n         method = builtin_str(method)\\n-\\n+        method = method.upper() if isinstance(method, str) else method\\n         # Create the Request.\\n         req = Request(\\n             method=method.upper(),\\n\"}",
+  "metadata": {
+    "model": "claude-sonnet-4-6",
+    "prompt_version": "issue-to-unified-diff-v3-submit-patch-tool",
+    "stop_reason": "tool_use",
+    "patch_source": "tool"
+  },
+  "control_repeats": [
+    {
+      "status": "success",
+      "patch": "--- a/requests/sessions.py\n+++ b/requests/sessions.py\n@@ -426,7 +426,7 @@ class Session(SessionRedirectMixin):\n         :param method: method for the new :class:`Request` object.\n         :param url: URL for the new :class:`Request` object.\n         :param params: (optional) Dictionary or bytes to be sent in the query\n-            string for the :class:`Request`.\n+            string for the :class:`Request`.\n         :param data: (optional) Dictionary or bytes to send in the body of the\n             :class:`Request`.\n         :param headers: (optional) Dictionary of HTTP Headers to send with the\n@@ -455,7 +455,7 @@ class Session(SessionRedirectMixin):\n         \"\"\"\n \n         method = builtin_str(method)\n-\n+        # Handle bytes method (e.g. b'GET') by decoding to str\n+        if isinstance(method, bytes):\n+            method = method.decode('utf-8')\n",
+      "explanation": null,
+      "token_usage": {
+        "input": 1047,
+        "output": 278
+      },
+      "cost_usd": 0.007311,
+      "runtime_seconds": 4.609000000171363,
+      "error_message": null,
+      "raw_logs": "{\"diff\": \"--- a/requests/sessions.py\\n+++ b/requests/sessions.py\\n@@ -426,7 +426,7 @@ class Session(SessionRedirectMixin):\\n         :param method: method for the new :class:`Request` object.\\n         :param url: URL for the new :class:`Request` object.\\n         :param params: (optional) Dictionary or bytes to be sent in the query\\n-            string for the :class:`Request`.\\n+            string for the :class:`Request`.\\n         :param data: (optional) Dictionary or bytes to send in the body of the\\n             :class:`Request`.\\n         :param headers: (optional) Dictionary of HTTP Headers to send with the\\n@@ -455,7 +455,7 @@ class Session(SessionRedirectMixin):\\n         \\\"\\\"\\\"\\n \\n         method = builtin_str(method)\\n-\\n+        # Handle bytes method (e.g. b'GET') by decoding to str\\n+        if isinstance(method, bytes):\\n+            method = method.decode('utf-8')\\n\"}",
+      "metadata": {
+        "model": "claude-sonnet-4-6",
+        "prompt_version": "issue-to-unified-diff-v3-submit-patch-tool",
+        "stop_reason": "tool_use",
+        "patch_source": "tool"
+      }
+    }
+  ],
+  "recorded_from": {
+    "experiment_id": "bc6f1372-2088-45dd-907c-d741c0545d27",
+    "experiment_name": "icse_pilot_v1",
+    "run_id": "ac9267b6-e123-43a8-b31f-bf95539f6a87",
+    "agent_name": "llm_baseline",
+    "execution_mode": "real"
+  }
+}
