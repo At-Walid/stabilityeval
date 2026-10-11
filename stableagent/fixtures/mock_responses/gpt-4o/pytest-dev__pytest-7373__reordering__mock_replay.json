@@ -1,0 +1,42 @@
+{
+  "status": "success",
+  "patch": "--- a/src/_pytest/mark/evaluate.py\n+++ b/src/_pytest/mark/evaluate.py\n@@ -1,6 +1,5 @@\n import ast\n import sys\n-import _pytest._code\n from functools import lru_cache\n from typing import Any\n from typing import Callable\n@@ -108,7 +107,6 @@ def _is_marked_with_condition(node: ast.AST, condition: str) -> bool:\n \n \n class MarkEvaluator:\n-    _evalcache = lru_cache(maxsize=128)\n \n     def __init__(self, item, name, condition, reason=None, strict=False):\n         self.item = item\n@@ -116,7 +114,7 @@ def __init__(self, item, name, condition, reason=None, strict=False):\n         self.reason = reason\n         self.strict = strict\n \n-    def _istrue(self):\n+    def _istrue(self):\n         if isinstance(self.condition, str):\n             # String condition: evaluate it as a Python expression.\n             try:\n@@ -124,13 +122,12 @@ def _istrue(self):\n                 return False\n             try:\n                 # Use the item's globals as the evaluation context.\n-                return self._evalcache(\n-                    self.condition, self.item.obj.__globals__, self.item.obj\n-                )\n+                return eval(self.condition, self.item.obj.__globals__, self.item.obj)\n             except Exception as e:\n                 raise pytest.fail.Exception(\n                     \"Error evaluating %r expression: %s\\n\" % (self.name, e),\n                     pytrace=False,\n                 )\n         return bool(self.condition)\n-\n+\n \n def pytest_runtest_setup(item):\n     for mark in item.iter_markers(name=\"skipif\"):\n",
+  "explanation": null,
+  "token_usage": {
+    "input": 432,
+    "output": 411
+  },
+  "cost_usd": 0.00519,
+  "runtime_seconds": 3.2350000001024455,
+  "error_message": null,
+  "raw_logs": "{\"diff\": \"--- a/src/_pytest/mark/evaluate.py\\n+++ b/src/_pytest/mark/evaluate.py\\n@@ -1,6 +1,5 @@\\n import ast\\n import sys\\n-import _pytest._code\\n from functools import lru_cache\\n from typing import Any\\n from typing import Callable\\n@@ -108,7 +107,6 @@ def _is_marked_with_condition(node: ast.AST, condition: str) -> bool:\\n \\n \\n class MarkEvaluator:\\n-    _evalcache = lru_cache(maxsize=128)\\n \\n     def __init__(self, item, name, condition, reason=None, strict=False):\\n         self.item = item\\n@@ -116,7 +114,7 @@ def __init__(self, item, name, condition, reason=None, strict=False):\\n         self.reason = reason\\n         self.strict = strict\\n \\n-    def _istrue(self):\\n+    def _istrue(self):\\n         if isinstance(self.condition, str):\\n             # String condition: evaluate it as a Python expression.\\n             try:\\n@@ -124,13 +122,12 @@ def _istrue(self):\\n                 return False\\n             try:\\n                 # Use the item's globals as the evaluation context.\\n-                return self._evalcache(\\n-                    self.condition, self.item.obj.__globals__, self.item.obj\\n-                )\\n+                return eval(self.condition, self.item.obj.__globals__, self.item.obj)\\n             except Exception as e:\\n                 raise pytest.fail.Exception(\\n                     \\\"Error evaluating %r expression: %s\\\\n\\\" % (self.name, e),\\n                     pytrace=False,\\n                 )\\n         return bool(self.condition)\\n-\\n+\\n \\n def pytest_runtest_setup(item):\\n     for mark in item.iter_markers(name=\\\"skipif\\\"):\\n\"}",
+  "metadata": {
+    "model": "gpt-4o",
+    "prompt_version": "issue-to-unified-diff-v3-submit-patch-tool",
+    "stop_reason": "tool_use",
+    "patch_source": "tool",
+    "model_snapshot": "gpt-4o-2024-08-06"
+  },
+  "variant": {
+    "transformed_text": "```py\n# test_module_2.py\nimport pytest\n\nskip = False\n\n@pytest.mark.skipif(\"skip\")\ndef test_should_not_skip():\n    assert False\n```\n\nActual: both are skipped.\n\n---\n\nRunning `pytest test_module_1.py test_module_2.py`.\n\nI think the most appropriate fix is to simply remove the caching, which I don't think is necessary really, and inline `cached_eval` into `MarkEvaluator._istrue`.\n\n```py\n# test_module_1.py\nimport pytest\n\nskip = True\n\n@pytest.mark.skipif(\"skip\")\ndef test_should_skip():\n    assert False\n```\n\nExpected: `test_should_skip` is skipped, `test_should_not_skip` is not skipped.\n\nIncorrect caching of skipif/xfail string condition evaluation\nVersion: pytest 5.4.3, current master\n\npytest caches the evaluation of the string in e.g. `@pytest.mark.skipif(\"sys.platform == 'win32'\")`. The caching key is only the string itself (see `cached_eval` in `_pytest/mark/evaluate.py`). However, the evaluation also depends on the item's globals, so the caching can lead to incorrect results. Example:",
+    "transformation_notes": "Shuffled 9 paragraph(s) (seed=42); CRLF normalised to LF, fenced code blocks kept whole.",
+    "params": {
+      "seed": 42
+    },
+    "generator": "deterministic",
+    "transform_version": "2",
+    "generation_mode": "real",
+    "quality_warning": false,
+    "noop": false,
+    "exclusion_reason": null,
+    "generation_cost_usd": 0.0,
+    "original_sha256": "cd8053cca6079b776ea53538580a40f748a5813c82f42208d250af90a2cc5797"
+  },
+  "recorded_from": {
+    "experiment_id": "9d27f3ef-397a-41b7-b1b2-e09729288a40",
+    "experiment_name": "icse_pilot_model2",
+    "run_id": "79347a66-0d06-4ed6-989b-ee840305d34f",
+    "agent_name": "llm_baseline",
+    "execution_mode": "real"
+  }
+}

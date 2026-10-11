@@ -1,0 +1,40 @@
+{
+  "status": "success",
+  "patch": "--- a/lib/matplotlib/backends/backend_ps.py\n+++ b/lib/matplotlib/backends/backend_ps.py\n@@ -666,6 +666,8 @@ class RendererPS:\n             font = self._get_font_ttf(prop)\n             stream = _get_ps_font_map(font)\n \n+            if not stream:\n+                continue\n             for ps_name, xs_names in stream:\n                 if fonttype == \"type3\":\n                     self._type3font[ps_name] = font\n",
+  "explanation": null,
+  "token_usage": {
+    "input": 1417,
+    "output": 114
+  },
+  "cost_usd": 0.0046825,
+  "runtime_seconds": 1.327999999979511,
+  "error_message": null,
+  "raw_logs": "{\"diff\": \"--- a/lib/matplotlib/backends/backend_ps.py\\n+++ b/lib/matplotlib/backends/backend_ps.py\\n@@ -666,6 +666,8 @@ class RendererPS:\\n             font = self._get_font_ttf(prop)\\n             stream = _get_ps_font_map(font)\\n \\n+            if not stream:\\n+                continue\\n             for ps_name, xs_names in stream:\\n                 if fonttype == \\\"type3\\\":\\n                     self._type3font[ps_name] = font\\n\"}",
+  "metadata": {
+    "model": "gpt-4o",
+    "prompt_version": "issue-to-unified-diff-v3-submit-patch-tool",
+    "stop_reason": "tool_use",
+    "patch_source": "tool",
+    "model_snapshot": "gpt-4o-2024-08-06"
+  },
+  "variant": {
+    "transformed_text": "## Summary\nWhen saving a figure with the PostScript backend, a TypeError: cannot unpack non-iterable NoneType object occurs if the figure contains a multi-line text label with an empty line.\n\n## Steps to Reproduce\n1. Run: ./venv/Scripts/python save_ps.py\n\n```python\nfrom matplotlib.figure import Figure\r\n\r\nfigure = Figure()\r\nax = figure.add_subplot(111)\r\n# ax.set_title('\\nLower title')  # this would cause an error as well\r\nax.annotate(text='\\nLower label', xy=(0, 0))\r\nfigure.savefig('figure.eps')\n```\n\n## Expected Behavior\nThe figure can be saved as `figure.eps` without error.\n\n## Actual Behavior\nTraceback (most recent call last):\r\n  File \"C:\\temp\\matplotlib_save_ps\\save_ps.py\", line 7, in <module>\r\n    figure.savefig('figure.eps')\r\n  File \"C:\\temp\\matplotlib_save_ps\\venv\\lib\\site-packages\\matplotlib\\figure.py\", line 3272, in savefig\r\n    self.canvas.print_figure(fname, **kwargs)\r\n  File \"C:\\temp\\matplotlib_save_ps\\venv\\lib\\site-packages\\matplotlib\\backend_bases.py\", line 2338, in print_figure\r\n    result = print_method(\r\n  File \"C:\\temp\\matplotlib_save_ps\\venv\\lib\\site-packages\\matplotlib\\backend_bases.py\", line 2204, in <lambda>\r\n    print_method = functools.wraps(meth)(lambda *args, **kwargs: meth(\r\n  File \"C:\\temp\\matplotlib_save_ps\\venv\\lib\\site-packages\\matplotlib\\_api\\deprecation.py\", line 410, in wrapper\r\n    return func(*inner_args, **inner_kwargs)\r\n  File \"C:\\temp\\matplotlib_save_ps\\venv\\lib\\site-packages\\matplotlib\\backends\\backend_ps.py\", line 869, in _print_ps\r\n    printer(fmt, outfile, dpi=dpi, dsc_comments=dsc_comments,\r\n  File \"C:\\temp\\matplotlib_save_ps\\venv\\lib\\site-packages\\matplotlib\\backends\\backend_ps.py\", line 927, in _print_figure\r\n    self.figure.draw(renderer)\r\n  File \"C:\\temp\\matplotlib_save_ps\\venv\\lib\\site-packages\\matplotlib\\artist.py\", line 74, in draw_wrapper\r\n    result = draw(artist, renderer, *args, **kwargs)\r\n  File \"C:\\temp\\matplotlib_save_ps\\venv\\lib\\site-packages\\matplotlib\\artist.py\", line 51, in draw_wrapper\r\n    return draw(artist, renderer)\r\n  File \"C:\\temp\\matplotlib_save_ps\\venv\\lib\\site-packages\\matplotlib\\figure.py\", line 3069, in draw\r\n    mimage._draw_list_compositing_images(\r\n  File \"C:\\temp\\matplotlib_save_ps\\venv\\lib\\site-packages\\matplotlib\\image.py\", line 131, in _draw_list_compositing_images\r\n    a.draw(renderer)\r\n  File \"C:\\temp\\matplotlib_save_ps\\venv\\lib\\site-packages\\matplotlib\\artist.py\", line 51, in draw_wrapper\r\n    return draw(artist, renderer)\r\n  File \"C:\\temp\\matplotlib_save_ps\\venv\\lib\\site-packages\\matplotlib\\axes\\_base.py\", line 3106, in draw\r\n    mimage._draw_list_compositing_images(\r\n  File \"C:\\temp\\matplotlib_save_ps\\venv\\lib\\site-packages\\matplotlib\\image.py\", line 131, in _draw_list_compositing_images\r\n    a.draw(renderer)\r\n  File \"C:\\temp\\matplotlib_save_ps\\venv\\lib\\site-packages\\matplotlib\\artist.py\", line 51, in draw_wrapper\r\n    return draw(artist, renderer)\r\n  File \"C:\\temp\\matplotlib_save_ps\\venv\\lib\\site-packages\\matplotlib\\text.py\", line 1995, in draw\r\n    Text.draw(self, renderer)\r\n  File \"C:\\temp\\matplotlib_save_ps\\venv\\lib\\site-packages\\matplotlib\\artist.py\", line 51, in draw_wrapper\r\n    return draw(artist, renderer)\r\n  File \"C:\\temp\\matplotlib_save_ps\\venv\\lib\\site-packages\\matplotlib\\text.py\", line 736, in draw\r\n    textrenderer.draw_text(gc, x, y, clean_line,\r\n  File \"C:\\temp\\matplotlib_save_ps\\venv\\lib\\site-packages\\matplotlib\\backends\\backend_ps.py\", line 248, in wrapper\r\n    return meth(self, *args, **kwargs)\r\n  File \"C:\\temp\\matplotlib_save_ps\\venv\\lib\\site-packages\\matplotlib\\backends\\backend_ps.py\", line 673, in draw_text\r\n    for ps_name, xs_names in stream:\r\nTypeError: cannot unpack non-iterable NoneType object\n\n## Environment\n- Operating system: Windows\n- Matplotlib Version: 3.6.0\n- Python version: 3.9.13\n- Installation: pip\n- Matplotlib Backend: _No response_\n- Jupyter version: _No response_\n\n## Additional Information\n- Seems to happen if a text label or title contains a linebreak with an empty line\n- Works without error for other backends such as PNG, PDF, SVG, Qt\n- Works with matplotlib<=3.5.3\n- Adding `if curr_stream:` before line 669 of `backend_ps.py` seems to fix the bug",
+    "transformation_notes": "Reformatted the bug report into the five required sections. Preserved all technical identifiers including ./venv/Scripts/python and _No response_ verbatim. All code placeholders appear exactly once. Additional information retained to preserve all facts from the original issue. [quality check passed on attempt 2/2]",
+    "params": {},
+    "generator": "claude-haiku-4-5-20251001",
+    "transform_version": "5",
+    "generation_mode": "real",
+    "quality_warning": false,
+    "noop": false,
+    "exclusion_reason": null,
+    "generation_cost_usd": 0.0056159999999999995,
+    "original_sha256": "0f8c32f683ad268ccbc81029dfd1a580803a56fea240665e05666d1b12f6dd2f"
+  },
+  "recorded_from": {
+    "experiment_id": "9d27f3ef-397a-41b7-b1b2-e09729288a40",
+    "experiment_name": "icse_pilot_model2",
+    "run_id": "6b016d32-f530-4994-a60d-5cb633e2b037",
+    "agent_name": "llm_baseline",
+    "execution_mode": "real"
+  }
+}

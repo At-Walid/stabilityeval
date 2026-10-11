@@ -1,0 +1,49 @@
+{
+  "status": "success",
+  "patch": "--- a/lib/matplotlib/backends/backend_ps.py\n+++ b/lib/matplotlib/backends/backend_ps.py\n@@ -666,7 +666,8 @@ class RendererPS:\n             fonttype = rcParams['ps.fonttype']\n \n         stream = self._get_ps_font_and_encoding(font)\n-        for ps_name, xs_names in stream:\n+        if stream:\n+            for ps_name, xs_names in stream:\n             if fonttype == 3:\n                 self._pswriter.write(f'/F{fontnum} {ps_name} def\n')\n             else:",
+  "explanation": null,
+  "token_usage": {
+    "input": 1446,
+    "output": 135
+  },
+  "cost_usd": 0.004965,
+  "runtime_seconds": 1.5150000001303852,
+  "error_message": null,
+  "raw_logs": "{\"diff\": \"--- a/lib/matplotlib/backends/backend_ps.py\\n+++ b/lib/matplotlib/backends/backend_ps.py\\n@@ -666,7 +666,8 @@ class RendererPS:\\n             fonttype = rcParams['ps.fonttype']\\n \\n         stream = self._get_ps_font_and_encoding(font)\\n-        for ps_name, xs_names in stream:\\n+        if stream:\\n+            for ps_name, xs_names in stream:\\n             if fonttype == 3:\\n                 self._pswriter.write(f'/F{fontnum} {ps_name} def\\n')\\n             else:\"}",
+  "metadata": {
+    "model": "gpt-4o",
+    "prompt_version": "issue-to-unified-diff-v3-submit-patch-tool",
+    "stop_reason": "tool_use",
+    "patch_source": "tool",
+    "model_snapshot": "gpt-4o-2024-08-06"
+  },
+  "control_repeats": [
+    {
+      "status": "success",
+      "patch": "--- a/lib/matplotlib/backends/backend_ps.py\n+++ b/lib/matplotlib/backends/backend_ps.py\n@@ -666,7 +666,8 @@\n             fonttype = rcParams['ps.fonttype']\n             if fonttype == 3:\n                 stream = self._get_ps_font_and_encoding(font)\n-            for ps_name, xs_names in stream:\n+            if stream:\n+                for ps_name, xs_names in stream:\n                 if fonttype == 3:\n                     self._pswriter.write(f\"/{ps_name} findfont {fontsize} scalefont setfont\\n\")\n                 else:",
+      "explanation": null,
+      "token_usage": {
+        "input": 1446,
+        "output": 144
+      },
+      "cost_usd": 0.005055,
+      "runtime_seconds": 1.375,
+      "error_message": null,
+      "raw_logs": "{\"diff\": \"--- a/lib/matplotlib/backends/backend_ps.py\\n+++ b/lib/matplotlib/backends/backend_ps.py\\n@@ -666,7 +666,8 @@\\n             fonttype = rcParams['ps.fonttype']\\n             if fonttype == 3:\\n                 stream = self._get_ps_font_and_encoding(font)\\n-            for ps_name, xs_names in stream:\\n+            if stream:\\n+                for ps_name, xs_names in stream:\\n                 if fonttype == 3:\\n                     self._pswriter.write(f\\\"/{ps_name} findfont {fontsize} scalefont setfont\\\\n\\\")\\n                 else:\"}",
+      "metadata": {
+        "model": "gpt-4o",
+        "prompt_version": "issue-to-unified-diff-v3-submit-patch-tool",
+        "stop_reason": "tool_use",
+        "patch_source": "tool",
+        "model_snapshot": "gpt-4o-2024-08-06"
+      }
+    }
+  ],
+  "recorded_from": {
+    "experiment_id": "9d27f3ef-397a-41b7-b1b2-e09729288a40",
+    "experiment_name": "icse_pilot_model2",
+    "run_id": "fe3ef7af-b411-45c4-8d2e-3e7c85af3232",
+    "agent_name": "llm_baseline",
+    "execution_mode": "real"
+  }
+}

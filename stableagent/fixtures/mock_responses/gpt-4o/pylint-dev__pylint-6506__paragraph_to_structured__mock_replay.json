@@ -1,0 +1,40 @@
+{
+  "status": "success",
+  "patch": "--- a/pylint/lint/run.py\n+++ b/pylint/lint/run.py\n@@ -132,7 +132,11 @@\n         linter.load_default_plugins()\n \n         # initialize configuration\n-        args = _config_initialization(\n+        try:\n+            args = _config_initialization(\n+                linter, argv, config)\n+        except _UnrecognizedOptionError as e:\n+            print(f\"error: {e}\")\n+            sys.exit(2)\n \n         # Run the linter\n         linter.load_config_file()",
+  "explanation": null,
+  "token_usage": {
+    "input": 700,
+    "output": 135
+  },
+  "cost_usd": 0.0031,
+  "runtime_seconds": 1.3910000000614673,
+  "error_message": null,
+  "raw_logs": "{\"diff\": \"--- a/pylint/lint/run.py\\n+++ b/pylint/lint/run.py\\n@@ -132,7 +132,11 @@\\n         linter.load_default_plugins()\\n \\n         # initialize configuration\\n-        args = _config_initialization(\\n+        try:\\n+            args = _config_initialization(\\n+                linter, argv, config)\\n+        except _UnrecognizedOptionError as e:\\n+            print(f\\\"error: {e}\\\")\\n+            sys.exit(2)\\n \\n         # Run the linter\\n         linter.load_config_file()\"}",
+  "metadata": {
+    "model": "gpt-4o",
+    "prompt_version": "issue-to-unified-diff-v3-submit-patch-tool",
+    "stop_reason": "tool_use",
+    "patch_source": "tool",
+    "model_snapshot": "gpt-4o-2024-08-06"
+  },
+  "variant": {
+    "transformed_text": "## Summary\nA traceback is printed when an unrecognized option is passed to pylint.\n\n## Steps to Reproduce\n1. Run:\n\n```shell\npylint -Q\n```\n\n## Expected Behavior\nWhen an unrecognized option is passed to pylint, display the error message without a traceback, optionally followed by a usage tip:\n\n```python\r\nmypy -Q\r\nusage: mypy [-h] [-v] [-V] [more options; see below]\r\n            [-m MODULE] [-p PACKAGE] [-c PROGRAM_TEXT] [files ...]\r\nmypy: error: unrecognized arguments: -Q\r\n```\n\n## Actual Behavior\nThe output includes:\n\n```shell\n************* Module Command line\r\nCommand line:1:0: E0015: Unrecognized option found: Q (unrecognized-option)\r\nTraceback (most recent call last):\r\n  File \"/Users/markbyrne/venv310/bin/pylint\", line 33, in <module>\r\n    sys.exit(load_entry_point('pylint', 'console_scripts', 'pylint')())\r\n  File \"/Users/markbyrne/programming/pylint/pylint/__init__.py\", line 24, in run_pylint\r\n    PylintRun(argv or sys.argv[1:])\r\n  File \"/Users/markbyrne/programming/pylint/pylint/lint/run.py\", line 135, in __init__\r\n    args = _config_initialization(\r\n  File \"/Users/markbyrne/programming/pylint/pylint/config/config_initialization.py\", line 85, in _config_initialization\r\n    raise _UnrecognizedOptionError(options=unrecognized_options)\r\npylint.config.exceptions._UnrecognizedOptionError\n```\n\nThe top part of the output is:\n\n`Command line:1:0: E0015: Unrecognized option found: Q (unrecognized-option)`\n\nFollowed by a traceback, which is not user-friendly.\n\n## Environment\nPylint version:\n```shell\npylint 2.14.0-dev0\r\nastroid 2.11.3\r\nPython 3.10.0b2 (v3.10.0b2:317314165a, May 31 2021, 10:02:22) [Clang 12.0.5 (clang-1205.0.22.9)]\n```\nOS / Environment: _No response_\nAdditional dependencies: _No response_",
+    "transformation_notes": "Reformatted the issue into the five required sections. Preserved the literal '_No response_' text from the original issue for Configuration, OS / Environment, and Additional dependencies fields. All code placeholders preserved in their original form and appear exactly once. [quality check passed on attempt 2/2]",
+    "params": {},
+    "generator": "claude-haiku-4-5-20251001",
+    "transform_version": "5",
+    "generation_mode": "real",
+    "quality_warning": false,
+    "noop": false,
+    "exclusion_reason": null,
+    "generation_cost_usd": 0.004607,
+    "original_sha256": "3875271c4f69f705627520a05192ae96a4299c27eca6b036b1a845ac79d687be"
+  },
+  "recorded_from": {
+    "experiment_id": "9d27f3ef-397a-41b7-b1b2-e09729288a40",
+    "experiment_name": "icse_pilot_model2",
+    "run_id": "d8a66b36-41ad-43ce-a215-58fa59a1969b",
+    "agent_name": "llm_baseline",
+    "execution_mode": "real"
+  }
+}

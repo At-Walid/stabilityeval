@@ -1,0 +1,42 @@
+{
+  "status": "success",
+  "patch": "--- a/pylint/reporters/text.py\n+++ b/pylint/reporters/text.py\n@@ -203,7 +203,7 @@\n         )\n \n     def _display(self, layout):\n-        msg = self._msg_template.format(**layout)\n+        msg = self._msg_template.format_map(layout)\n         try:\n             print(msg, file=self.out)\n         except UnicodeEncodeError:\n@@ -210,7 +210,7 @@\n \n     def _parse_template(self):\n         try:\n-            self._msg_template.format(category=\"category\")\n+            self._msg_template.format_map({\"category\": \"category\"})\n         except KeyError as e:\n             warnings.warn(\n                 \"Don't recognize the argument '%s' in the --msg-template. \"\n",
+  "explanation": null,
+  "token_usage": {
+    "input": 780,
+    "output": 187
+  },
+  "cost_usd": 0.00382,
+  "runtime_seconds": 1.6409999998286366,
+  "error_message": null,
+  "raw_logs": "{\"diff\": \"--- a/pylint/reporters/text.py\\n+++ b/pylint/reporters/text.py\\n@@ -203,7 +203,7 @@\\n         )\\n \\n     def _display(self, layout):\\n-        msg = self._msg_template.format(**layout)\\n+        msg = self._msg_template.format_map(layout)\\n         try:\\n             print(msg, file=self.out)\\n         except UnicodeEncodeError:\\n@@ -210,7 +210,7 @@\\n \\n     def _parse_template(self):\\n         try:\\n-            self._msg_template.format(category=\\\"category\\\")\\n+            self._msg_template.format_map({\\\"category\\\": \\\"category\\\"})\\n         except KeyError as e:\\n             warnings.warn(\\n                 \\\"Don't recognize the argument '%s' in the --msg-template. \\\"\\n\"}",
+  "metadata": {
+    "model": "gpt-4o",
+    "prompt_version": "issue-to-unified-diff-v3-submit-patch-tool",
+    "stop_reason": "tool_use",
+    "patch_source": "tool",
+    "model_snapshot": "gpt-4o-2024-08-06"
+  },
+  "variant": {
+    "transformed_text": "```shell\nAffected Version:\npylint 2.12.2\nastroid 2.9.2\nPython 3.9.9+ (heads/3.9-dirty:a2295a4, Dec 21 2021, 22:32:52) \n[GCC 4.8.5 20150623 (Red Hat 4.8.5-44)]\n\n\nPreviously working version:\nNo config file found, using default configuration\npylint 1.7.4, \nastroid 1.6.6\nPython 3.6.8 (default, Nov 16 2020, 16:55:22) \n[GCC 4.8.5 20150623 (Red Hat 4.8.5-44)]\n```\n\n### Pylint version\n\nIs this intentional or a bug?\n\n### Pylint output\n\n### Configuration\n\n### OS / Environment\n\n### Additional dependencies\n\n_No response_\n\nExpect the dictionary to print out with `\"Category\"` as the key.\n\n_No response_\n\n```shell\n[redacted]/site-packages/pylint/reporters/text.py:206: UserWarning: Don't recognize the argument '{ \"Category\"' in the --msg-template. Are you sure it is supported on the current version of pylint?\n  warnings.warn(\n************* Module [redacted].test\n\" }\n\" }\n\" }\n\" }\n\" }\n\" }\n```\n\nHave any list of errors:\n\n### Expected behavior\n\nOn pylint 1.7 w/ python3.6 - I am able to use this as my message template\n```\n$ pylint test.py --msg-template='{{ \"Category\": \"{category}\" }}'\nNo config file found, using default configuration\n************* Module [redacted].test\n{ \"Category\": \"convention\" }\n{ \"Category\": \"error\" }\n{ \"Category\": \"error\" }\n{ \"Category\": \"convention\" }\n{ \"Category\": \"convention\" }\n{ \"Category\": \"convention\" }\n{ \"Category\": \"error\" }\n```\n\n_No response_\n\n### Command used\n\n```shell\npylint test.py --msg-template='{{ \"Category\": \"{category}\" }}'\n```\n\nUsing custom braces in message template does not work\n### Bug description\n\nHowever, on Python3.9 with Pylint 2.12.2, I get the following:\n```\n$ pylint test.py --msg-template='{{ \"Category\": \"{category}\" }}'\n[redacted]/site-packages/pylint/reporters/text.py:206: UserWarning: Don't recognize the argument '{ \"Category\"' in the --msg-template. Are you sure it is supported on the current version of pylint?\n  warnings.warn(\n************* Module [redacted].test\n\" }\n\" }\n\" }\n\" }\n\" }\n\" }\n```",
+    "transformation_notes": "Shuffled 19 paragraph(s) (seed=42); CRLF normalised to LF, fenced code blocks kept whole.",
+    "params": {
+      "seed": 42
+    },
+    "generator": "deterministic",
+    "transform_version": "2",
+    "generation_mode": "real",
+    "quality_warning": false,
+    "noop": false,
+    "exclusion_reason": null,
+    "generation_cost_usd": 0.0,
+    "original_sha256": "27506bae0378e23877d5fb50f2724af79df7596bfd7e64c40db0ec72805747cf"
+  },
+  "recorded_from": {
+    "experiment_id": "9d27f3ef-397a-41b7-b1b2-e09729288a40",
+    "experiment_name": "icse_pilot_model2",
+    "run_id": "546241cb-1a44-498d-bc40-2a961a0e577c",
+    "agent_name": "llm_baseline",
+    "execution_mode": "real"
+  }
+}

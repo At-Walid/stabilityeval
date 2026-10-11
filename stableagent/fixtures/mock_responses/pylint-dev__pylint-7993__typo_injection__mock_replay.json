@@ -1,0 +1,41 @@
+{
+  "status": "success",
+  "patch": "--- a/pylint/reporters/text.py\n+++ b/pylint/reporters/text.py\n@@ -175,14 +175,16 @@ class TextReporter(BaseReporter):\n     def on_set_current_module(self, module: str, filepath: Optional[str]) -> None:\n         \"\"\"Set the format template to be used and check for unrecognized arguments.\"\"\"\n         template = str(self.linter.config.msg_template or self._template)\n+\n+        # Expand escaped braces to avoid them being interpreted as format fields\n+        template_without_escaped_braces = re.sub(r\"\\{\\{\", \"\", template)\n+        template_without_escaped_braces = re.sub(\n+            r\"\\}\\}\", \"\", template_without_escaped_braces\n+        )\n+\n         arguments = re.findall(r\"\\{(.+?)\\}\", template)\n+        arguments = re.findall(r\"\\{(.+?)\\}\", template_without_escaped_braces)\n         for argument in arguments:\n             if argument not in MESSAGE_FIELDS:\n                 warnings.warn(\n                     f\"Don't recognize the argument '{argument}' in the --msg-template. \"\n                     \"Are you sure it is supported on the current version of pylint?\"\n                 )\n-                template = re.sub(r\"\\{\" + argument + r\"\\}\", \"\", template)\n+                template = re.sub(r\"\\{\" + re.escape(argument) + r\"\\}\", \"\", template)\n         self._template = template\n",
+  "explanation": null,
+  "token_usage": {
+    "input": 1481,
+    "output": 399
+  },
+  "cost_usd": 0.010428,
+  "runtime_seconds": 6.2189999998081475,
+  "error_message": null,
+  "raw_logs": "{\"diff\": \"--- a/pylint/reporters/text.py\\n+++ b/pylint/reporters/text.py\\n@@ -175,14 +175,16 @@ class TextReporter(BaseReporter):\\n     def on_set_current_module(self, module: str, filepath: Optional[str]) -> None:\\n         \\\"\\\"\\\"Set the format template to be used and check for unrecognized arguments.\\\"\\\"\\\"\\n         template = str(self.linter.config.msg_template or self._template)\\n+\\n+        # Expand escaped braces to avoid them being interpreted as format fields\\n+        template_without_escaped_braces = re.sub(r\\\"\\\\{\\\\{\\\", \\\"\\\", template)\\n+        template_without_escaped_braces = re.sub(\\n+            r\\\"\\\\}\\\\}\\\", \\\"\\\", template_without_escaped_braces\\n+        )\\n+\\n         arguments = re.findall(r\\\"\\\\{(.+?)\\\\}\\\", template)\\n+        arguments = re.findall(r\\\"\\\\{(.+?)\\\\}\\\", template_without_escaped_braces)\\n         for argument in arguments:\\n             if argument not in MESSAGE_FIELDS:\\n                 warnings.warn(\\n                     f\\\"Don't recognize the argument '{argument}' in the --msg-template. \\\"\\n                     \\\"Are you sure it is supported on the current version of pylint?\\\"\\n                 )\\n-                template = re.sub(r\\\"\\\\{\\\" + argument + r\\\"\\\\}\\\", \\\"\\\", template)\\n+                template = re.sub(r\\\"\\\\{\\\" + re.escape(argument) + r\\\"\\\\}\\\", \\\"\\\", template)\\n         self._template = template\\n\"}",
+  "metadata": {
+    "model": "claude-sonnet-4-6",
+    "prompt_version": "issue-to-unified-diff-v3-submit-patch-tool",
+    "stop_reason": "tool_use",
+    "patch_source": "tool"
+  },
+  "variant": {
+    "transformed_text": "Using custom braces in message template does not work\n### Bug description\n\nHave any list of errors:\r\n\r\nOn pylint 1.7 w/ python3.6 - I am able to use this as my message template\r\n```\r\n$ pylint test.py --msg-template='{{ \"Category\": \"{category}\" }}'\r\nNo config file found, using default configuration\r\n************* Module [redacted].test\r\n{ \"Category\": \"convention\" }\r\n{ \"Category\": \"error\" }\r\n{ \"Category\": \"error\" }\r\n{ \"Category\": \"convention\" }\r\n{ \"Category\": \"convention\" }\r\n{ \"Category\": \"convention\" }\r\n{ \"Category\": \"error\" }\r\n```\r\n\r\nHowever, on Python3.9 with Pylint 2.12.2, I get the ofllowing:\r\n```\r\n$ pylint test.py --msg-template='{{ \"Category\": \"{category}\" }}'\r\n[redacted]/site-packages/pylint/reporters/text.py:206: UserWarning: Don't recognize the argument '{ \"Category\"' in the --msg-template. Are you sure it is supported on the current version of pylint?\r\n  warnings.warn(\r\n************* Module [redacted].test\r\n\" }\r\n\" }\r\n\" }\r\n\" }\r\n\" }\r\n\" }\r\n```\r\n\r\nIs this intentional or a bug?\n\n### Configuration\n\n_No response_\n\n### Command used\n\n```shell\npylint test.py --msg-template='{{ \"Category\": \"{category}\" }}'\n```\n\n\n### Pylint output\n\n```shell\n[redacted]/site-packages/pylint/reporters/text.py:206: UserWarning: Don't recognize the argument '{ \"Category\"' in the --msg-template. Are you sure it is supported on the current version of pylint?\r\n  warnings.warn(\r\n************* Module [redacted].test\r\n\" }\r\n\" }\r\n\" }\r\n\" }\r\n\" }\r\n\" }\n```\n\n\n### Expected behavior\n\nExpect the dictionary to print out iwth `\"Category\"` as the key.\n\n### ylint version\n\n```shell\nAffected Version:\r\npylint 2.12.2\r\nastroid 2.9.2\r\nPython 3.9.9+ (heads/3.9-dirty:a2295a4, Dec 21 2021, 22:32:52) \r\n[GCC 4.8.5 20150623 (Red Hat 4.8.5-44)]\r\n\r\n\r\nPreviously working version:\r\nNo config file found, using default configuration\r\npylint 1.7.4, \r\nastroid 1.6.6\r\nPython 3.6.8 (default, Nov 16 2020, 16:55:22) \r\n[GCC 4.8.5 20150623 (Red Hat 4.8.5-44)]\n```\n\n\n### OS / Environment\n\n_No response_\n\n### Additional dependejcies\n\n_No response_\n",
+    "transformation_notes": "Injected character-level typos into ~2% of prose words (7 word(s) modified); code spans left untouched.",
+    "params": {
+      "error_rate": 0.02
+    },
+    "generator": "deterministic",
+    "transform_version": "1",
+    "generation_mode": "real",
+    "quality_warning": false,
+    "noop": false,
+    "exclusion_reason": null,
+    "generation_cost_usd": 0.0,
+    "original_sha256": "27506bae0378e23877d5fb50f2724af79df7596bfd7e64c40db0ec72805747cf"
+  },
+  "recorded_from": {
+    "experiment_id": "bc6f1372-2088-45dd-907c-d741c0545d27",
+    "experiment_name": "icse_pilot_v1",
+    "run_id": "be0eaef0-d3b0-4a1c-a0f7-40f37ea3550d",
+    "agent_name": "llm_baseline",
+    "execution_mode": "real"
+  }
+}

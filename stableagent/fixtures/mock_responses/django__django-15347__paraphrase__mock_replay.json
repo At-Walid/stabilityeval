@@ -1,0 +1,39 @@
+{
+  "status": "success",
+  "patch": "--- a/django/contrib/messages/storage/cookie.py\n+++ b/django/contrib/messages/storage/cookie.py\n@@ -17,7 +17,7 @@ class MessageEncoder(json.JSONEncoder):\n         if isinstance(obj, Message):\n             # Using 0/1 here instead of False/True to produce more compact json\n             is_safedata = 1 if isinstance(obj.message, SafeData) else 0\n-            message = [self.message_key, is_safedata, obj.level, obj.message]\n-            if obj.extra_tags:\n+            message = [self.message_key, is_safedata, obj.level, obj.message]\n+            if obj.extra_tags is not None:\n                 message.append(obj.extra_tags)\n             return message\n",
+  "explanation": null,
+  "token_usage": {
+    "input": 1118,
+    "output": 233
+  },
+  "cost_usd": 0.006849,
+  "runtime_seconds": 3.922000000020489,
+  "error_message": null,
+  "raw_logs": "{\"diff\": \"--- a/django/contrib/messages/storage/cookie.py\\n+++ b/django/contrib/messages/storage/cookie.py\\n@@ -17,7 +17,7 @@ class MessageEncoder(json.JSONEncoder):\\n         if isinstance(obj, Message):\\n             # Using 0/1 here instead of False/True to produce more compact json\\n             is_safedata = 1 if isinstance(obj.message, SafeData) else 0\\n-            message = [self.message_key, is_safedata, obj.level, obj.message]\\n-            if obj.extra_tags:\\n+            message = [self.message_key, is_safedata, obj.level, obj.message]\\n+            if obj.extra_tags is not None:\\n                 message.append(obj.extra_tags)\\n             return message\\n\"}",
+  "metadata": {
+    "model": "claude-sonnet-4-6",
+    "prompt_version": "issue-to-unified-diff-v3-submit-patch-tool",
+    "stop_reason": "tool_use",
+    "patch_source": "tool"
+  },
+  "variant": {
+    "transformed_text": "The messages framework has a bug where extra_tags becomes None after serialization and deserialization cycles through any of the default storage backends, even when it was originally set to an empty string. The root cause is that MessageEncoder evaluates extra_tags for truthiness instead of explicitly checking whether it is None.\n\nReproduction steps:\n>>> from django.conf import settings\n>>> settings.configure() # Just to allow the following import\n>>> from django.contrib.messages.storage.base import Message\n>>> from django.contrib.messages.storage.cookie import MessageEncoder, MessageDecoder\n>>> original_message = Message(10, \"Here is a message\", extra_tags=\"\")\n>>> encoded_message = MessageEncoder().encode(original_message)\n>>> decoded_message = MessageDecoder().decode(encoded_message)\n>>> original_message.extra_tags == \"\"\nTrue\n>>> decoded_message.extra_tags is None\nTrue\nEffect of the bug in application behaviour\nThis error occurred in the wild with a template tag similar to the following:\n{% if x not in message.extra_tags %}\nWhen the message was displayed as part of a redirect, it had been serialised and deserialized which meant that extra_tags was None instead of the empty string. This caused an error.\nIt's important to note that this bug affects all of the standard API (messages.debug, messages.info etc. all have a default value of extra_tags equal to \"\").",
+    "transformation_notes": "Restructured the description to lead with the core issue and impact before explaining the root cause. Preserved all technical identifiers (MessageEncoder, extra_tags) and the placeholder verbatim. Maintained the semantic meaning of the bug and its cause while using different phrasing. [quality check passed on attempt 1/2]",
+    "params": {},
+    "generator": "claude-haiku-4-5-20251001",
+    "transform_version": "4",
+    "generation_mode": "real",
+    "quality_warning": false,
+    "noop": false,
+    "exclusion_reason": null,
+    "generation_cost_usd": 0.0013,
+    "original_sha256": "5370589f1c868ff26fda4d4e9a0b44eee3e4021db7065c5d26a35deeda54895e"
+  },
+  "recorded_from": {
+    "experiment_id": "bc6f1372-2088-45dd-907c-d741c0545d27",
+    "experiment_name": "icse_pilot_v1",
+    "run_id": "009ea01e-5e5a-4b1b-81a0-0356cd4b40f5",
+    "agent_name": "llm_baseline",
+    "execution_mode": "real"
+  }
+}

@@ -1,0 +1,39 @@
+{
+  "status": "success",
+  "patch": "--- a/sympy/parsing/mathematica.py\n+++ b/sympy/parsing/mathematica.py\n@@ -1,6 +1,7 @@\n from __future__ import annotations\n \n import re\n+import unicodedata\n from itertools import product\n from typing import Any\n \n@@ -144,7 +145,7 @@ class MathematicaParser:\n     # Mathematica function name pattern\n     FM_PATTERN = re.compile(r'''\n         (?:\n-            [a-zA-Z][a-zA-Z0-9]*  # function name\n+            [^\\W\\d_][^\\W_]*  # function name (supports Unicode letters)\n         )\n         \\[  # opening bracket\n     ''', re.VERBOSE)\n@@ -152,7 +153,7 @@ class MathematicaParser:\n     # Mathematica symbol pattern\n     SYMBOL_PATTERN = re.compile(r'''\n         (?<![a-zA-Z0-9])  # not preceded by alphanumeric\n-        [a-zA-Z][a-zA-Z0-9]*  # symbol name\n+        [^\\W\\d_][^\\W_]*  # symbol name (supports Unicode letters)\n         (?![a-zA-Z0-9\\[])  # not followed by alphanumeric or bracket\n     ''', re.VERBOSE)\n \n@@ -527,7 +528,7 @@ class MathematicaParser:\n         # Tokenize the input string\n         ...\n \n-    _literal = r\"[A-Za-z][A-Za-z0-9]*\"\n+    _literal = r\"[^\\W\\d_][^\\W_]*\"\n     _number = r\"[-+]?[0-9]+\\.?[0-9]*(?:E[-+]?[0-9]+)?\"\n \n     _enclosure_open = [\n",
+  "explanation": null,
+  "token_usage": {
+    "input": 1259,
+    "output": 508
+  },
+  "cost_usd": 0.011397,
+  "runtime_seconds": 7.391000000061467,
+  "error_message": null,
+  "raw_logs": "{\"diff\": \"--- a/sympy/parsing/mathematica.py\\n+++ b/sympy/parsing/mathematica.py\\n@@ -1,6 +1,7 @@\\n from __future__ import annotations\\n \\n import re\\n+import unicodedata\\n from itertools import product\\n from typing import Any\\n \\n@@ -144,7 +145,7 @@ class MathematicaParser:\\n     # Mathematica function name pattern\\n     FM_PATTERN = re.compile(r'''\\n         (?:\\n-            [a-zA-Z][a-zA-Z0-9]*  # function name\\n+            [^\\\\W\\\\d_][^\\\\W_]*  # function name (supports Unicode letters)\\n         )\\n         \\\\[  # opening bracket\\n     ''', re.VERBOSE)\\n@@ -152,7 +153,7 @@ class MathematicaParser:\\n     # Mathematica symbol pattern\\n     SYMBOL_PATTERN = re.compile(r'''\\n         (?<![a-zA-Z0-9])  # not preceded by alphanumeric\\n-        [a-zA-Z][a-zA-Z0-9]*  # symbol name\\n+        [^\\\\W\\\\d_][^\\\\W_]*  # symbol name (supports Unicode letters)\\n         (?![a-zA-Z0-9\\\\[])  # not followed by alphanumeric or bracket\\n     ''', re.VERBOSE)\\n \\n@@ -527,7 +528,7 @@ class MathematicaParser:\\n         # Tokenize the input string\\n         ...\\n \\n-    _literal = r\\\"[A-Za-z][A-Za-z0-9]*\\\"\\n+    _literal = r\\\"[^\\\\W\\\\d_][^\\\\W_]*\\\"\\n     _number = r\\\"[-+]?[0-9]+\\\\.?[0-9]*(?:E[-+]?[0-9]+)?\\\"\\n \\n     _enclosure_open = [\\n\"}",
+  "metadata": {
+    "model": "claude-sonnet-4-6",
+    "prompt_version": "issue-to-unified-diff-v3-submit-patch-tool",
+    "stop_reason": "tool_use",
+    "patch_source": "tool"
+  },
+  "variant": {
+    "transformed_text": "Cannot parse Greek characters (and possibly others) in parse_mathematica\nThe old Mathematica parser `mathematica` in the package `sympy.parsing.mathematica` was able to parse e.g. Greek characters. Hence the following example works fine:\n```\r\nfrom sympy.parsing.mathematica import mathematica\r\nmathematica('λ')\r\nOut[]: \r\nλ\r\n```\n\nAs of SymPy v. 1.11, the `mathematica` function is deprecated, and is replaced by `parse_mathematica`. This function, however, is unable to handle the simple example above:\n```\r\nfrom sympy.parsing.mathematica import parse_mathematica\r\nparse_mathematica('λ')\r\nTraceback (most recent call last):\r\n...\r\nFile \"<string>\", line unknown\r\nSyntaxError: unable to create a single AST for the expression\r\n```\n\nThis appears to be due to an issue in `parse_mathematica`, which is why this issue has been opened.\n\nThanks in advance!\nCannot parse Greek characters (and possibly others) in parse_mathematica\nThe old Mathematica parser `mathematica` in the package `sympy.parsing.mathematica` was able to parse e.g. Greek characters. Hence the following example works fine:\n```\r\nfrom sympy.parsing.mathematica import mathematica\r\nmathematica('λ')\r\nOut[]: \r\nλ\r\n```\n\nAs of SymPy v. 1.11, the `mathematica` function is deprecated, and is replaced by `parse_mathematica`. This function, however, is unable to handle the simple example above:\n```\r\nfrom sympy.parsing.mathematica import parse_mathematica\r\nparse_mathematica('λ')\r\nTraceback (most recent call last):\r\n...\r\nFile \"<string>\", line unknown\r\nSyntaxError: unable to create a single AST for the expression\r\n```\n\nThis appears to be due to an issue in `parse_mathematica`, which is why this issue has been opened.\n\nThanks in advance!",
+    "transformation_notes": "Rewrote only the sentences with emotional or informal language. [quality check passed on attempt 1/2]",
+    "params": {},
+    "generator": "claude-haiku-4-5-20251001",
+    "transform_version": "4",
+    "generation_mode": "real",
+    "quality_warning": false,
+    "noop": false,
+    "exclusion_reason": null,
+    "generation_cost_usd": 0.002115,
+    "original_sha256": "1c59678bf32d77d45874aa931fa806c5f7f6e599c01ab7f93d144a48a84273ea"
+  },
+  "recorded_from": {
+    "experiment_id": "bc6f1372-2088-45dd-907c-d741c0545d27",
+    "experiment_name": "icse_pilot_v1",
+    "run_id": "66462834-d0bc-4abc-9b74-58c196400aeb",
+    "agent_name": "llm_baseline",
+    "execution_mode": "real"
+  }
+}

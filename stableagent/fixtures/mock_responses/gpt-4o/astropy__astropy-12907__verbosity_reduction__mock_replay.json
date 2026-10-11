@@ -1,0 +1,42 @@
+{
+  "status": "success",
+  "patch": "--- a/astropy/modeling/separable.py\n+++ b/astropy/modeling/separable.py\n@@ -45,7 +45,12 @@ def separability_matrix(model):\n     n_outputs = model.n_outputs\n \n     matrix = np.zeros((n_inputs, n_outputs), dtype=bool)\n-    for i in range(n_inputs):\n-        for j in range(n_outputs):\n-            matrix[i, j] = model._separable[i, j]\n+\n+    def fill_matrix(compound_model, input_offset=0, output_offset=0):\n+        if isinstance(compound_model, CompoundModel):\n+            for submodel in compound_model:\n+                fill_matrix(submodel, input_offset, output_offset)\n+                input_offset += submodel.n_inputs\n+                output_offset += submodel.n_outputs\n+        else:\n+            for i in range(compound_model.n_inputs):\n+                for j in range(compound_model.n_outputs):\n+                    matrix[input_offset + i, output_offset + j] = compound_model._separable[i, j]\n \n-    return matrix\n+    fill_matrix(model)\n+    return matrix\n",
+  "explanation": null,
+  "token_usage": {
+    "input": 467,
+    "output": 266
+  },
+  "cost_usd": 0.0038275,
+  "runtime_seconds": 2.531999999890104,
+  "error_message": null,
+  "raw_logs": "{\"diff\": \"--- a/astropy/modeling/separable.py\\n+++ b/astropy/modeling/separable.py\\n@@ -45,7 +45,12 @@ def separability_matrix(model):\\n     n_outputs = model.n_outputs\\n \\n     matrix = np.zeros((n_inputs, n_outputs), dtype=bool)\\n-    for i in range(n_inputs):\\n-        for j in range(n_outputs):\\n-            matrix[i, j] = model._separable[i, j]\\n+\\n+    def fill_matrix(compound_model, input_offset=0, output_offset=0):\\n+        if isinstance(compound_model, CompoundModel):\\n+            for submodel in compound_model:\\n+                fill_matrix(submodel, input_offset, output_offset)\\n+                input_offset += submodel.n_inputs\\n+                output_offset += submodel.n_outputs\\n+        else:\\n+            for i in range(compound_model.n_inputs):\\n+                for j in range(compound_model.n_outputs):\\n+                    matrix[input_offset + i, output_offset + j] = compound_model._separable[i, j]\\n \\n-    return matrix\\n+    fill_matrix(model)\\n+    return matrix\\n\"}",
+  "metadata": {
+    "model": "gpt-4o",
+    "prompt_version": "issue-to-unified-diff-v3-submit-patch-tool",
+    "stop_reason": "tool_use",
+    "patch_source": "tool",
+    "model_snapshot": "gpt-4o-2024-08-06"
+  },
+  "variant": {
+    "transformed_text": "Modeling's `separability_matrix` does not compute separability correctly for nested CompoundModels.\n\n```python\r\nfrom astropy.modeling import models as m\r\nfrom astropy.modeling.separable import separability_matrix\r\n\r\ncm = m.Linear1D(10) & m.Linear1D(5)\r\n```\n\nExpected separability matrix:\n```python\r\n>>> separability_matrix(cm)\r\narray([[ True, False],\r\n       [False,  True]])\r\n```\n\nWith a more complex model:\n```python\r\n>>> separability_matrix(m.Pix2Sky_TAN() & m.Linear1D(10) & m.Linear1D(5))\r\narray([[ True,  True, False, False],\r\n       [ True,  True, False, False],\r\n       [False, False,  True, False],\r\n       [False, False, False,  True]])\r\n```\n\nThe output matrix correctly shows outputs and inputs to linear models are separable and independent.\n\nWith nested compound models:\n```python\r\n>>> separability_matrix(m.Pix2Sky_TAN() & cm)\r\narray([[ True,  True, False, False],\r\n       [ True,  True, False, False],\r\n       [False, False,  True,  True],\r\n       [False, False,  True,  True]])\r\n```\n\nInputs and outputs are incorrectly marked as non-separable.",
+    "transformation_notes": "Removed pleasantries ('as you might expect', 'feels like a bug to me', 'but I might be missing something') and speculation. Kept all code placeholders, technical terms (CompoundModels, separability matrix), and the symptom (inputs/outputs incorrectly marked as non-separable). Reduced word count to approximately 0.5× original length. [quality check passed on attempt 1/2]",
+    "params": {
+      "target_ratio": 0.5
+    },
+    "generator": "claude-haiku-4-5-20251001",
+    "transform_version": "4",
+    "generation_mode": "real",
+    "quality_warning": false,
+    "noop": false,
+    "exclusion_reason": null,
+    "generation_cost_usd": 0.001809,
+    "original_sha256": "c01334ec1b21a089c650cf2e7b96ab974469076bf1260d23885799e1f0a7551f"
+  },
+  "recorded_from": {
+    "experiment_id": "9d27f3ef-397a-41b7-b1b2-e09729288a40",
+    "experiment_name": "icse_pilot_model2",
+    "run_id": "b347d647-10a6-4dbc-ab24-4aa6fd4ab78c",
+    "agent_name": "llm_baseline",
+    "execution_mode": "real"
+  }
+}

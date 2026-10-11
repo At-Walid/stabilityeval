@@ -1,0 +1,47 @@
+{
+  "status": "success",
+  "patch": "--- a/seaborn/_core/scales.py\n+++ b/seaborn/_core/scales.py\n@@ -206,6 +206,9 @@ class Nominal(Scale):\n \n         if prop.legend:\n             obj.legend = categorical_legend\n+\n+        if data.dtype.kind == \"b\":\n+            data = data.astype(object)\n \n         return obj\n \n@@ -344,6 +344,9 @@ class ContinuousBase(Scale):\n \n     def _setup(self, data, prop, axis=None):\n \n+        if data.dtype.kind == \"b\":\n+            data = data.astype(float)\n+\n         new = self._new()\n         if new.values is None:\n             if prop.legend:\n",
+  "explanation": null,
+  "token_usage": {
+    "input": 1355,
+    "output": 228
+  },
+  "cost_usd": 0.007485,
+  "runtime_seconds": 4.780999999959022,
+  "error_message": null,
+  "raw_logs": "{\"diff\": \"--- a/seaborn/_core/scales.py\\n+++ b/seaborn/_core/scales.py\\n@@ -206,6 +206,9 @@ class Nominal(Scale):\\n \\n         if prop.legend:\\n             obj.legend = categorical_legend\\n+\\n+        if data.dtype.kind == \\\"b\\\":\\n+            data = data.astype(object)\\n \\n         return obj\\n \\n@@ -344,6 +344,9 @@ class ContinuousBase(Scale):\\n \\n     def _setup(self, data, prop, axis=None):\\n \\n+        if data.dtype.kind == \\\"b\\\":\\n+            data = data.astype(float)\\n+\\n         new = self._new()\\n         if new.values is None:\\n             if prop.legend:\\n\"}",
+  "metadata": {
+    "model": "claude-sonnet-4-6",
+    "prompt_version": "issue-to-unified-diff-v3-submit-patch-tool",
+    "stop_reason": "tool_use",
+    "patch_source": "tool"
+  },
+  "control_repeats": [
+    {
+      "status": "success",
+      "patch": "--- a/seaborn/_core/scales.py\n+++ b/seaborn/_core/scales.py\n@@ -206,6 +206,8 @@ class Nominal(Scale):\n \n         if prop.legend:\n             obj.legend = categorical_legend\n+        if hasattr(data, 'dtype') and data.dtype.kind == 'b':\n+            data = data.astype(int)\n \n         return obj\n \n@@ -344,6 +344,9 @@ class ContinuousBase(Scale):\n \n     def _setup(self, data, prop, axis=None):\n \n+        if hasattr(data, 'dtype') and data.dtype.kind == 'b':\n+            data = data.astype(float)\n+\n         new = self._clone()\n         if not isinstance(self.norm, tuple):\n             vmin, vmax = data.min(), data.max()\n",
+      "explanation": null,
+      "token_usage": {
+        "input": 1355,
+        "output": 260
+      },
+      "cost_usd": 0.007965,
+      "runtime_seconds": 4.484000000171363,
+      "error_message": null,
+      "raw_logs": "{\"diff\": \"--- a/seaborn/_core/scales.py\\n+++ b/seaborn/_core/scales.py\\n@@ -206,6 +206,8 @@ class Nominal(Scale):\\n \\n         if prop.legend:\\n             obj.legend = categorical_legend\\n+        if hasattr(data, 'dtype') and data.dtype.kind == 'b':\\n+            data = data.astype(int)\\n \\n         return obj\\n \\n@@ -344,6 +344,9 @@ class ContinuousBase(Scale):\\n \\n     def _setup(self, data, prop, axis=None):\\n \\n+        if hasattr(data, 'dtype') and data.dtype.kind == 'b':\\n+            data = data.astype(float)\\n+\\n         new = self._clone()\\n         if not isinstance(self.norm, tuple):\\n             vmin, vmax = data.min(), data.max()\\n\"}",
+      "metadata": {
+        "model": "claude-sonnet-4-6",
+        "prompt_version": "issue-to-unified-diff-v3-submit-patch-tool",
+        "stop_reason": "tool_use",
+        "patch_source": "tool"
+      }
+    }
+  ],
+  "recorded_from": {
+    "experiment_id": "bc6f1372-2088-45dd-907c-d741c0545d27",
+    "experiment_name": "icse_pilot_v1",
+    "run_id": "74d27ef5-6cdf-4296-ac49-7dafb4bb56bc",
+    "agent_name": "llm_baseline",
+    "execution_mode": "real"
+  }
+}

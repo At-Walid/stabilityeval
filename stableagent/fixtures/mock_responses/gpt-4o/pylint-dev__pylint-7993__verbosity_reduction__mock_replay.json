@@ -1,0 +1,33 @@
+{
+  "status": "skipped_variant",
+  "patch": null,
+  "explanation": null,
+  "token_usage": {},
+  "cost_usd": 0.0,
+  "runtime_seconds": 0.0,
+  "error_message": "Not run: variant excluded (identifier retention failed (missing 1: Python3.9))",
+  "raw_logs": "",
+  "metadata": {},
+  "variant": {
+    "transformed_text": "Custom braces in message templates fail in Pylint 2.12.2 with Python 3.9.\n\nOn Pylint 1.7 with python3.6, message template\n```\r\n$ pylint test.py --msg-template='{{ \"Category\": \"{category}\" }}'\r\nNo config file found, using default configuration\r\n************* Module [redacted].test\r\n{ \"Category\": \"convention\" }\r\n{ \"Category\": \"error\" }\r\n{ \"Category\": \"error\" }\r\n{ \"Category\": \"convention\" }\r\n{ \"Category\": \"convention\" }\r\n{ \"Category\": \"convention\" }\r\n{ \"Category\": \"error\" }\r\n```\nworks. On Python 3.9 with Pylint 2.12.2, it produces\n```\r\n$ pylint test.py --msg-template='{{ \"Category\": \"{category}\" }}'\r\n[redacted]/site-packages/pylint/reporters/text.py:206: UserWarning: Don't recognize the argument '{ \"Category\"' in the --msg-template. Are you sure it is supported on the current version of pylint?\r\n  warnings.warn(\r\n************* Module [redacted].test\r\n\" }\r\n\" }\r\n\" }\r\n\" }\r\n\" }\r\n\" }\r\n```\n.\n\nCommand:\n```shell\npylint test.py --msg-template='{{ \"Category\": \"{category}\" }}'\n```\n\nPylint output:\n```shell\n[redacted]/site-packages/pylint/reporters/text.py:206: UserWarning: Don't recognize the argument '{ \"Category\"' in the --msg-template. Are you sure it is supported on the current version of pylint?\r\n  warnings.warn(\r\n************* Module [redacted].test\r\n\" }\r\n\" }\r\n\" }\r\n\" }\r\n\" }\r\n\" }\n```\n\nExpected: dictionary prints with `\"Category\"` as the key.\n\nPylint version:\n```shell\nAffected Version:\r\npylint 2.12.2\r\nastroid 2.9.2\r\nPython 3.9.9+ (heads/3.9-dirty:a2295a4, Dec 21 2021, 22:32:52) \r\n[GCC 4.8.5 20150623 (Red Hat 4.8.5-44)]\r\n\r\n\r\nPreviously working version:\r\nNo config file found, using default configuration\r\npylint 1.7.4, \r\nastroid 1.6.6\r\nPython 3.6.8 (default, Nov 16 2020, 16:55:22) \r\n[GCC 4.8.5 20150623 (Red Hat 4.8.5-44)]\n```",
+    "transformation_notes": "Removed redundant preamble and configuration sections; kept symptom, versions, command, output, and expected behavior. Reduced to approximately 0.5× original length while preserving all code placeholders, version numbers (Pylint 1.7, python3.6, Python 3.9, Pylint 2.12.2), and technical identifiers. [QUALITY WARNING: identifier retention failed (missing 1: Python3.9) after 2 attempts; excluded from metrics]",
+    "params": {
+      "target_ratio": 0.5
+    },
+    "generator": "claude-haiku-4-5-20251001",
+    "transform_version": "4",
+    "generation_mode": "real",
+    "quality_warning": true,
+    "noop": false,
+    "exclusion_reason": "identifier retention failed (missing 1: Python3.9)",
+    "generation_cost_usd": 0.003962,
+    "original_sha256": "27506bae0378e23877d5fb50f2724af79df7596bfd7e64c40db0ec72805747cf"
+  },
+  "recorded_from": {
+    "experiment_id": "9d27f3ef-397a-41b7-b1b2-e09729288a40",
+    "experiment_name": "icse_pilot_model2",
+    "run_id": "b83030bb-53d0-4461-9f3b-d8f632d294c3",
+    "agent_name": "llm_baseline",
+    "execution_mode": "real"
+  }
+}

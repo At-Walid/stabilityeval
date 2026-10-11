@@ -1,0 +1,47 @@
+{
+  "status": "success",
+  "patch": "--- a/astropy/modeling/separable.py\n+++ b/astropy/modeling/separable.py\n@@ -290,7 +290,7 @@ def _separable(transform):\n         return _coord_matrix(transform, 'left', transform.n_outputs)\n     elif isinstance(transform, CompoundModel):\n         sepleft = _separable(transform.left)\n         sepright = _separable(transform.right)\n         return _operators[transform.op](sepleft, sepright)\n     elif isinstance(transform, Model):\n         return _coord_matrix(transform, 'left', transform.n_outputs)\n",
+  "explanation": null,
+  "token_usage": {
+    "input": 1168,
+    "output": 185
+  },
+  "cost_usd": 0.006279,
+  "runtime_seconds": 3.969000000040978,
+  "error_message": null,
+  "raw_logs": "{\"diff\": \"--- a/astropy/modeling/separable.py\\n+++ b/astropy/modeling/separable.py\\n@@ -290,7 +290,7 @@ def _separable(transform):\\n         return _coord_matrix(transform, 'left', transform.n_outputs)\\n     elif isinstance(transform, CompoundModel):\\n         sepleft = _separable(transform.left)\\n         sepright = _separable(transform.right)\\n         return _operators[transform.op](sepleft, sepright)\\n     elif isinstance(transform, Model):\\n         return _coord_matrix(transform, 'left', transform.n_outputs)\\n\"}",
+  "metadata": {
+    "model": "claude-sonnet-4-6",
+    "prompt_version": "issue-to-unified-diff-v3-submit-patch-tool",
+    "stop_reason": "tool_use",
+    "patch_source": "tool"
+  },
+  "control_repeats": [
+    {
+      "status": "success",
+      "patch": "--- a/astropy/modeling/separable.py\n+++ b/astropy/modeling/separable.py\n@@ -290,7 +290,7 @@ def _cstack(left, right):\n     cright = _coord_matrix(right, 'right', noutp)\n     for i in range(left.shape[0]):\n         for j in range(right.shape[1]):\n-            cright[i + left.shape[0], j + left.shape[1]] = right[i, j]\n+            cright[i + left.shape[0], j + left.shape[1]] = right[i, j]  # noqa: E501\n \n     return np.logical_or(cleft, cright)\n",
+      "explanation": null,
+      "token_usage": {
+        "input": 1168,
+        "output": 210
+      },
+      "cost_usd": 0.006654,
+      "runtime_seconds": 3.875,
+      "error_message": null,
+      "raw_logs": "{\"diff\": \"--- a/astropy/modeling/separable.py\\n+++ b/astropy/modeling/separable.py\\n@@ -290,7 +290,7 @@ def _cstack(left, right):\\n     cright = _coord_matrix(right, 'right', noutp)\\n     for i in range(left.shape[0]):\\n         for j in range(right.shape[1]):\\n-            cright[i + left.shape[0], j + left.shape[1]] = right[i, j]\\n+            cright[i + left.shape[0], j + left.shape[1]] = right[i, j]  # noqa: E501\\n \\n     return np.logical_or(cleft, cright)\\n\"}",
+      "metadata": {
+        "model": "claude-sonnet-4-6",
+        "prompt_version": "issue-to-unified-diff-v3-submit-patch-tool",
+        "stop_reason": "tool_use",
+        "patch_source": "tool"
+      }
+    }
+  ],
+  "recorded_from": {
+    "experiment_id": "bc6f1372-2088-45dd-907c-d741c0545d27",
+    "experiment_name": "icse_pilot_v1",
+    "run_id": "705a59e1-0f8f-4282-adf1-eb97fec5a27a",
+    "agent_name": "llm_baseline",
+    "execution_mode": "real"
+  }
+}

@@ -1,0 +1,49 @@
+{
+  "status": "success",
+  "patch": "--- a/sympy/parsing/mathematica.py\n+++ b/sympy/parsing/mathematica.py\n@@ -45,6 +45,8 @@\n \n def parse_mathematica(s):\n     \"\"\"Parse a string in Mathematica syntax and return a SymPy expression.\"\"\"\n+    # Ensure the input string is properly encoded to handle Greek and other Unicode characters\n+    s = s.encode('utf-8').decode('unicode_escape')\n     try:\n         # Attempt to parse the string using the Mathematica parser\n         expr = _mathematica_parser.parse(s)",
+  "explanation": null,
+  "token_usage": {
+    "input": 607,
+    "output": 138
+  },
+  "cost_usd": 0.0028975,
+  "runtime_seconds": 1.343000000109896,
+  "error_message": null,
+  "raw_logs": "{\"diff\": \"--- a/sympy/parsing/mathematica.py\\n+++ b/sympy/parsing/mathematica.py\\n@@ -45,6 +45,8 @@\\n \\n def parse_mathematica(s):\\n     \\\"\\\"\\\"Parse a string in Mathematica syntax and return a SymPy expression.\\\"\\\"\\\"\\n+    # Ensure the input string is properly encoded to handle Greek and other Unicode characters\\n+    s = s.encode('utf-8').decode('unicode_escape')\\n     try:\\n         # Attempt to parse the string using the Mathematica parser\\n         expr = _mathematica_parser.parse(s)\"}",
+  "metadata": {
+    "model": "gpt-4o",
+    "prompt_version": "issue-to-unified-diff-v3-submit-patch-tool",
+    "stop_reason": "tool_use",
+    "patch_source": "tool",
+    "model_snapshot": "gpt-4o-2024-08-06"
+  },
+  "control_repeats": [
+    {
+      "status": "success",
+      "patch": "--- a/sympy/parsing/mathematica.py\n+++ b/sympy/parsing/mathematica.py\n@@ -45,6 +45,7 @@\n import ast\n import tokenize\n import token\n+import re\n \n from sympy.core.compatibility import iterable\n from sympy.core.sympify import sympify\n@@ -100,6 +101,10 @@\n     # Tokenize the input string\n     tokens = list(tokenize.generate_tokens(io.StringIO(code).readline))\n \n+    # Replace Greek characters with their corresponding names\n+    greek_pattern = re.compile(r'[\\u0370-\\u03FF]')\n+    code = greek_pattern.sub(lambda x: '\\\\' + x.group(0), code)\n+\n     # Parse the tokens into an AST\n     try:\n         tree = ast.parse(code)",
+      "explanation": null,
+      "token_usage": {
+        "input": 607,
+        "output": 195
+      },
+      "cost_usd": 0.0034675,
+      "runtime_seconds": 3.047000000020489,
+      "error_message": null,
+      "raw_logs": "{\"diff\": \"--- a/sympy/parsing/mathematica.py\\n+++ b/sympy/parsing/mathematica.py\\n@@ -45,6 +45,7 @@\\n import ast\\n import tokenize\\n import token\\n+import re\\n \\n from sympy.core.compatibility import iterable\\n from sympy.core.sympify import sympify\\n@@ -100,6 +101,10 @@\\n     # Tokenize the input string\\n     tokens = list(tokenize.generate_tokens(io.StringIO(code).readline))\\n \\n+    # Replace Greek characters with their corresponding names\\n+    greek_pattern = re.compile(r'[\\\\u0370-\\\\u03FF]')\\n+    code = greek_pattern.sub(lambda x: '\\\\\\\\' + x.group(0), code)\\n+\\n     # Parse the tokens into an AST\\n     try:\\n         tree = ast.parse(code)\"}",
+      "metadata": {
+        "model": "gpt-4o",
+        "prompt_version": "issue-to-unified-diff-v3-submit-patch-tool",
+        "stop_reason": "tool_use",
+        "patch_source": "tool",
+        "model_snapshot": "gpt-4o-2024-08-06"
+      }
+    }
+  ],
+  "recorded_from": {
+    "experiment_id": "9d27f3ef-397a-41b7-b1b2-e09729288a40",
+    "experiment_name": "icse_pilot_model2",
+    "run_id": "de28ee99-c050-4e3f-8c6c-e7f0733de37f",
+    "agent_name": "llm_baseline",
+    "execution_mode": "real"
+  }
+}

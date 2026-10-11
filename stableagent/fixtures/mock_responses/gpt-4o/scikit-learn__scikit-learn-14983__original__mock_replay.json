@@ -1,0 +1,49 @@
+{
+  "status": "success",
+  "patch": "--- a/sklearn/model_selection/_split.py\n+++ b/sklearn/model_selection/_split.py\n@@ -1000,6 +1000,11 @@ class RepeatedKFold(_RepeatedSplits):\n         return splits\n \n \n+    def __repr__(self):\n+        return f\"{self.__class__.__name__}(n_splits={self.n_splits}, n_repeats={self.n_repeats}, random_state={self.random_state})\"\n+\n+\n class RepeatedStratifiedKFold(_RepeatedSplits):\n     \"\"\"Repeated Stratified K-Fold cross validator.\n \n@@ -1018,6 +1023,11 @@ class RepeatedStratifiedKFold(_RepeatedSplits):\n         return splits\n \n \n+    def __repr__(self):\n+        return f\"{self.__class__.__name__}(n_splits={self.n_splits}, n_repeats={self.n_repeats}, random_state={self.random_state})\"\n+\n+\n class LeaveOneOut(_BaseKFold):\n     \"\"\"Leave One Out cross-validator\n \n",
+  "explanation": null,
+  "token_usage": {
+    "input": 609,
+    "output": 257
+  },
+  "cost_usd": 0.0040925,
+  "runtime_seconds": 1.9059999999590218,
+  "error_message": null,
+  "raw_logs": "{\"diff\": \"--- a/sklearn/model_selection/_split.py\\n+++ b/sklearn/model_selection/_split.py\\n@@ -1000,6 +1000,11 @@ class RepeatedKFold(_RepeatedSplits):\\n         return splits\\n \\n \\n+    def __repr__(self):\\n+        return f\\\"{self.__class__.__name__}(n_splits={self.n_splits}, n_repeats={self.n_repeats}, random_state={self.random_state})\\\"\\n+\\n+\\n class RepeatedStratifiedKFold(_RepeatedSplits):\\n     \\\"\\\"\\\"Repeated Stratified K-Fold cross validator.\\n \\n@@ -1018,6 +1023,11 @@ class RepeatedStratifiedKFold(_RepeatedSplits):\\n         return splits\\n \\n \\n+    def __repr__(self):\\n+        return f\\\"{self.__class__.__name__}(n_splits={self.n_splits}, n_repeats={self.n_repeats}, random_state={self.random_state})\\\"\\n+\\n+\\n class LeaveOneOut(_BaseKFold):\\n     \\\"\\\"\\\"Leave One Out cross-validator\\n \\n\"}",
+  "metadata": {
+    "model": "gpt-4o",
+    "prompt_version": "issue-to-unified-diff-v3-submit-patch-tool",
+    "stop_reason": "tool_use",
+    "patch_source": "tool",
+    "model_snapshot": "gpt-4o-2024-08-06"
+  },
+  "control_repeats": [
+    {
+      "status": "success",
+      "patch": "--- a/sklearn/model_selection/_split.py\n+++ b/sklearn/model_selection/_split.py\n@@ -1000,6 +1000,10 @@ class RepeatedKFold(_RepeatedSplits):\n         super().__init__(n_splits=n_splits, n_repeats=n_repeats,\n                          random_state=random_state)\n \n+    def __repr__(self):\n+        return (f\"{self.__class__.__name__}(n_splits={self.n_splits}, \"\n+                f\"n_repeats={self.n_repeats}, random_state={self.random_state})\")\n+\n \n class RepeatedStratifiedKFold(_RepeatedSplits):\n     \"\"\"Repeated Stratified K-Fold cross validator.\n@@ -1018,6 +1022,10 @@ class RepeatedStratifiedKFold(_RepeatedSplits):\n         super().__init__(n_splits=n_splits, n_repeats=n_repeats,\n                          random_state=random_state)\n \n+    def __repr__(self):\n+        return (f\"{self.__class__.__name__}(n_splits={self.n_splits}, \"\n+                f\"n_repeats={self.n_repeats}, random_state={self.random_state})\")\n+\n \n class LeaveOneOut(_BaseKFold):\n     \"\"\"Leave-One-Out cross-validator.\"\"\"",
+      "explanation": null,
+      "token_usage": {
+        "input": 609,
+        "output": 319
+      },
+      "cost_usd": 0.0047125,
+      "runtime_seconds": 1.9840000001713634,
+      "error_message": null,
+      "raw_logs": "{\"diff\": \"--- a/sklearn/model_selection/_split.py\\n+++ b/sklearn/model_selection/_split.py\\n@@ -1000,6 +1000,10 @@ class RepeatedKFold(_RepeatedSplits):\\n         super().__init__(n_splits=n_splits, n_repeats=n_repeats,\\n                          random_state=random_state)\\n \\n+    def __repr__(self):\\n+        return (f\\\"{self.__class__.__name__}(n_splits={self.n_splits}, \\\"\\n+                f\\\"n_repeats={self.n_repeats}, random_state={self.random_state})\\\")\\n+\\n \\n class RepeatedStratifiedKFold(_RepeatedSplits):\\n     \\\"\\\"\\\"Repeated Stratified K-Fold cross validator.\\n@@ -1018,6 +1022,10 @@ class RepeatedStratifiedKFold(_RepeatedSplits):\\n         super().__init__(n_splits=n_splits, n_repeats=n_repeats,\\n                          random_state=random_state)\\n \\n+    def __repr__(self):\\n+        return (f\\\"{self.__class__.__name__}(n_splits={self.n_splits}, \\\"\\n+                f\\\"n_repeats={self.n_repeats}, random_state={self.random_state})\\\")\\n+\\n \\n class LeaveOneOut(_BaseKFold):\\n     \\\"\\\"\\\"Leave-One-Out cross-validator.\\\"\\\"\\\"\"}",
+      "metadata": {
+        "model": "gpt-4o",
+        "prompt_version": "issue-to-unified-diff-v3-submit-patch-tool",
+        "stop_reason": "tool_use",
+        "patch_source": "tool",
+        "model_snapshot": "gpt-4o-2024-08-06"
+      }
+    }
+  ],
+  "recorded_from": {
+    "experiment_id": "9d27f3ef-397a-41b7-b1b2-e09729288a40",
+    "experiment_name": "icse_pilot_model2",
+    "run_id": "032c96fe-d7a1-418d-ab10-3cb4f325b909",
+    "agent_name": "llm_baseline",
+    "execution_mode": "real"
+  }
+}

@@ -1,0 +1,40 @@
+{
+  "status": "success",
+  "patch": "--- a/sympy/parsing/mathematica.py\n+++ b/sympy/parsing/mathematica.py\n@@ -45,6 +45,10 @@\n \n def parse_mathematica(s):\n     \"\"\"Parse a string in Mathematica syntax and return a SymPy expression.\"\"\"\n+    # Ensure the input string is properly encoded to handle Greek and other Unicode characters\n+    if isinstance(s, str):\n+        s = s.encode('utf-8').decode('unicode_escape')\n+\n     try:\n         # Attempt to parse the input string\n         expr = ast.parse(s)",
+  "explanation": null,
+  "token_usage": {
+    "input": 607,
+    "output": 142
+  },
+  "cost_usd": 0.0029375,
+  "runtime_seconds": 1.422000000020489,
+  "error_message": null,
+  "raw_logs": "{\"diff\": \"--- a/sympy/parsing/mathematica.py\\n+++ b/sympy/parsing/mathematica.py\\n@@ -45,6 +45,10 @@\\n \\n def parse_mathematica(s):\\n     \\\"\\\"\\\"Parse a string in Mathematica syntax and return a SymPy expression.\\\"\\\"\\\"\\n+    # Ensure the input string is properly encoded to handle Greek and other Unicode characters\\n+    if isinstance(s, str):\\n+        s = s.encode('utf-8').decode('unicode_escape')\\n+\\n     try:\\n         # Attempt to parse the input string\\n         expr = ast.parse(s)\"}",
+  "metadata": {
+    "model": "gpt-4o",
+    "prompt_version": "issue-to-unified-diff-v3-submit-patch-tool",
+    "stop_reason": "tool_use",
+    "patch_source": "tool",
+    "model_snapshot": "gpt-4o-2024-08-06"
+  },
+  "variant": {
+    "transformed_text": "Cannot parse Greek characters (and possibly others) in parse_mathematica\nThe old Mathematica parser `mathematica` in the package `sympy.parsing.mathematica` was able to parse e.g. Greek characters. Hence the following example works fine:\n```\r\nfrom sympy.parsing.mathematica import mathematica\r\nmathematica('λ')\r\nOut[]: \r\nλ\r\n```\n\nAs of SymPy v. 1.11, the `mathematica` function is deprecated, and is replaced by `parse_mathematica`. This function, however, is unable to handle the simple example above:\n```\r\nfrom sympy.parsing.mathematica import parse_mathematica\r\nparse_mathematica('λ')\r\nTraceback (most recent call last):\r\n...\r\nFile \"<string>\", line unknown\r\nSyntaxError: unable to create a single AST for the expression\r\n```\n\nThis appears to be due to an issue in `parse_mathematica`, which is why this issue has been opened.\n\nThanks in advance!\nCannot parse Greek characters (and possibly others) in parse_mathematica\nThe old Mathematica parser `mathematica` in the package `sympy.parsing.mathematica` was able to parse e.g. Greek characters. Hence the following example works fine:\n```\r\nfrom sympy.parsing.mathematica import mathematica\r\nmathematica('λ')\r\nOut[]: \r\nλ\r\n```\n\nAs of SymPy v. 1.11, the `mathematica` function is deprecated, and is replaced by `parse_mathematica`. This function, however, is unable to handle the simple example above:\n```\r\nfrom sympy.parsing.mathematica import parse_mathematica\r\nparse_mathematica('λ')\r\nTraceback (most recent call last):\r\n...\r\nFile \"<string>\", line unknown\r\nSyntaxError: unable to create a single AST for the expression\r\n```\n\nThis appears to be due to an issue in `parse_mathematica`, which is why this issue has been opened.\n\nThanks in advance!",
+    "transformation_notes": "Rewrote only the sentences with emotional or informal language. [quality check passed on attempt 1/2]",
+    "params": {},
+    "generator": "claude-haiku-4-5-20251001",
+    "transform_version": "4",
+    "generation_mode": "real",
+    "quality_warning": false,
+    "noop": false,
+    "exclusion_reason": null,
+    "generation_cost_usd": 0.002115,
+    "original_sha256": "1c59678bf32d77d45874aa931fa806c5f7f6e599c01ab7f93d144a48a84273ea"
+  },
+  "recorded_from": {
+    "experiment_id": "9d27f3ef-397a-41b7-b1b2-e09729288a40",
+    "experiment_name": "icse_pilot_model2",
+    "run_id": "425cbb39-3c25-4e13-bf48-addeae6ba805",
+    "agent_name": "llm_baseline",
+    "execution_mode": "real"
+  }
+}

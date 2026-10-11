@@ -1,0 +1,19 @@
+{
+  "status": "success",
+  "patch": "--- a/sympy/simplify/simplify.py\n+++ b/sympy/simplify/simplify.py\n@@ -589,7 +589,11 @@ def simplify(expr, **kwargs):\n-    expr = trigsimp(expr, deep=True)\n+    original_assumptions = expr.assumptions0\n+    expr = trigsimp(expr, deep=True)\n+    if original_assumptions:\n+        expr = expr.subs(\n+            [(s, s.func(s.name, **original_assumptions)) for s in expr.free_symbols]\n+        )\n",
+  "explanation": "Captured each symbol's assumptions before trigonometric simplification and restored them afterward so downstream simplifications stay correct.",
+  "token_usage": {
+    "input": 2504,
+    "output": 970
+  },
+  "cost_usd": 0.0,
+  "runtime_seconds": 3.48,
+  "error_message": null,
+  "raw_logs": "[2026-07-05T09:00:00Z] INFO  agent='mock_replay' issue=sympy__sympy-20590 transform='original'\n[2026-07-05T09:00:00Z] INFO  Loading fixture from disk\n[2026-07-05T09:00:00Z] INFO  Fixture deserialized (issue_id=sympy__sympy-20590, transform=original)\n[2026-07-05T09:00:00Z] INFO  Patch extracted successfully (runtime=3.48s)\n[2026-07-05T09:00:00Z] INFO  Status: SUCCESS",
+  "metadata": {
+    "issue_id": "sympy__sympy-20590",
+    "transformation_name": "original",
+    "agent": "mock_replay",
+    "fixture_version": "1.0"
+  }
+}

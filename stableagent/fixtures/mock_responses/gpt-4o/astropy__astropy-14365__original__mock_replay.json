@@ -1,0 +1,49 @@
+{
+  "status": "success",
+  "patch": "--- a/astropy/io/ascii/qdp.py\n+++ b/astropy/io/ascii/qdp.py\n@@ -123,7 +123,7 @@ class QDPHeader(core.BaseHeader):\n         self._set_cols_from_names()\n \n     def process_lines(self, lines):\n-        for line in lines:\n+        for line in map(str.upper, lines):\n             line = line.strip()\n             if not line or line.startswith('!'):\n                 continue\n@@ -131,7 +131,7 @@ class QDPHeader(core.BaseHeader):\n             if line.startswith('READ'):\n                 if 'SERR' in line:\n                     self.has_serr = True\n-                elif 'TERR' in line:\n+                elif 'TERR' in line:\n                     self.has_terr = True\n             elif line.startswith('NO'):\n                 if 'NO SERR' in line:\n                     self.has_serr = False\n",
+  "explanation": null,
+  "token_usage": {
+    "input": 635,
+    "output": 217
+  },
+  "cost_usd": 0.0037575,
+  "runtime_seconds": 2.4689999998081475,
+  "error_message": null,
+  "raw_logs": "{\"diff\": \"--- a/astropy/io/ascii/qdp.py\\n+++ b/astropy/io/ascii/qdp.py\\n@@ -123,7 +123,7 @@ class QDPHeader(core.BaseHeader):\\n         self._set_cols_from_names()\\n \\n     def process_lines(self, lines):\\n-        for line in lines:\\n+        for line in map(str.upper, lines):\\n             line = line.strip()\\n             if not line or line.startswith('!'):\\n                 continue\\n@@ -131,7 +131,7 @@ class QDPHeader(core.BaseHeader):\\n             if line.startswith('READ'):\\n                 if 'SERR' in line:\\n                     self.has_serr = True\\n-                elif 'TERR' in line:\\n+                elif 'TERR' in line:\\n                     self.has_terr = True\\n             elif line.startswith('NO'):\\n                 if 'NO SERR' in line:\\n                     self.has_serr = False\\n\"}",
+  "metadata": {
+    "model": "gpt-4o",
+    "prompt_version": "issue-to-unified-diff-v3-submit-patch-tool",
+    "stop_reason": "tool_use",
+    "patch_source": "tool",
+    "model_snapshot": "gpt-4o-2024-08-06"
+  },
+  "control_repeats": [
+    {
+      "status": "success",
+      "patch": "--- a/astropy/io/ascii/qdp.py\n+++ b/astropy/io/ascii/qdp.py\n@@ -123,7 +123,7 @@\n         self.data = []\n \n     def process_lines(self, lines):\n-        for line in lines:\n+        for line in map(str.upper, lines):\n             line = line.strip()\n             if not line or line.startswith('!'):\n                 continue\n@@ -131,7 +131,7 @@\n             if line.startswith('READ'):\n                 self._process_read(line)\n             elif line.startswith('NO'):\n                 self._process_no(line)\n-            elif line.startswith('LABEL'):\n+            elif line.upper().startswith('LABEL'):\n                 self._process_label(line)\n             elif line.startswith('LINE'):\n                 self._process_line(line)\n@@ -139,7 +139,7 @@\n                 self._process_comment(line)\n             else:\n                 raise ValueError(f'Unrecognized QDP line: {line}')\n-    def _process_read(self, line):\n+    def _process_read(self, line):\n         tokens = line.split()\n         if len(tokens) < 3:\n             raise ValueError(f'Invalid READ line: {line}')\n@@ -147,7 +147,7 @@\n         serr = False\n         terr = False\n \n-        if tokens[1] == 'SERR':\n+        if tokens[1].upper() == 'SERR':\n             serr = True\n         elif tokens[1] == 'TERR':\n             terr = True\n@@ -155,7 +155,7 @@\n             raise ValueError(f'Invalid error type in READ line: {line}')\n \n         try:\n-            self.serr_index = int(tokens[2]) - 1\n+            self.serr_index = int(tokens[2]) - 1\n             if serr:\n                 self.serr_index = int(tokens[2]) - 1\n                 self.serr_index2 = int(tokens[3]) - 1\n@@ -163,7 +163,7 @@\n                 self.terr_index = int(tokens[2]) - 1\n                 self.terr_index2 = int(tokens[3]) - 1\n         except (IndexError, ValueError):\n-            raise ValueError(f'Invalid index in READ line: {line}')\n+            raise ValueError(f'Invalid index in READ line: {line}')\n \n     def _process_no(self, line):\n         tokens = line.split()",
+      "explanation": null,
+      "token_usage": {
+        "input": 635,
+        "output": 582
+      },
+      "cost_usd": 0.0074075,
+      "runtime_seconds": 5.062999999849126,
+      "error_message": null,
+      "raw_logs": "{\"diff\": \"--- a/astropy/io/ascii/qdp.py\\n+++ b/astropy/io/ascii/qdp.py\\n@@ -123,7 +123,7 @@\\n         self.data = []\\n \\n     def process_lines(self, lines):\\n-        for line in lines:\\n+        for line in map(str.upper, lines):\\n             line = line.strip()\\n             if not line or line.startswith('!'):\\n                 continue\\n@@ -131,7 +131,7 @@\\n             if line.startswith('READ'):\\n                 self._process_read(line)\\n             elif line.startswith('NO'):\\n                 self._process_no(line)\\n-            elif line.startswith('LABEL'):\\n+            elif line.upper().startswith('LABEL'):\\n                 self._process_label(line)\\n             elif line.startswith('LINE'):\\n                 self._process_line(line)\\n@@ -139,7 +139,7 @@\\n                 self._process_comment(line)\\n             else:\\n                 raise ValueError(f'Unrecognized QDP line: {line}')\\n-    def _process_read(self, line):\\n+    def _process_read(self, line):\\n         tokens = line.split()\\n         if len(tokens) < 3:\\n             raise ValueError(f'Invalid READ line: {line}')\\n@@ -147,7 +147,7 @@\\n         serr = False\\n         terr = False\\n \\n-        if tokens[1] == 'SERR':\\n+        if tokens[1].upper() == 'SERR':\\n             serr = True\\n         elif tokens[1] == 'TERR':\\n             terr = True\\n@@ -155,7 +155,7 @@\\n             raise ValueError(f'Invalid error type in READ line: {line}')\\n \\n         try:\\n-            self.serr_index = int(tokens[2]) - 1\\n+            self.serr_index = int(tokens[2]) - 1\\n             if serr:\\n                 self.serr_index = int(tokens[2]) - 1\\n                 self.serr_index2 = int(tokens[3]) - 1\\n@@ -163,7 +163,7 @@\\n                 self.terr_index = int(tokens[2]) - 1\\n                 self.terr_index2 = int(tokens[3]) - 1\\n         except (IndexError, ValueError):\\n-            raise ValueError(f'Invalid index in READ line: {line}')\\n+            raise ValueError(f'Invalid index in READ line: {line}')\\n \\n     def _process_no(self, line):\\n         tokens = line.split()\"}",
+      "metadata": {
+        "model": "gpt-4o",
+        "prompt_version": "issue-to-unified-diff-v3-submit-patch-tool",
+        "stop_reason": "tool_use",
+        "patch_source": "tool",
+        "model_snapshot": "gpt-4o-2024-08-06"
+      }
+    }
+  ],
+  "recorded_from": {
+    "experiment_id": "9d27f3ef-397a-41b7-b1b2-e09729288a40",
+    "experiment_name": "icse_pilot_model2",
+    "run_id": "0e51f28b-3f0d-44dd-a658-d0ec98905294",
+    "agent_name": "llm_baseline",
+    "execution_mode": "real"
+  }
+}

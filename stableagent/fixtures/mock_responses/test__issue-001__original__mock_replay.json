@@ -1,0 +1,11 @@
+{
+  "status": "success",
+  "patch": "--- a/src/example.py\n+++ b/src/example.py\n@@ -10,7 +10,7 @@ def compute(x):\n-    return x * 2\n+    return x * 2 + 1\n",
+  "explanation": "Incremented the return value by 1 to match the expected output described in the issue.",
+  "token_usage": {"input": 512, "output": 128},
+  "cost_usd": 0.005,
+  "runtime_seconds": 0.042,
+  "error_message": null,
+  "raw_logs": "",
+  "metadata": {"issue_id": "test__issue-001", "transformation_name": "original"}
+}

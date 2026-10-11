@@ -1,0 +1,38 @@
+# Secrets: the API key is passed at run time, never copied into the image.
+.env
+**/*.env
+.env.*
+.streamlit/secrets.toml
+
+# Version control, CI and local environments
+.git
+.github
+.venv
+venv
+**/__pycache__
+**/*.py[cod]
+.pytest_cache
+.ruff_cache
+.mypy_cache
+.coverage
+htmlcov
+*.egg-info
+
+# Results of local runs and local databases (the shipped pilot database is kept)
+results
+runs.csv
+**/*.db
+**/*.db-shm
+**/*.db-wal
+**/*.db-journal
+!data/pilot/stableagent_pilot.db
+
+# Not needed in the image
+tests
+docs
+screenshots
+*.tar
+*.tar.gz
+Dockerfile
+docker-compose.yml
+.dockerignore

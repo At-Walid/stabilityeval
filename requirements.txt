@@ -1,0 +1,17 @@
+# Runtime dependencies, pinned to the versions StableAgent 1.0.0 was tested with (Python 3.11).
+# Install:  pip install -r requirements.txt && pip install -e .
+anthropic==0.109.2
+datasets==5.0.0
+matplotlib==3.11.2
+numpy==2.4.6
+openai==3.28.0
+pandas==3.0.3
+plotly==6.8.0
+pydantic==2.13.4
+pydantic-settings==2.14.1
+python-dotenv==1.2.2
+rich==15.0.0
+SQLAlchemy==2.0.51
+streamlit==1.58.0
+truststore==0.10.4
+typer==0.25.1

@@ -1,0 +1,47 @@
+{
+  "status": "success",
+  "patch": "--- a/sympy/physics/vector/point.py\n+++ b/sympy/physics/vector/point.py\n@@ -448,9 +448,25 @@ class Point(object):\n         if not isinstance(frame, ReferenceFrame):\n             raise TypeError('frame must be a ReferenceFrame')\n         if not (frame in self._vel_dict):\n-            raise ValueError('Velocity of point ' + self.name + ' has not been'\n-                             ' defined in ReferenceFrame ' + frame.name)\n-        return self._vel_dict[frame]\n+            visited = []\n+            queue = [self]\n+            while queue:\n+                node = queue.pop(0)\n+                if node in visited:\n+                    continue\n+                visited.append(node)\n+                for point, pos_vec in node._pos_dict.items():\n+                    if point in visited:\n+                        continue\n+                    # Try to compute velocity via differentiation of position\n+                    try:\n+                        vel = self.pos_from(point).dt(frame) + point.vel(frame)\n+                        self._vel_dict[frame] = vel\n+                        return vel\n+                    except ValueError:\n+                        queue.append(point)\n+            raise ValueError('Velocity of point ' + self.name + ' has not been'\n+                             ' defined in ReferenceFrame ' + frame.name)\n+        return self._vel_dict[frame]\n \n     def partial_velocity(self, frame, *gen_speeds):\n         \"\"\"Returns the partial velocities of the linear velocity vector of this\n",
+  "explanation": null,
+  "token_usage": {
+    "input": 1384,
+    "output": 421
+  },
+  "cost_usd": 0.010467,
+  "runtime_seconds": 6.1399999998975545,
+  "error_message": null,
+  "raw_logs": "{\"diff\": \"--- a/sympy/physics/vector/point.py\\n+++ b/sympy/physics/vector/point.py\\n@@ -448,9 +448,25 @@ class Point(object):\\n         if not isinstance(frame, ReferenceFrame):\\n             raise TypeError('frame must be a ReferenceFrame')\\n         if not (frame in self._vel_dict):\\n-            raise ValueError('Velocity of point ' + self.name + ' has not been'\\n-                             ' defined in ReferenceFrame ' + frame.name)\\n-        return self._vel_dict[frame]\\n+            visited = []\\n+            queue = [self]\\n+            while queue:\\n+                node = queue.pop(0)\\n+                if node in visited:\\n+                    continue\\n+                visited.append(node)\\n+                for point, pos_vec in node._pos_dict.items():\\n+                    if point in visited:\\n+                        continue\\n+                    # Try to compute velocity via differentiation of position\\n+                    try:\\n+                        vel = self.pos_from(point).dt(frame) + point.vel(frame)\\n+                        self._vel_dict[frame] = vel\\n+                        return vel\\n+                    except ValueError:\\n+                        queue.append(point)\\n+            raise ValueError('Velocity of point ' + self.name + ' has not been'\\n+                             ' defined in ReferenceFrame ' + frame.name)\\n+        return self._vel_dict[frame]\\n \\n     def partial_velocity(self, frame, *gen_speeds):\\n         \\\"\\\"\\\"Returns the partial velocities of the linear velocity vector of this\\n\"}",
+  "metadata": {
+    "model": "claude-sonnet-4-6",
+    "prompt_version": "issue-to-unified-diff-v3-submit-patch-tool",
+    "stop_reason": "tool_use",
+    "patch_source": "tool"
+  },
+  "control_repeats": [
+    {
+      "status": "success",
+      "patch": "--- a/sympy/physics/vector/point.py\n+++ b/sympy/physics/vector/point.py\n@@ -448,9 +448,25 @@ class Point(object):\n         if not isinstance(frame, ReferenceFrame):\n             raise TypeError('frame must be a ReferenceFrame')\n         if not (frame in self._vel_dict):\n-            raise ValueError('Velocity of point ' + self.name + ' has not been'\n-                             ' defined in ReferenceFrame ' + frame.name)\n-        return self._vel_dict[frame]\n+            visited = []\n+            queue = [self]\n+            while queue:\n+                node = queue.pop(0)\n+                if node in visited:\n+                    continue\n+                visited.append(node)\n+                for other, pos_vec in node._pos_dict.items():\n+                    if other in visited:\n+                        continue\n+                    # Try to compute velocity via differentiation of position\n+                    if other in other._vel_dict or frame in other._vel_dict:\n+                        # other has a known velocity in frame, or we can try\n+                        pass\n+                    queue.append(other)\n+            # Try to find a point with a defined position relative to self\n+            # and compute velocity by differentiating the position vector\n+            for point, pos_vec in self._pos_dict.items():\n+                if frame in point._vel_dict:\n+                    self._vel_dict[frame] = point._vel_dict[frame] + pos_vec.dt(frame)\n+                    return self._vel_dict[frame]\n+            raise ValueError('Velocity of point ' + self.name + ' has not been'\n+                             ' defined in ReferenceFrame ' + frame.name)\n+        return self._vel_dict[frame]\n \n     def partial_velocity(self, frame, *gen_speeds):\n         \"\"\"Returns the partial velocities of the linear velocity vector of this\n",
+      "explanation": null,
+      "token_usage": {
+        "input": 1384,
+        "output": 509
+      },
+      "cost_usd": 0.011787,
+      "runtime_seconds": 8.297000000020489,
+      "error_message": null,
+      "raw_logs": "{\"diff\": \"--- a/sympy/physics/vector/point.py\\n+++ b/sympy/physics/vector/point.py\\n@@ -448,9 +448,25 @@ class Point(object):\\n         if not isinstance(frame, ReferenceFrame):\\n             raise TypeError('frame must be a ReferenceFrame')\\n         if not (frame in self._vel_dict):\\n-            raise ValueError('Velocity of point ' + self.name + ' has not been'\\n-                             ' defined in ReferenceFrame ' + frame.name)\\n-        return self._vel_dict[frame]\\n+            visited = []\\n+            queue = [self]\\n+            while queue:\\n+                node = queue.pop(0)\\n+                if node in visited:\\n+                    continue\\n+                visited.append(node)\\n+                for other, pos_vec in node._pos_dict.items():\\n+                    if other in visited:\\n+                        continue\\n+                    # Try to compute velocity via differentiation of position\\n+                    if other in other._vel_dict or frame in other._vel_dict:\\n+                        # other has a known velocity in frame, or we can try\\n+                        pass\\n+                    queue.append(other)\\n+            # Try to find a point with a defined position relative to self\\n+            # and compute velocity by differentiating the position vector\\n+            for point, pos_vec in self._pos_dict.items():\\n+                if frame in point._vel_dict:\\n+                    self._vel_dict[frame] = point._vel_dict[frame] + pos_vec.dt(frame)\\n+                    return self._vel_dict[frame]\\n+            raise ValueError('Velocity of point ' + self.name + ' has not been'\\n+                             ' defined in ReferenceFrame ' + frame.name)\\n+        return self._vel_dict[frame]\\n \\n     def partial_velocity(self, frame, *gen_speeds):\\n         \\\"\\\"\\\"Returns the partial velocities of the linear velocity vector of this\\n\"}",
+      "metadata": {
+        "model": "claude-sonnet-4-6",
+        "prompt_version": "issue-to-unified-diff-v3-submit-patch-tool",
+        "stop_reason": "tool_use",
+        "patch_source": "tool"
+      }
+    }
+  ],
+  "recorded_from": {
+    "experiment_id": "bc6f1372-2088-45dd-907c-d741c0545d27",
+    "experiment_name": "icse_pilot_v1",
+    "run_id": "1ea6e25a-3286-44e5-91be-55e8bb1e3b4b",
+    "agent_name": "llm_baseline",
+    "execution_mode": "real"
+  }
+}

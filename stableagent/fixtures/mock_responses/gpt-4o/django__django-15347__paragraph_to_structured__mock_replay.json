@@ -1,0 +1,40 @@
+{
+  "status": "success",
+  "patch": "--- a/django/contrib/messages/storage/base.py\n+++ b/django/contrib/messages/storage/base.py\n@@ -10,6 +10,7 @@ class Message:\n         self.level = level\n         self.message = message\n         self.extra_tags = extra_tags\n+        if self.extra_tags is None:\n+            self.extra_tags = \"\"\n \n     def __eq__(self, other):\n         if not isinstance(other, Message):\n@@ -50,7 +51,7 @@ class MessageEncoder(json.JSONEncoder):\n         message_dict = {\n             'level': obj.level,\n             'message': obj.message,\n-            'extra_tags': obj.extra_tags,\n+            'extra_tags': obj.extra_tags if obj.extra_tags != \"\" else \"\",\n         }\n         return message_dict\n \n@@ -70,7 +71,7 @@ class MessageDecoder(json.JSONDecoder):\n             level = message_dict['level']\n             message = message_dict['message']\n             extra_tags = message_dict.get('extra_tags', None)\n-            return Message(level, message, extra_tags)\n+            return Message(level, message, extra_tags if extra_tags is not None else \"\")\n         return obj\n \n \n",
+  "explanation": null,
+  "token_usage": {
+    "input": 495,
+    "output": 278
+  },
+  "cost_usd": 0.0040175,
+  "runtime_seconds": 2.3129999998491257,
+  "error_message": null,
+  "raw_logs": "{\"diff\": \"--- a/django/contrib/messages/storage/base.py\\n+++ b/django/contrib/messages/storage/base.py\\n@@ -10,6 +10,7 @@ class Message:\\n         self.level = level\\n         self.message = message\\n         self.extra_tags = extra_tags\\n+        if self.extra_tags is None:\\n+            self.extra_tags = \\\"\\\"\\n \\n     def __eq__(self, other):\\n         if not isinstance(other, Message):\\n@@ -50,7 +51,7 @@ class MessageEncoder(json.JSONEncoder):\\n         message_dict = {\\n             'level': obj.level,\\n             'message': obj.message,\\n-            'extra_tags': obj.extra_tags,\\n+            'extra_tags': obj.extra_tags if obj.extra_tags != \\\"\\\" else \\\"\\\",\\n         }\\n         return message_dict\\n \\n@@ -70,7 +71,7 @@ class MessageDecoder(json.JSONDecoder):\\n             level = message_dict['level']\\n             message = message_dict['message']\\n             extra_tags = message_dict.get('extra_tags', None)\\n-            return Message(level, message, extra_tags)\\n+            return Message(level, message, extra_tags if extra_tags is not None else \\\"\\\")\\n         return obj\\n \\n \\n\"}",
+  "metadata": {
+    "model": "gpt-4o",
+    "prompt_version": "issue-to-unified-diff-v3-submit-patch-tool",
+    "stop_reason": "tool_use",
+    "patch_source": "tool",
+    "model_snapshot": "gpt-4o-2024-08-06"
+  },
+  "variant": {
+    "transformed_text": "## Summary\nThe messages framework incorrectly serializes/deserializes extra_tags when it's an empty string, converting empty string to None.\n\n## Steps to Reproduce\n>>> from django.conf import settings\n>>> settings.configure() # Just to allow the following import\n>>> from django.contrib.messages.storage.base import Message\n>>> from django.contrib.messages.storage.cookie import MessageEncoder, MessageDecoder\n>>> original_message = Message(10, \"Here is a message\", extra_tags=\"\")\n>>> encoded_message = MessageEncoder().encode(original_message)\n>>> decoded_message = MessageDecoder().decode(encoded_message)\n>>> original_message.extra_tags == \"\"\nTrue\n>>> decoded_message.extra_tags is None\nTrue\nEffect of the bug in application behaviour\nThis error occurred in the wild with a template tag similar to the following:\n{% if x not in message.extra_tags %}\nWhen the message was displayed as part of a redirect, it had been serialised and deserialized which meant that extra_tags was None instead of the empty string. This caused an error.\nIt's important to note that this bug affects all of the standard API (messages.debug, messages.info etc. all have a default value of extra_tags equal to \"\").\n\n## Expected Behavior\nWhen a message with extra_tags=\"\" is serialized and then deserialized, extra_tags should remain as an empty string.\n\n## Actual Behavior\nWhen a message with extra_tags=\"\" is serialized and then deserialized with any of the built-in storage backends, extra_tags is converted to None instead of remaining as an empty string.\n\n## Environment\nNot specified",
+    "transformation_notes": "Reformatted the issue description into the five required sections. The issue states that MessageEncoder checks for the truthiness of extra_tags rather than checking if it is not None. The reproduction steps are provided by the placeholder CODE_1. Environment details are not specified in the original issue. [quality check passed on attempt 1/2]",
+    "params": {},
+    "generator": "claude-haiku-4-5-20251001",
+    "transform_version": "5",
+    "generation_mode": "real",
+    "quality_warning": false,
+    "noop": false,
+    "exclusion_reason": null,
+    "generation_cost_usd": 0.001842,
+    "original_sha256": "5370589f1c868ff26fda4d4e9a0b44eee3e4021db7065c5d26a35deeda54895e"
+  },
+  "recorded_from": {
+    "experiment_id": "9d27f3ef-397a-41b7-b1b2-e09729288a40",
+    "experiment_name": "icse_pilot_model2",
+    "run_id": "ff5cdc7d-9975-4a38-b061-b48b11df1bb6",
+    "agent_name": "llm_baseline",
+    "execution_mode": "real"
+  }
+}

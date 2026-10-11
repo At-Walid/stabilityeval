@@ -1,0 +1,42 @@
+{
+  "status": "success",
+  "patch": "--- a/django/db/backends/base/schema.py\n+++ b/django/db/backends/base/schema.py\n@@ -375,7 +375,11 @@ class BaseDatabaseSchemaEditor:\n         # This is a separate method as some backends have custom\n         # behaviour here.\n         constraints = self._constraint_names(model, [fields], index=True, unique=True)\n-        if len(constraints) != 1:\n+        # Filter out unique constraints if we are deleting an index_together\n+        if not index_together:\n+            constraints = [c for c in constraints if not c.endswith(\"_uniq\")]\n+\n+        if len(constraints) != 1:\n             raise ValueError(\"Found wrong number (%s) of constraints for %s\" % (\n                 len(constraints), ', '.join(fields)\n             ))\n@@ -383,6 +387,7 @@ class BaseDatabaseSchemaEditor:\n \n     def _delete_composed_index(self, model, fields, name=None):\n         \"\"\"Delete an index (but not a unique constraint)\"\"\"\n+        index_together = name is None\n         self.execute(self._delete_constraint_sql(self.sql_delete_index, model, fields, name))\n \n     def _alter_field(self, model, old_field, new_field, old_type, new_type, old_db_parameters, new_db_parameters, strict=False):",
+  "explanation": null,
+  "token_usage": {
+    "input": 421,
+    "output": 308
+  },
+  "cost_usd": 0.0041325,
+  "runtime_seconds": 2.780999999959022,
+  "error_message": null,
+  "raw_logs": "{\"diff\": \"--- a/django/db/backends/base/schema.py\\n+++ b/django/db/backends/base/schema.py\\n@@ -375,7 +375,11 @@ class BaseDatabaseSchemaEditor:\\n         # This is a separate method as some backends have custom\\n         # behaviour here.\\n         constraints = self._constraint_names(model, [fields], index=True, unique=True)\\n-        if len(constraints) != 1:\\n+        # Filter out unique constraints if we are deleting an index_together\\n+        if not index_together:\\n+            constraints = [c for c in constraints if not c.endswith(\\\"_uniq\\\")]\\n+\\n+        if len(constraints) != 1:\\n             raise ValueError(\\\"Found wrong number (%s) of constraints for %s\\\" % (\\n                 len(constraints), ', '.join(fields)\\n             ))\\n@@ -383,6 +387,7 @@ class BaseDatabaseSchemaEditor:\\n \\n     def _delete_composed_index(self, model, fields, name=None):\\n         \\\"\\\"\\\"Delete an index (but not a unique constraint)\\\"\\\"\\\"\\n+        index_together = name is None\\n         self.execute(self._delete_constraint_sql(self.sql_delete_index, model, fields, name))\\n \\n     def _alter_field(self, model, old_field, new_field, old_type, new_type, old_db_parameters, new_db_parameters, strict=False):\"}",
+  "metadata": {
+    "model": "gpt-4o",
+    "prompt_version": "issue-to-unified-diff-v3-submit-patch-tool",
+    "stop_reason": "tool_use",
+    "patch_source": "tool",
+    "model_snapshot": "gpt-4o-2024-08-06"
+  },
+  "variant": {
+    "transformed_text": "Happens with Django 1.11.10\nSteps to reproduce:\n1) Create models with 2 fields, add 2 same fields to unique_together and to index_together\n2) Delete index_together -> Fail\nIt will fail at django/db/backends/base/schema.py, line 378, in _delete_composed_index(), ValueError: Found wrong number (2) of constraints for as this one will find two constraints, the _uniq and the _idx one. No way to get out of this...\nThe worst in my case is that happened as I wanted to refactor my code to use the \"new\" (Dj 1.11) Options.indexes feature. I am actually not deleting the index, just the way it is declared in my code.\nI think there are 2 different points here:\n1) The deletion of index_together should be possible alone or made coherent (migrations side?) with unique_together\n2) Moving the declaration of an index should not result in an index re-creation\n\nMigration crashes deleting an index_together if there is a unique_together on the same fields\nDescription",
+    "transformation_notes": "Shuffled 2 paragraph(s) (seed=42); CRLF normalised to LF, fenced code blocks kept whole.",
+    "params": {
+      "seed": 42
+    },
+    "generator": "deterministic",
+    "transform_version": "2",
+    "generation_mode": "real",
+    "quality_warning": false,
+    "noop": false,
+    "exclusion_reason": null,
+    "generation_cost_usd": 0.0,
+    "original_sha256": "773681998993eff75a3b69f04821e4e8683f89cfffdee38f19fe11cb3c7a98be"
+  },
+  "recorded_from": {
+    "experiment_id": "9d27f3ef-397a-41b7-b1b2-e09729288a40",
+    "experiment_name": "icse_pilot_model2",
+    "run_id": "3ddee52a-0e37-4b8f-ab80-e9db45ea639d",
+    "agent_name": "llm_baseline",
+    "execution_mode": "real"
+  }
+}

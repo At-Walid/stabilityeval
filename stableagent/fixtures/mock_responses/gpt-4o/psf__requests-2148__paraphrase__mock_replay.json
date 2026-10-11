@@ -1,0 +1,40 @@
+{
+  "status": "success",
+  "patch": "--- a/requests/models.py\n+++ b/requests/models.py\n@@ -622,7 +622,11 @@ class Response(object):\n         def generate():\n             try:\n                 for chunk in self.raw.stream(chunk_size, decode_content=True):\n-                    yield chunk\n+                    try:\n+                        yield chunk\n+                    except socket.error as e:\n+                        raise ConnectionError(e)\n             except ProtocolError as e:\n                 raise ChunkedEncodingError(e)\n             except DecodeError as e:\n--- a/requests/packages/urllib3/response.py\n+++ b/requests/packages/urllib3/response.py\n@@ -184,7 +184,11 @@ class HTTPResponse(object):\n         else:\n             fp_closed = getattr(self._fp, \"closed\", False)\n \n-        if self._fp and not fp_closed:\n+        try:\n+            if self._fp and not fp_closed:\n+                data = self._fp.read(amt)\n+        except socket.error as e:\n+            raise ConnectionError(e)\n \n             if amt is None:\n                 # cStringIO doesn't like amt=None\n                 data = self._fp.read()\n",
+  "explanation": null,
+  "token_usage": {
+    "input": 917,
+    "output": 265
+  },
+  "cost_usd": 0.0049425,
+  "runtime_seconds": 1.7969999997876585,
+  "error_message": null,
+  "raw_logs": "{\"diff\": \"--- a/requests/models.py\\n+++ b/requests/models.py\\n@@ -622,7 +622,11 @@ class Response(object):\\n         def generate():\\n             try:\\n                 for chunk in self.raw.stream(chunk_size, decode_content=True):\\n-                    yield chunk\\n+                    try:\\n+                        yield chunk\\n+                    except socket.error as e:\\n+                        raise ConnectionError(e)\\n             except ProtocolError as e:\\n                 raise ChunkedEncodingError(e)\\n             except DecodeError as e:\\n--- a/requests/packages/urllib3/response.py\\n+++ b/requests/packages/urllib3/response.py\\n@@ -184,7 +184,11 @@ class HTTPResponse(object):\\n         else:\\n             fp_closed = getattr(self._fp, \\\"closed\\\", False)\\n \\n-        if self._fp and not fp_closed:\\n+        try:\\n+            if self._fp and not fp_closed:\\n+                data = self._fp.read(amt)\\n+        except socket.error as e:\\n+            raise ConnectionError(e)\\n \\n             if amt is None:\\n                 # cStringIO doesn't like amt=None\\n                 data = self._fp.read()\\n\"}",
+  "metadata": {
+    "model": "gpt-4o",
+    "prompt_version": "issue-to-unified-diff-v3-submit-patch-tool",
+    "stop_reason": "tool_use",
+    "patch_source": "tool",
+    "model_snapshot": "gpt-4o-2024-08-06"
+  },
+  "variant": {
+    "transformed_text": "I encountered a situation where a socket reset resulted in a raw socket error being raised rather than being wrapped in a requests exception such as requests.exceptions.ConnectionError:\n\n```\n  File \"/home/rtdean/***/***/***/***/***/***.py\", line 67, in dir_parse\n    root = ElementTree.fromstring(response.text)\n  File \"/home/rtdean/.pyenv/versions/2.7.6/lib/python2.7/site-packages/requests-2.3.0-py2.7.egg/requests/models.py\", line 721, in text\n    if not self.content:\n  File \"/home/rtdean/.pyenv/versions/2.7.6/lib/python2.7/site-packages/requests-2.3.0-py2.7.egg/requests/models.py\", line 694, in content\n    self._content = bytes().join(self.iter_content(CONTENT_CHUNK_SIZE)) or bytes()\n  File \"/home/rtdean/.pyenv/versions/2.7.6/lib/python2.7/site-packages/requests-2.3.0-py2.7.egg/requests/models.py\", line 627, in generate\n    for chunk in self.raw.stream(chunk_size, decode_content=True):\n  File \"/home/rtdean/.pyenv/versions/2.7.6/lib/python2.7/site-packages/requests-2.3.0-py2.7.egg/requests/packages/urllib3/response.py\", line 240, in stream\n    data = self.read(amt=amt, decode_content=decode_content)\n  File \"/home/rtdean/.pyenv/versions/2.7.6/lib/python2.7/site-packages/requests-2.3.0-py2.7.egg/requests/packages/urllib3/response.py\", line 187, in read\n    data = self._fp.read(amt)\n  File \"/home/rtdean/.pyenv/versions/2.7.6/lib/python2.7/httplib.py\", line 543, in read\n    return self._read_chunked(amt)\n  File \"/home/rtdean/.pyenv/versions/2.7.6/lib/python2.7/httplib.py\", line 612, in _read_chunked\n    value.append(self._safe_read(chunk_left))\n  File \"/home/rtdean/.pyenv/versions/2.7.6/lib/python2.7/httplib.py\", line 658, in _safe_read\n    chunk = self.fp.read(min(amt, MAXAMOUNT))\n  File \"/home/rtdean/.pyenv/versions/2.7.6/lib/python2.7/socket.py\", line 380, in read\n    data = self._sock.recv(left)\n  File \"/home/rtdean/.pyenv/versions/2.7.6/lib/python2.7/site-packages/gevent-1.0.1-py2.7-linux-x86_64.egg/gevent/socket.py\", line 385, in recv\n    return sock.recv(*args)\nsocket.error: [Errno 104] Connection reset by peer\n```\n\nIt's unclear whether this behavior is intentional or unintended... typically, I would anticipate receiving a requests exception when working with the requests library, though I can also monitor for socket-level errors if that's the expected approach.",
+    "transformation_notes": "Restructured the description to use different phrasing while maintaining the core issue: a socket.error is not being caught and wrapped in requests.exceptions.ConnectionError. Changed 'I just noticed' to 'I encountered', 'was raised to me as' to 'resulted in...being raised', and 'by accident or design' to 'intentional or unintended'. Preserved the code placeholder and the technical identifiers (socket error, requests.exceptions.ConnectionError, requests). [quality check passed on attempt 1/2]",
+    "params": {},
+    "generator": "claude-haiku-4-5-20251001",
+    "transform_version": "4",
+    "generation_mode": "real",
+    "quality_warning": false,
+    "noop": false,
+    "exclusion_reason": null,
+    "generation_cost_usd": 0.001626,
+    "original_sha256": "68364fcb5e168c51619a74fe0026d874a7f62dda4c796e61c9f9a9c808c56a6d"
+  },
+  "recorded_from": {
+    "experiment_id": "9d27f3ef-397a-41b7-b1b2-e09729288a40",
+    "experiment_name": "icse_pilot_model2",
+    "run_id": "1ae2e817-20b1-46b1-b647-07626dce2126",
+    "agent_name": "llm_baseline",
+    "execution_mode": "real"
+  }
+}

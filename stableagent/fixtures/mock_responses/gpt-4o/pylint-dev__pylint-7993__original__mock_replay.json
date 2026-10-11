@@ -1,0 +1,49 @@
+{
+  "status": "success",
+  "patch": "--- a/pylint/reporters/text.py\n+++ b/pylint/reporters/text.py\n@@ -203,7 +203,7 @@ class TextReporter(BaseReporter):\n         )\n         for message in self.messages:\n             if not any(\n-                msg in self._template for msg in message\n+                msg in self._template.replace('{{', '{').replace('}}', '}') for msg in message\n             ):\n                 warnings.warn(\n                     \"Don't recognize the argument '{msg}' in the --msg-template. \"\n",
+  "explanation": null,
+  "token_usage": {
+    "input": 781,
+    "output": 122
+  },
+  "cost_usd": 0.0031725,
+  "runtime_seconds": 1.4379999998491257,
+  "error_message": null,
+  "raw_logs": "{\"diff\": \"--- a/pylint/reporters/text.py\\n+++ b/pylint/reporters/text.py\\n@@ -203,7 +203,7 @@ class TextReporter(BaseReporter):\\n         )\\n         for message in self.messages:\\n             if not any(\\n-                msg in self._template for msg in message\\n+                msg in self._template.replace('{{', '{').replace('}}', '}') for msg in message\\n             ):\\n                 warnings.warn(\\n                     \\\"Don't recognize the argument '{msg}' in the --msg-template. \\\"\\n\"}",
+  "metadata": {
+    "model": "gpt-4o",
+    "prompt_version": "issue-to-unified-diff-v3-submit-patch-tool",
+    "stop_reason": "tool_use",
+    "patch_source": "tool",
+    "model_snapshot": "gpt-4o-2024-08-06"
+  },
+  "control_repeats": [
+    {
+      "status": "success",
+      "patch": "--- a/pylint/reporters/text.py\n+++ b/pylint/reporters/text.py\n@@ -203,7 +203,7 @@ class TextReporter(BaseReporter):\n         )\n         for message in self.messages:\n             try:\n-                msg = self._msg_template.format(**message)\n+                msg = self._msg_template.replace('{{', '{').replace('}}', '}').format(**message)\n             except KeyError as e:\n                 warnings.warn(\n                     \"Don't recognize the argument '%s' in the --msg-template. \"",
+      "explanation": null,
+      "token_usage": {
+        "input": 781,
+        "output": 124
+      },
+      "cost_usd": 0.0031925,
+      "runtime_seconds": 1.2340000001713634,
+      "error_message": null,
+      "raw_logs": "{\"diff\": \"--- a/pylint/reporters/text.py\\n+++ b/pylint/reporters/text.py\\n@@ -203,7 +203,7 @@ class TextReporter(BaseReporter):\\n         )\\n         for message in self.messages:\\n             try:\\n-                msg = self._msg_template.format(**message)\\n+                msg = self._msg_template.replace('{{', '{').replace('}}', '}').format(**message)\\n             except KeyError as e:\\n                 warnings.warn(\\n                     \\\"Don't recognize the argument '%s' in the --msg-template. \\\"\"}",
+      "metadata": {
+        "model": "gpt-4o",
+        "prompt_version": "issue-to-unified-diff-v3-submit-patch-tool",
+        "stop_reason": "tool_use",
+        "patch_source": "tool",
+        "model_snapshot": "gpt-4o-2024-08-06"
+      }
+    }
+  ],
+  "recorded_from": {
+    "experiment_id": "9d27f3ef-397a-41b7-b1b2-e09729288a40",
+    "experiment_name": "icse_pilot_model2",
+    "run_id": "6100355c-e5a8-4751-ac59-600e28967d0d",
+    "agent_name": "llm_baseline",
+    "execution_mode": "real"
+  }
+}

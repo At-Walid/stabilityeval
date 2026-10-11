@@ -1,0 +1,33 @@
+{
+  "status": "skipped_variant",
+  "patch": null,
+  "explanation": null,
+  "token_usage": {},
+  "cost_usd": 0.0,
+  "runtime_seconds": 0.0,
+  "error_message": "Not run: variant excluded (identifier retention failed (missing 2: python2.6, python3.4))",
+  "raw_logs": "",
+  "metadata": {},
+  "variant": {
+    "transformed_text": "In requests/sessions.py, the command:\n\nmethod = builtin_str(method)\n\nconverts method from b'GET' to the literal string \"b'GET'\". When requests uses method \"b'GET'\", it receives a 404 Not Found response.\n\nUsing Python 3.4, python-neutronclient 2.3.9, and requests 2.4.3. neutronclient calls utils.safe_encode_list(args), converting values to binary strings including method. The issue does not occur in Python 2.6.",
+    "transformation_notes": "Removed speculative language and redundant explanations; consolidated problem statement; kept all identifiers, version numbers, and file path verbatim; preserved observed behavior (404 response when method becomes literal string). [QUALITY WARNING: identifier retention failed (missing 2: python2.6, python3.4) after 2 attempts; excluded from metrics]",
+    "params": {
+      "target_ratio": 0.5
+    },
+    "generator": "claude-haiku-4-5-20251001",
+    "transform_version": "4",
+    "generation_mode": "real",
+    "quality_warning": true,
+    "noop": false,
+    "exclusion_reason": "identifier retention failed (missing 2: python2.6, python3.4)",
+    "generation_cost_usd": 0.003904,
+    "original_sha256": "9fdbda259c2e75551a5282e979edf4ca93ba378bee22df393fe02998991cfd1a"
+  },
+  "recorded_from": {
+    "experiment_id": "9d27f3ef-397a-41b7-b1b2-e09729288a40",
+    "experiment_name": "icse_pilot_model2",
+    "run_id": "9027a927-60b1-4e3b-bd35-065ca5a78013",
+    "agent_name": "llm_baseline",
+    "execution_mode": "real"
+  }
+}

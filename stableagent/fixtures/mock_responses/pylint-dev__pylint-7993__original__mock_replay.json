@@ -1,0 +1,47 @@
+{
+  "status": "success",
+  "patch": "--- a/pylint/reporters/text.py\n+++ b/pylint/reporters/text.py\n@@ -175,14 +175,16 @@ class TextReporter(BaseReporter):\n     def on_set_current_module(self, module: str, filepath: Optional[str]) -> None:\n         \"\"\"Set the format template to be used and check for unrecognized arguments.\"\"\"\n         template = str(self.linter.config.msg_template or self._template)\n+\n+        # Expand escaped braces to avoid them being interpreted as format fields\n+        template_without_escaped_braces = template.replace(\"{{\", \"\").replace(\"}}\", \"\")\n+\n         arguments = re.findall(r\"\\{(.+?)\\}\", template)\n         for argument in arguments:\n-            if argument not in MESSAGE_FIELDS:\n+            if argument not in MESSAGE_FIELDS and argument not in template_without_escaped_braces:\n                 warnings.warn(\n                     f\"Don't recognize the argument '{argument}' in the --msg-template. \"\n                     \"Are you sure it is supported on the current version of pylint?\"\n                 )\n-                template = re.sub(r\"\\{\" + argument + r\"\\}\", \"\", template)\n         self._template = template\n",
+  "explanation": null,
+  "token_usage": {
+    "input": 1476,
+    "output": 336
+  },
+  "cost_usd": 0.009468,
+  "runtime_seconds": 5.5310000001918525,
+  "error_message": null,
+  "raw_logs": "{\"diff\": \"--- a/pylint/reporters/text.py\\n+++ b/pylint/reporters/text.py\\n@@ -175,14 +175,16 @@ class TextReporter(BaseReporter):\\n     def on_set_current_module(self, module: str, filepath: Optional[str]) -> None:\\n         \\\"\\\"\\\"Set the format template to be used and check for unrecognized arguments.\\\"\\\"\\\"\\n         template = str(self.linter.config.msg_template or self._template)\\n+\\n+        # Expand escaped braces to avoid them being interpreted as format fields\\n+        template_without_escaped_braces = template.replace(\\\"{{\\\", \\\"\\\").replace(\\\"}}\\\", \\\"\\\")\\n+\\n         arguments = re.findall(r\\\"\\\\{(.+?)\\\\}\\\", template)\\n         for argument in arguments:\\n-            if argument not in MESSAGE_FIELDS:\\n+            if argument not in MESSAGE_FIELDS and argument not in template_without_escaped_braces:\\n                 warnings.warn(\\n                     f\\\"Don't recognize the argument '{argument}' in the --msg-template. \\\"\\n                     \\\"Are you sure it is supported on the current version of pylint?\\\"\\n                 )\\n-                template = re.sub(r\\\"\\\\{\\\" + argument + r\\\"\\\\}\\\", \\\"\\\", template)\\n         self._template = template\\n\"}",
+  "metadata": {
+    "model": "claude-sonnet-4-6",
+    "prompt_version": "issue-to-unified-diff-v3-submit-patch-tool",
+    "stop_reason": "tool_use",
+    "patch_source": "tool"
+  },
+  "control_repeats": [
+    {
+      "status": "success",
+      "patch": "--- a/pylint/reporters/text.py\n+++ b/pylint/reporters/text.py\n@@ -175,14 +175,16 @@ class TextReporter(BaseReporter):\n     def on_set_current_module(self, module: str, filepath: Optional[str]) -> None:\n         \"\"\"Set the format template to be used and check for unrecognized arguments.\"\"\"\n         template = str(self.linter.config.msg_template or self._template)\n+\n+        # Expand escaped braces to avoid them being interpreted as format fields\n+        template_without_escaped_braces = template.replace(\"{{\", \"\").replace(\"}}\", \"\")\n+\n         arguments = re.findall(r\"\\{(.+?)\\}\", template)\n         for argument in arguments:\n-            if argument not in MESSAGE_FIELDS:\n+            if argument not in MESSAGE_FIELDS and argument not in template_without_escaped_braces:\n                 warnings.warn(\n                     f\"Don't recognize the argument '{argument}' in the --msg-template. \"\n                     \"Are you sure it is supported on the current version of pylint?\"\n                 )\n-                template = re.sub(r\"\\{\" + argument + r\"\\}\", \"\", template)\n+                template = re.sub(r\"\\{\" + re.escape(argument) + r\"\\}\", \"\", template)\n         self._template = template\n",
+      "explanation": null,
+      "token_usage": {
+        "input": 1476,
+        "output": 363
+      },
+      "cost_usd": 0.009873,
+      "runtime_seconds": 5.9850000001024455,
+      "error_message": null,
+      "raw_logs": "{\"diff\": \"--- a/pylint/reporters/text.py\\n+++ b/pylint/reporters/text.py\\n@@ -175,14 +175,16 @@ class TextReporter(BaseReporter):\\n     def on_set_current_module(self, module: str, filepath: Optional[str]) -> None:\\n         \\\"\\\"\\\"Set the format template to be used and check for unrecognized arguments.\\\"\\\"\\\"\\n         template = str(self.linter.config.msg_template or self._template)\\n+\\n+        # Expand escaped braces to avoid them being interpreted as format fields\\n+        template_without_escaped_braces = template.replace(\\\"{{\\\", \\\"\\\").replace(\\\"}}\\\", \\\"\\\")\\n+\\n         arguments = re.findall(r\\\"\\\\{(.+?)\\\\}\\\", template)\\n         for argument in arguments:\\n-            if argument not in MESSAGE_FIELDS:\\n+            if argument not in MESSAGE_FIELDS and argument not in template_without_escaped_braces:\\n                 warnings.warn(\\n                     f\\\"Don't recognize the argument '{argument}' in the --msg-template. \\\"\\n                     \\\"Are you sure it is supported on the current version of pylint?\\\"\\n                 )\\n-                template = re.sub(r\\\"\\\\{\\\" + argument + r\\\"\\\\}\\\", \\\"\\\", template)\\n+                template = re.sub(r\\\"\\\\{\\\" + re.escape(argument) + r\\\"\\\\}\\\", \\\"\\\", template)\\n         self._template = template\\n\"}",
+      "metadata": {
+        "model": "claude-sonnet-4-6",
+        "prompt_version": "issue-to-unified-diff-v3-submit-patch-tool",
+        "stop_reason": "tool_use",
+        "patch_source": "tool"
+      }
+    }
+  ],
+  "recorded_from": {
+    "experiment_id": "bc6f1372-2088-45dd-907c-d741c0545d27",
+    "experiment_name": "icse_pilot_v1",
+    "run_id": "b2ac5f2f-8c57-4b76-81e4-69b31ce309d1",
+    "agent_name": "llm_baseline",
+    "execution_mode": "real"
+  }
+}

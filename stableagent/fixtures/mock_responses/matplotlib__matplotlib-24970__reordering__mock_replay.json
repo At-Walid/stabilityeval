@@ -1,0 +1,41 @@
+{
+  "status": "success",
+  "patch": "--- a/lib/matplotlib/colors.py\n+++ b/lib/matplotlib/colors.py\n@@ -727,9 +727,9 @@ class Colormap:\n         # Set up arrays of colors\n         lut = self._lut\n         if np.ma.is_masked(X):\n-            xa[xa > self.N - 1] = self._i_over\n-            xa[xa < 0] = self._i_under\n-            xa[mask_bad] = self._i_bad\n+            xa[xa > self.N - 1] = self._i_over  # Set over-range values\n+            xa[xa < 0] = self._i_under  # Set under-range values\n+            xa[mask_bad] = self._i_bad  # Set bad values\n         else:\n             pass\n \n@@ -720,9 +720,9 @@ class Colormap:\n         xa = np.array([X], copy=True)\n         if not xa.dtype.isnative:\n             xa = xa.byteswap().newbyteorder()  # Native byteorder is faster.\n-        if xa.dtype.kind == \"f\":\n+        if xa.dtype.kind == \"f\":  # float\n             xa *= self.N\n             # Negative values are out of range, but astype(int) would truncate\n             # them towards zero.\n",
+  "explanation": null,
+  "token_usage": {
+    "input": 1313,
+    "output": 369
+  },
+  "cost_usd": 0.009474,
+  "runtime_seconds": 6.202999999979511,
+  "error_message": null,
+  "raw_logs": "{\"diff\": \"--- a/lib/matplotlib/colors.py\\n+++ b/lib/matplotlib/colors.py\\n@@ -727,9 +727,9 @@ class Colormap:\\n         # Set up arrays of colors\\n         lut = self._lut\\n         if np.ma.is_masked(X):\\n-            xa[xa > self.N - 1] = self._i_over\\n-            xa[xa < 0] = self._i_under\\n-            xa[mask_bad] = self._i_bad\\n+            xa[xa > self.N - 1] = self._i_over  # Set over-range values\\n+            xa[xa < 0] = self._i_under  # Set under-range values\\n+            xa[mask_bad] = self._i_bad  # Set bad values\\n         else:\\n             pass\\n \\n@@ -720,9 +720,9 @@ class Colormap:\\n         xa = np.array([X], copy=True)\\n         if not xa.dtype.isnative:\\n             xa = xa.byteswap().newbyteorder()  # Native byteorder is faster.\\n-        if xa.dtype.kind == \\\"f\\\":\\n+        if xa.dtype.kind == \\\"f\\\":  # float\\n             xa *= self.N\\n             # Negative values are out of range, but astype(int) would truncate\\n             # them towards zero.\\n\"}",
+  "metadata": {
+    "model": "claude-sonnet-4-6",
+    "prompt_version": "issue-to-unified-diff-v3-submit-patch-tool",
+    "stop_reason": "tool_use",
+    "patch_source": "tool"
+  },
+  "variant": {
+    "transformed_text": "Linux package manager\n\n```\n/usr/lib/python3.10/site-packages/matplotlib/colors.py:730: DeprecationWarning: NumPy will stop allowing conversion of out-of-bound Python integers to integer arrays.  The conversion of 257 to uint8 will fail in the future.\nFor the old behavior, usually:\n    np.array(value).astype(dtype)`\nwill give the desired result (the cast overflows).\n  xa[xa > self.N - 1] = self._i_over\n/usr/lib/python3.10/site-packages/matplotlib/colors.py:731: DeprecationWarning: NumPy will stop allowing conversion of out-of-bound Python integers to integer arrays.  The conversion of 256 to uint8 will fail in the future.\nFor the old behavior, usually:\n    np.array(value).astype(dtype)`\nwill give the desired result (the cast overflows).\n  xa[xa < 0] = self._i_under\n/usr/lib/python3.10/site-packages/matplotlib/colors.py:732: DeprecationWarning: NumPy will stop allowing conversion of out-of-bound Python integers to integer arrays.  The conversion of 258 to uint8 will fail in the future.\nFor the old behavior, usually:\n    np.array(value).astype(dtype)`\nwill give the desired result (the cast overflows).\n  xa[mask_bad] = self._i_bad\n```\n\n### Code for reproduction\n\nQtAgg\n\n_No response_\n\n### Matplotlib Version\n\n### Python version\n\n_No response_\n\n### Expected outcome\n\n3.6.2\n\n### Jupyter version\n\n### Matplotlib Backend\n\n### Operating system\n\nStarting NumPy 1.24 I observe several deprecation warnings.\n\nArchLinux\n\n### Actual outcome\n\nPython 3.10.9\n\nNo warnings.\n\n### Additional information\n\n[Bug]: NumPy 1.24 deprecation warnings\n### Bug summary\n\n```python\nimport matplotlib.pyplot as plt\nimport numpy as np\n\nplt.get_cmap()(np.empty((0, ), dtype=np.uint8))\n```\n\n### Installation",
+    "transformation_notes": "Shuffled 22 paragraph(s) (seed=42); CRLF normalised to LF, fenced code blocks kept whole.",
+    "params": {
+      "seed": 42
+    },
+    "generator": "deterministic",
+    "transform_version": "2",
+    "generation_mode": "real",
+    "quality_warning": false,
+    "noop": false,
+    "exclusion_reason": null,
+    "generation_cost_usd": 0.0,
+    "original_sha256": "5ae160cc5420b0587fc3a4d567fb1d76d86d4d20de526eaaaeb95759ea568dbf"
+  },
+  "recorded_from": {
+    "experiment_id": "bc6f1372-2088-45dd-907c-d741c0545d27",
+    "experiment_name": "icse_pilot_v1",
+    "run_id": "264dc323-ec69-41b0-8e25-f6041d9b0394",
+    "agent_name": "llm_baseline",
+    "execution_mode": "real"
+  }
+}

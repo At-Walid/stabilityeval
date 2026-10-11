@@ -1,0 +1,42 @@
+{
+  "status": "success",
+  "patch": "--- a/django/db/backends/base/schema.py\n+++ b/django/db/backends/base/schema.py\n@@ -375,7 +375,11 @@ class BaseDatabaseSchemaEditor:\n         # This is a little tricky: we need to find the index that matches the\n         # columns and is not the primary key or unique constraint (if they\n         # exist). This is because we can't delete those.\n-        constraints = self._constraint_names(model, [fields], index=True, primary_key=False, unique=False)\n+        constraints = self._constraint_names(model, [fields], index=True, primary_key=False)\n+        # Filter out unique constraints from the list of constraints\n+        constraints = [c for c in constraints if not self._is_unique_constraint(model, c)]\n         if len(constraints) != 1:\n             raise ValueError(\"Found wrong number (%s) of constraints for %s\" % (\n                 len(constraints), ', '.join(fields)\n@@ -390,6 +394,10 @@ class BaseDatabaseSchemaEditor:\n         self.execute(self._delete_constraint_sql(self.sql_delete_index, model, constraint))\n \n     def _constraint_names(self, model, columns, index=True, primary_key=True, unique=True, foreign_key=True, check=True):\n+        \"\"\"\n+        Return a list of constraint names for the given model and columns.\n+        \"\"\"\n         constraints = self.connection.introspection.get_constraints(self.connection.cursor(), model._meta.db_table)\n         column_names = [model._meta.get_field(column).column for column in columns]\n         result = []\n@@ -401,6 +409,12 @@ class BaseDatabaseSchemaEditor:\n         return result\n \n     def _is_unique_constraint(self, model, constraint_name):\n+        \"\"\"\n+        Check if the given constraint is a unique constraint.\n+        \"\"\"\n+        constraints = self.connection.introspection.get_constraints(self.connection.cursor(), model._meta.db_table)\n+        return constraints[constraint_name]['unique']\n+\n     def _alter_field(self, model, old_field, new_field, old_type, new_type, old_db_params, new_db_params, strict=False):\n         \"\"\"Handles a field alteration on a model. Must be called from inside a\n         transaction.\"\"\"\n         # Ensure we have the right type for the new field\"",
+  "explanation": null,
+  "token_usage": {
+    "input": 425,
+    "output": 524
+  },
+  "cost_usd": 0.0063025,
+  "runtime_seconds": 4.0,
+  "error_message": null,
+  "raw_logs": "{\"diff\": \"--- a/django/db/backends/base/schema.py\\n+++ b/django/db/backends/base/schema.py\\n@@ -375,7 +375,11 @@ class BaseDatabaseSchemaEditor:\\n         # This is a little tricky: we need to find the index that matches the\\n         # columns and is not the primary key or unique constraint (if they\\n         # exist). This is because we can't delete those.\\n-        constraints = self._constraint_names(model, [fields], index=True, primary_key=False, unique=False)\\n+        constraints = self._constraint_names(model, [fields], index=True, primary_key=False)\\n+        # Filter out unique constraints from the list of constraints\\n+        constraints = [c for c in constraints if not self._is_unique_constraint(model, c)]\\n         if len(constraints) != 1:\\n             raise ValueError(\\\"Found wrong number (%s) of constraints for %s\\\" % (\\n                 len(constraints), ', '.join(fields)\\n@@ -390,6 +394,10 @@ class BaseDatabaseSchemaEditor:\\n         self.execute(self._delete_constraint_sql(self.sql_delete_index, model, constraint))\\n \\n     def _constraint_names(self, model, columns, index=True, primary_key=True, unique=True, foreign_key=True, check=True):\\n+        \\\"\\\"\\\"\\n+        Return a list of constraint names for the given model and columns.\\n+        \\\"\\\"\\\"\\n         constraints = self.connection.introspection.get_constraints(self.connection.cursor(), model._meta.db_table)\\n         column_names = [model._meta.get_field(column).column for column in columns]\\n         result = []\\n@@ -401,6 +409,12 @@ class BaseDatabaseSchemaEditor:\\n         return result\\n \\n     def _is_unique_constraint(self, model, constraint_name):\\n+        \\\"\\\"\\\"\\n+        Check if the given constraint is a unique constraint.\\n+        \\\"\\\"\\\"\\n+        constraints = self.connection.introspection.get_constraints(self.connection.cursor(), model._meta.db_table)\\n+        return constraints[constraint_name]['unique']\\n+\\n     def _alter_field(self, model, old_field, new_field, old_type, new_type, old_db_params, new_db_params, strict=False):\\n         \\\"\\\"\\\"Handles a field alteration on a model. Must be called from inside a\\n         transaction.\\\"\\\"\\\"\\n         # Ensure we have the right type for the new field\\\"\"}",
+  "metadata": {
+    "model": "gpt-4o",
+    "prompt_version": "issue-to-unified-diff-v3-submit-patch-tool",
+    "stop_reason": "tool_use",
+    "patch_source": "tool",
+    "model_snapshot": "gpt-4o-2024-08-06"
+  },
+  "variant": {
+    "transformed_text": "Migration crashes deleting an index_together f there is a unique_together on the same fields\nDescription\n\t\nHappens with Django 1.11.10\nSteps to reproduce:\n1) Create models with 2 fields, add 2 same filds to unique_together and to index_together\n2) Delete index_together -> Fail\nIt will fail at django/db/backends/base/schema.py, line 378, in _delete_composed_index(), ValueError: Found wrong number (2) of constraints for as this one will find two constraints, the _uniq and the _idx one. No way to get out of this...\nThe worst in my case is that happened as I wanted to refactor my code to use the \"new\" (Dj 1.11) Options.indexes feature. I am actually not deleting the index, just the way it is declared in my code.\nI think there are 2 different points here:\n1) The deletion of index_together should be possible alone or made coheren (migrations side?) with unique_together\n2) Moving the declaration of an index should not result in an index re-creation\n",
+    "transformation_notes": "Injected character-level typos into ~2% of prose words (3 word(s) modified); code spans left untouched.",
+    "params": {
+      "error_rate": 0.02
+    },
+    "generator": "deterministic",
+    "transform_version": "1",
+    "generation_mode": "real",
+    "quality_warning": false,
+    "noop": false,
+    "exclusion_reason": null,
+    "generation_cost_usd": null,
+    "original_sha256": "773681998993eff75a3b69f04821e4e8683f89cfffdee38f19fe11cb3c7a98be"
+  },
+  "recorded_from": {
+    "experiment_id": "9d27f3ef-397a-41b7-b1b2-e09729288a40",
+    "experiment_name": "icse_pilot_model2",
+    "run_id": "5bfb7fad-3294-403a-a4c6-8d356fe6bf7c",
+    "agent_name": "llm_baseline",
+    "execution_mode": "real"
+  }
+}

@@ -1,0 +1,39 @@
+{
+  "status": "success",
+  "patch": "--- a/django/contrib/messages/storage/cookie.py\n+++ b/django/contrib/messages/storage/cookie.py\n@@ -17,7 +17,7 @@ class MessageEncoder(json.JSONEncoder):\n         if isinstance(obj, Message):\n             # Using 0/1 here instead of False/True to produce more compact json\n             is_safedata = 1 if isinstance(obj.message, SafeData) else 0\n-            message = [self.message_key, is_safedata, obj.level, obj.message]\n+            message = [self.message_key, is_safedata, obj.level, obj.message, obj.extra_tags]\n             if obj.extra_tags:\n                 message.append(obj.extra_tags)\n             return message\n@@ -36,7 +36,7 @@ class MessageDecoder(json.JSONDecoder):\n             if obj[0] == MessageEncoder.message_key:\n                 if obj[1]:\n                     obj[3] = mark_safe(obj[3])\n-                return Message(*obj[2:])\n+                return Message(*obj[2:5])\n         return obj\n \n     def process_messages(self, obj):\n",
+  "explanation": null,
+  "token_usage": {
+    "input": 1174,
+    "output": 330
+  },
+  "cost_usd": 0.008472,
+  "runtime_seconds": 5.297000000020489,
+  "error_message": null,
+  "raw_logs": "{\"diff\": \"--- a/django/contrib/messages/storage/cookie.py\\n+++ b/django/contrib/messages/storage/cookie.py\\n@@ -17,7 +17,7 @@ class MessageEncoder(json.JSONEncoder):\\n         if isinstance(obj, Message):\\n             # Using 0/1 here instead of False/True to produce more compact json\\n             is_safedata = 1 if isinstance(obj.message, SafeData) else 0\\n-            message = [self.message_key, is_safedata, obj.level, obj.message]\\n+            message = [self.message_key, is_safedata, obj.level, obj.message, obj.extra_tags]\\n             if obj.extra_tags:\\n                 message.append(obj.extra_tags)\\n             return message\\n@@ -36,7 +36,7 @@ class MessageDecoder(json.JSONDecoder):\\n             if obj[0] == MessageEncoder.message_key:\\n                 if obj[1]:\\n                     obj[3] = mark_safe(obj[3])\\n-                return Message(*obj[2:])\\n+                return Message(*obj[2:5])\\n         return obj\\n \\n     def process_messages(self, obj):\\n\"}",
+  "metadata": {
+    "model": "claude-sonnet-4-6",
+    "prompt_version": "issue-to-unified-diff-v3-submit-patch-tool",
+    "stop_reason": "tool_use",
+    "patch_source": "tool"
+  },
+  "variant": {
+    "transformed_text": "## Summary\nThe messages framework incorrectly serializes/deserializes extra_tags when it's an empty string, converting empty string to None.\n\n## Steps to Reproduce\n>>> from django.conf import settings\n>>> settings.configure() # Just to allow the following import\n>>> from django.contrib.messages.storage.base import Message\n>>> from django.contrib.messages.storage.cookie import MessageEncoder, MessageDecoder\n>>> original_message = Message(10, \"Here is a message\", extra_tags=\"\")\n>>> encoded_message = MessageEncoder().encode(original_message)\n>>> decoded_message = MessageDecoder().decode(encoded_message)\n>>> original_message.extra_tags == \"\"\nTrue\n>>> decoded_message.extra_tags is None\nTrue\nEffect of the bug in application behaviour\nThis error occurred in the wild with a template tag similar to the following:\n{% if x not in message.extra_tags %}\nWhen the message was displayed as part of a redirect, it had been serialised and deserialized which meant that extra_tags was None instead of the empty string. This caused an error.\nIt's important to note that this bug affects all of the standard API (messages.debug, messages.info etc. all have a default value of extra_tags equal to \"\").\n\n## Expected Behavior\nWhen a message with extra_tags=\"\" is serialized and then deserialized, extra_tags should remain as an empty string.\n\n## Actual Behavior\nWhen a message with extra_tags=\"\" is serialized and then deserialized with any of the built-in storage backends, extra_tags is converted to None instead of remaining as an empty string.\n\n## Environment\nNot specified",
+    "transformation_notes": "Reformatted the issue description into the five required sections. The issue states that MessageEncoder checks for the truthiness of extra_tags rather than checking if it is not None. The reproduction steps are provided by the placeholder CODE_1. Environment details are not specified in the original issue. [quality check passed on attempt 1/2]",
+    "params": {},
+    "generator": "claude-haiku-4-5-20251001",
+    "transform_version": "5",
+    "generation_mode": "real",
+    "quality_warning": false,
+    "noop": false,
+    "exclusion_reason": null,
+    "generation_cost_usd": 0.001842,
+    "original_sha256": "5370589f1c868ff26fda4d4e9a0b44eee3e4021db7065c5d26a35deeda54895e"
+  },
+  "recorded_from": {
+    "experiment_id": "bc6f1372-2088-45dd-907c-d741c0545d27",
+    "experiment_name": "icse_pilot_v1",
+    "run_id": "bc61003c-6a00-4ef7-94e3-eeb677064258",
+    "agent_name": "llm_baseline",
+    "execution_mode": "real"
+  }
+}

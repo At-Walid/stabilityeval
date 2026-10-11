@@ -1,0 +1,20 @@
+# gitleaks configuration: the default rules, plus one narrow allowlist.
+#
+# The pilot exports (data/pilot/exports/) contain thousands of run ids (UUIDs, e.g. in "scope_key")
+# and variant cache keys (SHA-256 hex, "_cache_key"). The generic-api-key rule reports them because
+# they follow a field whose name contains "key". They are identifiers, not secrets. Only values of
+# exactly those two shapes, and only in those files, are ignored; every rule stays active elsewhere.
+title = "StableAgent gitleaks configuration"
+
+[extend]
+useDefault = true
+
+[[allowlists]]
+description = "Run ids (UUIDs) and variant cache keys (SHA-256) in the shipped pilot exports"
+condition = "AND"
+paths = ['''data/pilot/exports/''']
+regexTarget = "secret"
+regexes = [
+  '''^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{0,12}$''',
+  '''^[0-9a-f]{64}$''',
+]

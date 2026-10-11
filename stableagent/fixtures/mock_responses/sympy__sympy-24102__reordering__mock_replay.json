@@ -1,0 +1,41 @@
+{
+  "status": "success",
+  "patch": "--- a/sympy/parsing/mathematica.py\n+++ b/sympy/parsing/mathematica.py\n@@ -1,6 +1,7 @@\n from __future__ import annotations\n \n import re\n+import unicodedata\n from itertools import product\n from typing import Any\n \n@@ -595,7 +596,7 @@ def _get_tokenizer(self):\n         if self._regex is None:\n             # Compile the regex for tokenization\n             self._regex = re.compile(\n-                r'(?P<TOKEN>[a-zA-Z][a-zA-Z0-9]*)'\n+                r'(?P<TOKEN>[^\\W\\d_][^\\W_]*)'\n                 r'|(?P<NUMBER>[0-9]+(?:\\.[0-9]+)?(?:\\*\\^[+-]?[0-9]+)?)'\n                 r'|(?P<STRING>\"(?:[^\"\\\\]|\\\\.)*\")'\n                 r'|(?P<OPERATOR>[+\\-*/^:=<>!&|@~,;_\\'`])'\n",
+  "explanation": null,
+  "token_usage": {
+    "input": 1259,
+    "output": 303
+  },
+  "cost_usd": 0.008322,
+  "runtime_seconds": 5.202999999979511,
+  "error_message": null,
+  "raw_logs": "{\"diff\": \"--- a/sympy/parsing/mathematica.py\\n+++ b/sympy/parsing/mathematica.py\\n@@ -1,6 +1,7 @@\\n from __future__ import annotations\\n \\n import re\\n+import unicodedata\\n from itertools import product\\n from typing import Any\\n \\n@@ -595,7 +596,7 @@ def _get_tokenizer(self):\\n         if self._regex is None:\\n             # Compile the regex for tokenization\\n             self._regex = re.compile(\\n-                r'(?P<TOKEN>[a-zA-Z][a-zA-Z0-9]*)'\\n+                r'(?P<TOKEN>[^\\\\W\\\\d_][^\\\\W_]*)'\\n                 r'|(?P<NUMBER>[0-9]+(?:\\\\.[0-9]+)?(?:\\\\*\\\\^[+-]?[0-9]+)?)'\\n                 r'|(?P<STRING>\\\"(?:[^\\\"\\\\\\\\]|\\\\\\\\.)*\\\")'\\n                 r'|(?P<OPERATOR>[+\\\\-*/^:=<>!&|@~,;_\\\\'`])'\\n\"}",
+  "metadata": {
+    "model": "claude-sonnet-4-6",
+    "prompt_version": "issue-to-unified-diff-v3-submit-patch-tool",
+    "stop_reason": "tool_use",
+    "patch_source": "tool"
+  },
+  "variant": {
+    "transformed_text": "As of SymPy v. 1.11, the `mathematica` function is deprecated, and is replaced by `parse_mathematica`. This function, however, seems unable to handle the simple example above:\n```\nfrom sympy.parsing.mathematica import parse_mathematica\nparse_mathematica('λ')\nTraceback (most recent call last):\n...\nFile \"<string>\", line unknown\nSyntaxError: unable to create a single AST for the expression\n```\n\nThanks in advance!\nCannot parse Greek characters (and possibly others) in parse_mathematica\nThe old Mathematica parser `mathematica` in the package `sympy.parsing.mathematica` was able to parse e.g. Greek characters. Hence the following example works fine:\n```\nfrom sympy.parsing.mathematica import mathematica\nmathematica('λ')\nOut[]: \nλ\n```\n\nAs of SymPy v. 1.11, the `mathematica` function is deprecated, and is replaced by `parse_mathematica`. This function, however, seems unable to handle the simple example above:\n```\nfrom sympy.parsing.mathematica import parse_mathematica\nparse_mathematica('λ')\nTraceback (most recent call last):\n...\nFile \"<string>\", line unknown\nSyntaxError: unable to create a single AST for the expression\n```\n\nThis appears to be due to a bug in `parse_mathematica`, which is why I have opened this issue.\n\nThanks in advance!\n\nCannot parse Greek characters (and possibly others) in parse_mathematica\nThe old Mathematica parser `mathematica` in the package `sympy.parsing.mathematica` was able to parse e.g. Greek characters. Hence the following example works fine:\n```\nfrom sympy.parsing.mathematica import mathematica\nmathematica('λ')\nOut[]: \nλ\n```\n\nThis appears to be due to a bug in `parse_mathematica`, which is why I have opened this issue.",
+    "transformation_notes": "Shuffled 7 paragraph(s) (seed=42); CRLF normalised to LF, fenced code blocks kept whole.",
+    "params": {
+      "seed": 42
+    },
+    "generator": "deterministic",
+    "transform_version": "2",
+    "generation_mode": "real",
+    "quality_warning": false,
+    "noop": false,
+    "exclusion_reason": null,
+    "generation_cost_usd": 0.0,
+    "original_sha256": "1c59678bf32d77d45874aa931fa806c5f7f6e599c01ab7f93d144a48a84273ea"
+  },
+  "recorded_from": {
+    "experiment_id": "bc6f1372-2088-45dd-907c-d741c0545d27",
+    "experiment_name": "icse_pilot_v1",
+    "run_id": "fc296761-a8f0-4a48-8a40-ce090a4b066a",
+    "agent_name": "llm_baseline",
+    "execution_mode": "real"
+  }
+}

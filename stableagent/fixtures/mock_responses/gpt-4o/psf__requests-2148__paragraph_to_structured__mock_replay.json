@@ -1,0 +1,40 @@
+{
+  "status": "success",
+  "patch": "--- a/requests/adapters.py\n+++ b/requests/adapters.py\n@@ -13,6 +13,7 @@\n import os.path\n import socket\n import struct\n+import errno\n \n from .models import Response\n from .packages.urllib3.poolmanager import PoolManager, proxy_from_url\n@@ -384,7 +385,12 @@ class HTTPAdapter(BaseAdapter):\n \n         except (ProtocolError, socket.error) as err:\n             if isinstance(err, ProtocolError):\n-                raise ConnectionError(err, request=request)\n+                raise ConnectionError(err, request=request)\n+            elif isinstance(err, socket.error):\n+                if err.errno in (errno.ECONNRESET, errno.ECONNABORTED, errno.EPIPE):\n+                    raise ConnectionError(err, request=request)\n+                else:\n+                    raise\n \n         except MaxRetryError as e:\n             if isinstance(e.reason, ConnectTimeoutError):",
+  "explanation": null,
+  "token_usage": {
+    "input": 931,
+    "output": 215
+  },
+  "cost_usd": 0.0044775,
+  "runtime_seconds": 1.577999999979511,
+  "error_message": null,
+  "raw_logs": "{\"diff\": \"--- a/requests/adapters.py\\n+++ b/requests/adapters.py\\n@@ -13,6 +13,7 @@\\n import os.path\\n import socket\\n import struct\\n+import errno\\n \\n from .models import Response\\n from .packages.urllib3.poolmanager import PoolManager, proxy_from_url\\n@@ -384,7 +385,12 @@ class HTTPAdapter(BaseAdapter):\\n \\n         except (ProtocolError, socket.error) as err:\\n             if isinstance(err, ProtocolError):\\n-                raise ConnectionError(err, request=request)\\n+                raise ConnectionError(err, request=request)\\n+            elif isinstance(err, socket.error):\\n+                if err.errno in (errno.ECONNRESET, errno.ECONNABORTED, errno.EPIPE):\\n+                    raise ConnectionError(err, request=request)\\n+                else:\\n+                    raise\\n \\n         except MaxRetryError as e:\\n             if isinstance(e.reason, ConnectTimeoutError):\"}",
+  "metadata": {
+    "model": "gpt-4o",
+    "prompt_version": "issue-to-unified-diff-v3-submit-patch-tool",
+    "stop_reason": "tool_use",
+    "patch_source": "tool",
+    "model_snapshot": "gpt-4o-2024-08-06"
+  },
+  "variant": {
+    "transformed_text": "## Summary\nsocket.error exception is not caught and wrapped in a requests exception (such as ConnectionError).\n\n## Steps to Reproduce\nNot specified\n\n## Expected Behavior\nWhen using requests, a socket error should be wrapped in a requests exception (such as requests.exceptions.ConnectionError) rather than raised as a raw socket error.\n\n## Actual Behavior\n```\n  File \"/home/rtdean/***/***/***/***/***/***.py\", line 67, in dir_parse\n    root = ElementTree.fromstring(response.text)\n  File \"/home/rtdean/.pyenv/versions/2.7.6/lib/python2.7/site-packages/requests-2.3.0-py2.7.egg/requests/models.py\", line 721, in text\n    if not self.content:\n  File \"/home/rtdean/.pyenv/versions/2.7.6/lib/python2.7/site-packages/requests-2.3.0-py2.7.egg/requests/models.py\", line 694, in content\n    self._content = bytes().join(self.iter_content(CONTENT_CHUNK_SIZE)) or bytes()\n  File \"/home/rtdean/.pyenv/versions/2.7.6/lib/python2.7/site-packages/requests-2.3.0-py2.7.egg/requests/models.py\", line 627, in generate\n    for chunk in self.raw.stream(chunk_size, decode_content=True):\n  File \"/home/rtdean/.pyenv/versions/2.7.6/lib/python2.7/site-packages/requests-2.3.0-py2.7.egg/requests/packages/urllib3/response.py\", line 240, in stream\n    data = self.read(amt=amt, decode_content=decode_content)\n  File \"/home/rtdean/.pyenv/versions/2.7.6/lib/python2.7/site-packages/requests-2.3.0-py2.7.egg/requests/packages/urllib3/response.py\", line 187, in read\n    data = self._fp.read(amt)\n  File \"/home/rtdean/.pyenv/versions/2.7.6/lib/python2.7/httplib.py\", line 543, in read\n    return self._read_chunked(amt)\n  File \"/home/rtdean/.pyenv/versions/2.7.6/lib/python2.7/httplib.py\", line 612, in _read_chunked\n    value.append(self._safe_read(chunk_left))\n  File \"/home/rtdean/.pyenv/versions/2.7.6/lib/python2.7/httplib.py\", line 658, in _safe_read\n    chunk = self.fp.read(min(amt, MAXAMOUNT))\n  File \"/home/rtdean/.pyenv/versions/2.7.6/lib/python2.7/socket.py\", line 380, in read\n    data = self._sock.recv(left)\n  File \"/home/rtdean/.pyenv/versions/2.7.6/lib/python2.7/site-packages/gevent-1.0.1-py2.7-linux-x86_64.egg/gevent/socket.py\", line 385, in recv\n    return sock.recv(*args)\nsocket.error: [Errno 104] Connection reset by peer\n```\n\nA raw socket error is raised instead of a requests exception.\n\n## Environment\nNot specified",
+    "transformation_notes": "Reformatted the issue into the five required sections. The issue describes the unexpected behavior (raw socket error instead of wrapped exception) without providing explicit reproduction steps or environment details. The code placeholder was preserved and placed in the Actual Behavior section where it illustrates the problem. [quality check passed on attempt 1/2]",
+    "params": {},
+    "generator": "claude-haiku-4-5-20251001",
+    "transform_version": "5",
+    "generation_mode": "real",
+    "quality_warning": false,
+    "noop": false,
+    "exclusion_reason": null,
+    "generation_cost_usd": 0.001703,
+    "original_sha256": "68364fcb5e168c51619a74fe0026d874a7f62dda4c796e61c9f9a9c808c56a6d"
+  },
+  "recorded_from": {
+    "experiment_id": "9d27f3ef-397a-41b7-b1b2-e09729288a40",
+    "experiment_name": "icse_pilot_model2",
+    "run_id": "c0f89ab7-3d2c-42eb-86ce-2316464cfaf8",
+    "agent_name": "llm_baseline",
+    "execution_mode": "real"
+  }
+}

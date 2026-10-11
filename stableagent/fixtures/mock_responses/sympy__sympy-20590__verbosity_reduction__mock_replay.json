@@ -1,0 +1,19 @@
+{
+  "status": "failure",
+  "patch": null,
+  "explanation": null,
+  "token_usage": {
+    "input": 1832,
+    "output": 130
+  },
+  "cost_usd": 0.0,
+  "runtime_seconds": 1.32,
+  "error_message": "Agent could not identify the relevant code from the compressed issue description.",
+  "raw_logs": "[2026-07-05T09:00:00Z] INFO  agent='mock_replay' issue=sympy__sympy-20590 transform='verbosity_reduction'\n[2026-07-05T09:00:00Z] INFO  Loading fixture from disk\n[2026-07-05T09:00:00Z] INFO  Fixture deserialized (issue_id=sympy__sympy-20590, transform=verbosity_reduction)\n[2026-07-05T09:00:00Z] WARN  Patch extraction failed \u2014 response did not contain a valid diff\n[2026-07-05T09:00:00Z] ERROR Status: FAILURE (runtime=1.32s)",
+  "metadata": {
+    "issue_id": "sympy__sympy-20590",
+    "transformation_name": "verbosity_reduction",
+    "agent": "mock_replay",
+    "fixture_version": "1.0"
+  }
+}

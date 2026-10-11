@@ -1,0 +1,49 @@
+{
+  "status": "success",
+  "patch": "--- a/src/_pytest/mark/evaluate.py\n+++ b/src/_pytest/mark/evaluate.py\n@@ -1,7 +1,6 @@\n import ast\n import sys\n import _pytest._code\n-from functools import lru_cache\n from _pytest.compat import STRING_TYPES\n \n \n@@ -9,7 +8,6 @@ def safe_eval(source, globals=None, locals=None):\n     mode = \"eval\"\n     source = _pytest._code.Source(source).strip()\n     \n-    @lru_cache(maxsize=50)\n     def cached_eval(source, globals=None, locals=None):\n         # Use the same ast parsing as code.__new__\n         code = compile(source, \"<string>\", mode)\n@@ -17,7 +15,7 @@ def cached_eval(source, globals=None, locals=None):\n         return eval(code, globals, locals)\n \n     try:\n-        return cached_eval(source, globals, locals)\n+        return eval(compile(source, \"<string>\", mode), globals, locals)\n     except SyntaxError as e:\n         raise SyntaxError(\n             \"{} at {}:{}\".format(e, e.filename, e.lineno)\n@@ -64,7 +62,7 @@ class MarkEvaluator:\n         self._marks = marks\n \n     def _istrue(self):\n-        return safe_eval(self.expression, self.globals, self.locals)\n+        return eval(compile(self.expression, \"<string>\", \"eval\"), self.globals, self.locals)\n \n     def istrue(self):\n         try:\n",
+  "explanation": null,
+  "token_usage": {
+    "input": 434,
+    "output": 362
+  },
+  "cost_usd": 0.004705,
+  "runtime_seconds": 2.7649999998975545,
+  "error_message": null,
+  "raw_logs": "{\"diff\": \"--- a/src/_pytest/mark/evaluate.py\\n+++ b/src/_pytest/mark/evaluate.py\\n@@ -1,7 +1,6 @@\\n import ast\\n import sys\\n import _pytest._code\\n-from functools import lru_cache\\n from _pytest.compat import STRING_TYPES\\n \\n \\n@@ -9,7 +8,6 @@ def safe_eval(source, globals=None, locals=None):\\n     mode = \\\"eval\\\"\\n     source = _pytest._code.Source(source).strip()\\n     \\n-    @lru_cache(maxsize=50)\\n     def cached_eval(source, globals=None, locals=None):\\n         # Use the same ast parsing as code.__new__\\n         code = compile(source, \\\"<string>\\\", mode)\\n@@ -17,7 +15,7 @@ def cached_eval(source, globals=None, locals=None):\\n         return eval(code, globals, locals)\\n \\n     try:\\n-        return cached_eval(source, globals, locals)\\n+        return eval(compile(source, \\\"<string>\\\", mode), globals, locals)\\n     except SyntaxError as e:\\n         raise SyntaxError(\\n             \\\"{} at {}:{}\\\".format(e, e.filename, e.lineno)\\n@@ -64,7 +62,7 @@ class MarkEvaluator:\\n         self._marks = marks\\n \\n     def _istrue(self):\\n-        return safe_eval(self.expression, self.globals, self.locals)\\n+        return eval(compile(self.expression, \\\"<string>\\\", \\\"eval\\\"), self.globals, self.locals)\\n \\n     def istrue(self):\\n         try:\\n\"}",
+  "metadata": {
+    "model": "gpt-4o",
+    "prompt_version": "issue-to-unified-diff-v3-submit-patch-tool",
+    "stop_reason": "tool_use",
+    "patch_source": "tool",
+    "model_snapshot": "gpt-4o-2024-08-06"
+  },
+  "control_repeats": [
+    {
+      "status": "success",
+      "patch": "--- a/src/_pytest/mark/evaluate.py\n+++ b/src/_pytest/mark/evaluate.py\n@@ -1,7 +1,6 @@\n import ast\n import sys\n import _pytest._code\n-from functools import lru_cache\n from _pytest.compat import STRING_TYPES\n \n \n@@ -9,7 +8,6 @@\n     pass\n \n \n-@lru_cache(maxsize=50)\n def cached_eval(\n     string: str, globals: dict, locals: dict | None = None\n ) -> object:\n@@ -17,7 +15,7 @@\n     expr = ast.parse(string, mode=\"eval\").body\n     return eval(expr, globals, locals)\n \n-\n+\n class MarkEvaluator:\n     def __init__(self, item, mark):\n         self.item = item\n@@ -38,7 +36,7 @@\n         if isinstance(self.condition, STRING_TYPES):\n             import _pytest._code\n \n-            result = cached_eval(self.condition, namespace)\n+            result = eval(ast.parse(self.condition, mode=\"eval\").body, namespace)\n         elif callable(self.condition):\n             if self.holder:\n                 warnings.warn(\n",
+      "explanation": null,
+      "token_usage": {
+        "input": 434,
+        "output": 276
+      },
+      "cost_usd": 0.003845,
+      "runtime_seconds": 2.25,
+      "error_message": null,
+      "raw_logs": "{\"diff\": \"--- a/src/_pytest/mark/evaluate.py\\n+++ b/src/_pytest/mark/evaluate.py\\n@@ -1,7 +1,6 @@\\n import ast\\n import sys\\n import _pytest._code\\n-from functools import lru_cache\\n from _pytest.compat import STRING_TYPES\\n \\n \\n@@ -9,7 +8,6 @@\\n     pass\\n \\n \\n-@lru_cache(maxsize=50)\\n def cached_eval(\\n     string: str, globals: dict, locals: dict | None = None\\n ) -> object:\\n@@ -17,7 +15,7 @@\\n     expr = ast.parse(string, mode=\\\"eval\\\").body\\n     return eval(expr, globals, locals)\\n \\n-\\n+\\n class MarkEvaluator:\\n     def __init__(self, item, mark):\\n         self.item = item\\n@@ -38,7 +36,7 @@\\n         if isinstance(self.condition, STRING_TYPES):\\n             import _pytest._code\\n \\n-            result = cached_eval(self.condition, namespace)\\n+            result = eval(ast.parse(self.condition, mode=\\\"eval\\\").body, namespace)\\n         elif callable(self.condition):\\n             if self.holder:\\n                 warnings.warn(\\n\"}",
+      "metadata": {
+        "model": "gpt-4o",
+        "prompt_version": "issue-to-unified-diff-v3-submit-patch-tool",
+        "stop_reason": "tool_use",
+        "patch_source": "tool",
+        "model_snapshot": "gpt-4o-2024-08-06"
+      }
+    }
+  ],
+  "recorded_from": {
+    "experiment_id": "9d27f3ef-397a-41b7-b1b2-e09729288a40",
+    "experiment_name": "icse_pilot_model2",
+    "run_id": "c182d877-4a1c-4f7b-9c37-cd1b861a5ab2",
+    "agent_name": "llm_baseline",
+    "execution_mode": "real"
+  }
+}

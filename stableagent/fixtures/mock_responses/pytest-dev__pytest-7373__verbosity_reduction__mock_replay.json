@@ -1,0 +1,33 @@
+{
+  "status": "skipped_variant",
+  "patch": null,
+  "explanation": null,
+  "token_usage": {},
+  "cost_usd": 0.0,
+  "runtime_seconds": 0.0,
+  "error_message": "Not run: variant excluded (identifier retention failed (missing 1: 5.4.3))",
+  "raw_logs": "",
+  "metadata": {},
+  "variant": {
+    "transformed_text": "pytest caches evaluation of skipif/xfail string conditions in e.g. `@pytest.mark.skipif(\"sys.platform == 'win32'\")`. The caching key is only the string itself (see `cached_eval` in `_pytest/mark/evaluate.py`). However, evaluation depends on the item's globals, causing incorrect results.\n\nExample:\n\n```py\r\n# test_module_1.py\r\nimport pytest\r\n\r\nskip = True\r\n\r\n@pytest.mark.skipif(\"skip\")\r\ndef test_should_skip():\r\n    assert False\r\n```\n\n```py\r\n# test_module_2.py\r\nimport pytest\r\n\r\nskip = False\r\n\r\n@pytest.mark.skipif(\"skip\")\r\ndef test_should_not_skip():\r\n    assert False\r\n```\n\nRunning `pytest test_module_1.py test_module_2.py`.\n\nExpected: `test_should_skip` is skipped, `test_should_not_skip` is not skipped.\n\nActual: both are skipped.\n\nProposed fix: remove the caching and inline `cached_eval` into `MarkEvaluator._istrue`.",
+    "transformation_notes": "Removed version info and filler phrases ('I think', 'which I don't think is necessary really'). Condensed explanation while preserving all code placeholders exactly once and the symptom/expected/actual behavior. [QUALITY WARNING: identifier retention failed (missing 1: 5.4.3) after 2 attempts; excluded from metrics]",
+    "params": {
+      "target_ratio": 0.5
+    },
+    "generator": "claude-haiku-4-5-20251001",
+    "transform_version": "4",
+    "generation_mode": "real",
+    "quality_warning": true,
+    "noop": false,
+    "exclusion_reason": "identifier retention failed (missing 1: 5.4.3)",
+    "generation_cost_usd": 0.004087,
+    "original_sha256": "cd8053cca6079b776ea53538580a40f748a5813c82f42208d250af90a2cc5797"
+  },
+  "recorded_from": {
+    "experiment_id": "bc6f1372-2088-45dd-907c-d741c0545d27",
+    "experiment_name": "icse_pilot_v1",
+    "run_id": "fd47a65c-0b28-4aff-ac29-fe87a2923ef0",
+    "agent_name": "llm_baseline",
+    "execution_mode": "real"
+  }
+}

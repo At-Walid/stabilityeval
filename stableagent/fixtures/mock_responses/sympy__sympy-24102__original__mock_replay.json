@@ -1,0 +1,47 @@
+{
+  "status": "success",
+  "patch": "--- a/sympy/parsing/mathematica.py\n+++ b/sympy/parsing/mathematica.py\n@@ -1,6 +1,7 @@\n from __future__ import annotations\n \n import re\n+import unicodedata\n from itertools import product\n from typing import Any\n \n@@ -150,7 +151,7 @@ class MathematicaParser:\n     # Mathematica function name pattern\n     FM_PATTERN = re.compile(r'''\n         (?:\n-            [a-zA-Z][a-zA-Z0-9]*  # function name\n+            [^\\W\\d_][^\\W_]*  # function name (supports Unicode letters)\n         )\n         \\[  # opening bracket\n     ''', re.VERBOSE)\n@@ -158,7 +159,7 @@ class MathematicaParser:\n     # Mathematica symbol pattern\n     SYMBOL_PATTERN = re.compile(r'''\n         (?<![a-zA-Z0-9])  # not preceded by alphanumeric\n-        [a-zA-Z][a-zA-Z0-9]*  # symbol name\n+        [^\\W\\d_][^\\W_]*  # symbol name (supports Unicode letters)\n         (?![a-zA-Z0-9\\[])  # not followed by alphanumeric or bracket\n     ''', re.VERBOSE)\n \n@@ -541,7 +542,7 @@ class MathematicaParser:\n         # Tokenize the input string\n         ...\n \n-    _literal = r\"[A-Za-z][A-Za-z0-9]*\"\n+    _literal = r\"[^\\W\\d_][^\\W_]*\"\n     _number = r\"(?:[0-9]+(?:\\.[0-9]*)?|\\.[0-9]+)\"\n \n     _enclosure_open = [\n@@ -591,7 +592,7 @@ class MathematicaParser:\n         r\"\\*\\*\",\n     ]\n \n-    _literal_re = re.compile(r\"[A-Za-z][A-Za-z0-9]*\")\n+    _literal_re = re.compile(r\"[^\\W\\d_][^\\W_]*\", re.UNICODE)\n \n     def _get_tokenizer(self):\n         tokenizer = getattr(self, \"_tokenizer\", None)\n@@ -601,7 +602,7 @@ class MathematicaParser:\n             # Compile the tokenizer pattern\n             ...\n         return tokenizer\n-        \n+\n     def _get_tokenizer(self):\n         tokenizer = getattr(self, \"_tokenizer\", None)\n         if tokenizer is not None:\n",
+  "explanation": null,
+  "token_usage": {
+    "input": 1259,
+    "output": 707
+  },
+  "cost_usd": 0.014382,
+  "runtime_seconds": 9.891000000061467,
+  "error_message": null,
+  "raw_logs": "{\"diff\": \"--- a/sympy/parsing/mathematica.py\\n+++ b/sympy/parsing/mathematica.py\\n@@ -1,6 +1,7 @@\\n from __future__ import annotations\\n \\n import re\\n+import unicodedata\\n from itertools import product\\n from typing import Any\\n \\n@@ -150,7 +151,7 @@ class MathematicaParser:\\n     # Mathematica function name pattern\\n     FM_PATTERN = re.compile(r'''\\n         (?:\\n-            [a-zA-Z][a-zA-Z0-9]*  # function name\\n+            [^\\\\W\\\\d_][^\\\\W_]*  # function name (supports Unicode letters)\\n         )\\n         \\\\[  # opening bracket\\n     ''', re.VERBOSE)\\n@@ -158,7 +159,7 @@ class MathematicaParser:\\n     # Mathematica symbol pattern\\n     SYMBOL_PATTERN = re.compile(r'''\\n         (?<![a-zA-Z0-9])  # not preceded by alphanumeric\\n-        [a-zA-Z][a-zA-Z0-9]*  # symbol name\\n+        [^\\\\W\\\\d_][^\\\\W_]*  # symbol name (supports Unicode letters)\\n         (?![a-zA-Z0-9\\\\[])  # not followed by alphanumeric or bracket\\n     ''', re.VERBOSE)\\n \\n@@ -541,7 +542,7 @@ class MathematicaParser:\\n         # Tokenize the input string\\n         ...\\n \\n-    _literal = r\\\"[A-Za-z][A-Za-z0-9]*\\\"\\n+    _literal = r\\\"[^\\\\W\\\\d_][^\\\\W_]*\\\"\\n     _number = r\\\"(?:[0-9]+(?:\\\\.[0-9]*)?|\\\\.[0-9]+)\\\"\\n \\n     _enclosure_open = [\\n@@ -591,7 +592,7 @@ class MathematicaParser:\\n         r\\\"\\\\*\\\\*\\\",\\n     ]\\n \\n-    _literal_re = re.compile(r\\\"[A-Za-z][A-Za-z0-9]*\\\")\\n+    _literal_re = re.compile(r\\\"[^\\\\W\\\\d_][^\\\\W_]*\\\", re.UNICODE)\\n \\n     def _get_tokenizer(self):\\n         tokenizer = getattr(self, \\\"_tokenizer\\\", None)\\n@@ -601,7 +602,7 @@ class MathematicaParser:\\n             # Compile the tokenizer pattern\\n             ...\\n         return tokenizer\\n-        \\n+\\n     def _get_tokenizer(self):\\n         tokenizer = getattr(self, \\\"_tokenizer\\\", None)\\n         if tokenizer is not None:\\n\"}",
+  "metadata": {
+    "model": "claude-sonnet-4-6",
+    "prompt_version": "issue-to-unified-diff-v3-submit-patch-tool",
+    "stop_reason": "tool_use",
+    "patch_source": "tool"
+  },
+  "control_repeats": [
+    {
+      "status": "success",
+      "patch": "--- a/sympy/parsing/mathematica.py\n+++ b/sympy/parsing/mathematica.py\n@@ -1,6 +1,7 @@\n from __future__ import annotations\n \n import re\n+import unicodedata\n from itertools import product\n from typing import Any\n \n@@ -144,7 +145,7 @@ class MathematicaParser:\n     # Mathematica function name pattern\n     FM_PATTERN = re.compile(r'''\n         (?:\n-            [a-zA-Z][a-zA-Z0-9]*  # function name\n+            [^\\W\\d_][^\\W_]*  # function name (supports Unicode letters)\n         )\n         \\[  # opening bracket\n     ''', re.VERBOSE)\n@@ -193,7 +194,7 @@ class MathematicaParser:\n     RULES = {\n         # Mathematica symbol name\n         \"Symbol\": re.compile(r'''\n-            [a-zA-Z][a-zA-Z0-9]*  # symbol name\n+            [^\\W\\d_][^\\W_]*  # symbol name (supports Unicode letters)\n         ''', re.VERBOSE),\n         # Mathematica number\n         \"Integer\": re.compile(r'''\n@@ -543,7 +544,7 @@ class MathematicaParser:\n         return self._parse_after_braces(code)\n \n     def _is_symbol_or_number(self, expr):\n-        return re.match(r'^[a-zA-Z0-9.]+$', expr)\n+        return re.match(r'^(?:[^\\W_]|[0-9.])+$', expr, re.UNICODE)\n \n     def _parse_after_braces(self, expr, inside_braces=False):\n         # ... (rest of the method)\n@@ -591,7 +592,7 @@ class MathematicaParser:\n         return self._parse_after_braces(code)\n \n     def _get_symbol_or_number(self, expr):\n-        m = re.match(r'^[a-zA-Z][a-zA-Z0-9]*$', expr)\n+        m = re.match(r'^[^\\W\\d_][^\\W_]*$', expr, re.UNICODE)\n         if m:\n             return sympy.Symbol(expr)\n         m = re.match(r'^-?[0-9]+$', expr)\n",
+      "explanation": null,
+      "token_usage": {
+        "input": 1259,
+        "output": 645
+      },
+      "cost_usd": 0.013452,
+      "runtime_seconds": 9.202999999979511,
+      "error_message": null,
+      "raw_logs": "{\"diff\": \"--- a/sympy/parsing/mathematica.py\\n+++ b/sympy/parsing/mathematica.py\\n@@ -1,6 +1,7 @@\\n from __future__ import annotations\\n \\n import re\\n+import unicodedata\\n from itertools import product\\n from typing import Any\\n \\n@@ -144,7 +145,7 @@ class MathematicaParser:\\n     # Mathematica function name pattern\\n     FM_PATTERN = re.compile(r'''\\n         (?:\\n-            [a-zA-Z][a-zA-Z0-9]*  # function name\\n+            [^\\\\W\\\\d_][^\\\\W_]*  # function name (supports Unicode letters)\\n         )\\n         \\\\[  # opening bracket\\n     ''', re.VERBOSE)\\n@@ -193,7 +194,7 @@ class MathematicaParser:\\n     RULES = {\\n         # Mathematica symbol name\\n         \\\"Symbol\\\": re.compile(r'''\\n-            [a-zA-Z][a-zA-Z0-9]*  # symbol name\\n+            [^\\\\W\\\\d_][^\\\\W_]*  # symbol name (supports Unicode letters)\\n         ''', re.VERBOSE),\\n         # Mathematica number\\n         \\\"Integer\\\": re.compile(r'''\\n@@ -543,7 +544,7 @@ class MathematicaParser:\\n         return self._parse_after_braces(code)\\n \\n     def _is_symbol_or_number(self, expr):\\n-        return re.match(r'^[a-zA-Z0-9.]+$', expr)\\n+        return re.match(r'^(?:[^\\\\W_]|[0-9.])+$', expr, re.UNICODE)\\n \\n     def _parse_after_braces(self, expr, inside_braces=False):\\n         # ... (rest of the method)\\n@@ -591,7 +592,7 @@ class MathematicaParser:\\n         return self._parse_after_braces(code)\\n \\n     def _get_symbol_or_number(self, expr):\\n-        m = re.match(r'^[a-zA-Z][a-zA-Z0-9]*$', expr)\\n+        m = re.match(r'^[^\\\\W\\\\d_][^\\\\W_]*$', expr, re.UNICODE)\\n         if m:\\n             return sympy.Symbol(expr)\\n         m = re.match(r'^-?[0-9]+$', expr)\\n\"}",
+      "metadata": {
+        "model": "claude-sonnet-4-6",
+        "prompt_version": "issue-to-unified-diff-v3-submit-patch-tool",
+        "stop_reason": "tool_use",
+        "patch_source": "tool"
+      }
+    }
+  ],
+  "recorded_from": {
+    "experiment_id": "bc6f1372-2088-45dd-907c-d741c0545d27",
+    "experiment_name": "icse_pilot_v1",
+    "run_id": "9dc84b85-2a97-4f30-90c9-2d444f172e39",
+    "agent_name": "llm_baseline",
+    "execution_mode": "real"
+  }
+}

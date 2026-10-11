@@ -1,0 +1,39 @@
+{
+  "status": "success",
+  "patch": "--- a/django/db/backends/base/schema.py\n+++ b/django/db/backends/base/schema.py\n@@ -378,7 +378,12 @@ class BaseDatabaseSchemaEditor:\n         constraint_names = self._constraint_names(\n             model, [f.column for f in fields], exclude=meta_constraint_names,\n             **constraint_kwargs\n         )\n+        if len(constraint_names) == 0:\n+            raise ValueError(\"Found wrong number (0) of constraints for %s(%s)\" % (\n+                model._meta.db_table,\n+                \", \".join([f.column for f in fields]),\n+            ))\n         if len(constraint_names) != 1:\n+            # Try to filter by the exact type of constraint\n             constraint_names = self._constraint_names(\n                 model, [f.column for f in fields], exclude=meta_constraint_names,\n                 **constraint_kwargs\n@@ -378,10 +383,22 @@ class BaseDatabaseSchemaEditor:\n         constraint_names = self._constraint_names(\n             model, [f.column for f in fields], exclude=meta_constraint_names,\n             **constraint_kwargs\n         )\n         if len(constraint_names) != 1:\n             raise ValueError(\"Found wrong number (%s) of constraints for %s(%s)\" % (\n                 len(constraint_names),\n                 model._meta.db_table,\n                 \", \".join([f.column for f in fields]),\n             ))\n         self.execute(self._delete_constraint_sql(sql, model, constraint_names[0]))\n",
+  "explanation": null,
+  "token_usage": {
+    "input": 1059,
+    "output": 423
+  },
+  "cost_usd": 0.009522,
+  "runtime_seconds": 6.437000000150874,
+  "error_message": null,
+  "raw_logs": "{\"diff\": \"--- a/django/db/backends/base/schema.py\\n+++ b/django/db/backends/base/schema.py\\n@@ -378,7 +378,12 @@ class BaseDatabaseSchemaEditor:\\n         constraint_names = self._constraint_names(\\n             model, [f.column for f in fields], exclude=meta_constraint_names,\\n             **constraint_kwargs\\n         )\\n+        if len(constraint_names) == 0:\\n+            raise ValueError(\\\"Found wrong number (0) of constraints for %s(%s)\\\" % (\\n+                model._meta.db_table,\\n+                \\\", \\\".join([f.column for f in fields]),\\n+            ))\\n         if len(constraint_names) != 1:\\n+            # Try to filter by the exact type of constraint\\n             constraint_names = self._constraint_names(\\n                 model, [f.column for f in fields], exclude=meta_constraint_names,\\n                 **constraint_kwargs\\n@@ -378,10 +383,22 @@ class BaseDatabaseSchemaEditor:\\n         constraint_names = self._constraint_names(\\n             model, [f.column for f in fields], exclude=meta_constraint_names,\\n             **constraint_kwargs\\n         )\\n         if len(constraint_names) != 1:\\n             raise ValueError(\\\"Found wrong number (%s) of constraints for %s(%s)\\\" % (\\n                 len(constraint_names),\\n                 model._meta.db_table,\\n                 \\\", \\\".join([f.column for f in fields]),\\n             ))\\n         self.execute(self._delete_constraint_sql(sql, model, constraint_names[0]))\\n\"}",
+  "metadata": {
+    "model": "claude-sonnet-4-6",
+    "prompt_version": "issue-to-unified-diff-v3-submit-patch-tool",
+    "stop_reason": "tool_use",
+    "patch_source": "tool"
+  },
+  "variant": {
+    "transformed_text": "# Migration crashes deleting an index_together if there is a unique_together on the same fields\n\nDescription\n\t\nHappens with Django 1.11.10\n\nSteps to reproduce:\n\n1) Create models with 2 fields, add 2 same fields to unique_together and to index_together\n2) Delete index_together -> Fail\n\nIt fails at django/db/backends/base/schema.py, line 378, in _delete_composed_index(), ValueError: Found wrong number (2) of constraints for as this one will find two constraints, the _uniq and the _idx one. There is no way to proceed in this situation.\n\nThe concern in my case is that this occurred when I wanted to refactor my code to use the \"new\" (Dj 1.11) Options.indexes feature. I am actually not deleting the index, just the way it is declared in my code.\n\nI think there are 2 different points here:\n\n1) The deletion of index_together should be possible independently or made coherent (migrations side?) with unique_together\n2) Moving the declaration of an index should not result in an index re-creation",
+    "transformation_notes": "Rewrote only the sentences with emotional or informal language. [quality check passed on attempt 1/2]",
+    "params": {},
+    "generator": "claude-haiku-4-5-20251001",
+    "transform_version": "4",
+    "generation_mode": "real",
+    "quality_warning": false,
+    "noop": false,
+    "exclusion_reason": null,
+    "generation_cost_usd": 0.001944,
+    "original_sha256": "773681998993eff75a3b69f04821e4e8683f89cfffdee38f19fe11cb3c7a98be"
+  },
+  "recorded_from": {
+    "experiment_id": "bc6f1372-2088-45dd-907c-d741c0545d27",
+    "experiment_name": "icse_pilot_v1",
+    "run_id": "ac5eb716-afc0-4295-8d10-2005563151b4",
+    "agent_name": "llm_baseline",
+    "execution_mode": "real"
+  }
+}

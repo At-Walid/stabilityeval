@@ -1,0 +1,39 @@
+{
+  "status": "success",
+  "patch": "--- a/django/db/models/sql/query.py\n+++ b/django/db/models/sql/query.py\n@@ -742,7 +742,7 @@ class Query(BaseExpression):\n                 cur_model = source.related_model\n             else:\n                 cur_model = source.field.model\n-            opts = cur_model._meta\n+            opts = cur_model._meta.concrete_model._meta\n             # Even if we're \"just\" doing an .only(), we must add \"id\" for the\n             # temporary model.\n             if not must_include[root_alias].get(model):\n",
+  "explanation": null,
+  "token_usage": {
+    "input": 1743,
+    "output": 184
+  },
+  "cost_usd": 0.007989,
+  "runtime_seconds": 3.546000000089407,
+  "error_message": null,
+  "raw_logs": "{\"diff\": \"--- a/django/db/models/sql/query.py\\n+++ b/django/db/models/sql/query.py\\n@@ -742,7 +742,7 @@ class Query(BaseExpression):\\n                 cur_model = source.related_model\\n             else:\\n                 cur_model = source.field.model\\n-            opts = cur_model._meta\\n+            opts = cur_model._meta.concrete_model._meta\\n             # Even if we're \\\"just\\\" doing an .only(), we must add \\\"id\\\" for the\\n             # temporary model.\\n             if not must_include[root_alias].get(model):\\n\"}",
+  "metadata": {
+    "model": "claude-sonnet-4-6",
+    "prompt_version": "issue-to-unified-diff-v3-submit-patch-tool",
+    "stop_reason": "tool_use",
+    "patch_source": "tool"
+  },
+  "variant": {
+    "transformed_text": "## Summary\nQuerySet.only() after select_related() crashes on proxy models.\n\n## Steps to Reproduce\nTraceback (most recent call last):\n File \"D:\\study\\django_college\\manage.py\", line 22, in <module>\n\tmain()\n File \"D:\\study\\django_college\\manage.py\", line 18, in main\n\texecute_from_command_line(sys.argv)\n File \"D:\\Anaconda3\\envs\\django\\lib\\site-packages\\django\\core\\management\\__init__.py\", line 446, in execute_from_command_line\n\tutility.execute()\n File \"D:\\Anaconda3\\envs\\django\\lib\\site-packages\\django\\core\\management\\__init__.py\", line 440, in execute\n\tself.fetch_command(subcommand).run_from_argv(self.argv)\n File \"D:\\Anaconda3\\envs\\django\\lib\\site-packages\\django\\core\\management\\base.py\", line 414, in run_from_argv\n\tself.execute(*args, **cmd_options)\n File \"D:\\Anaconda3\\envs\\django\\lib\\site-packages\\django\\core\\management\\base.py\", line 460, in execute\n\toutput = self.handle(*args, **options)\n File \"D:\\study\\django_college\\project\\users\\management\\commands\\test_proxy.py\", line 9, in handle\n\tobjs = list(AnotherModel.objects.select_related(\"custom\").only(\"custom__name\").all())\n File \"D:\\Anaconda3\\envs\\django\\lib\\site-packages\\django\\db\\models\\query.py\", line 302, in __len__\n\tself._fetch_all()\n File \"D:\\Anaconda3\\envs\\django\\lib\\site-packages\\django\\db\\models\\query.py\", line 1507, in _fetch_all\n\tself._result_cache = list(self._iterable_class(self))\n File \"D:\\Anaconda3\\envs\\django\\lib\\site-packages\\django\\db\\models\\query.py\", line 71, in __iter__\n\trelated_populators = get_related_populators(klass_info, select, db)\n File \"D:\\Anaconda3\\envs\\django\\lib\\site-packages\\django\\db\\models\\query.py\", line 2268, in get_related_populators\n\trel_cls = RelatedPopulator(rel_klass_info, select, db)\n File \"D:\\Anaconda3\\envs\\django\\lib\\site-packages\\django\\db\\models\\query.py\", line 2243, in __init__\n\tself.pk_idx = self.init_list.index(self.model_cls._meta.pk.attname)\nValueError: 'id' is not in list\nModels:\nclass CustomModel(models.Model):\n\tname = models.CharField(max_length=16)\nclass ProxyCustomModel(CustomModel):\n\tclass Meta:\n\t\tproxy = True\nclass AnotherModel(models.Model):\n\tcustom = models.ForeignKey(\n\t\tProxyCustomModel,\n\t\ton_delete=models.SET_NULL,\n\t\tnull=True,\n\t\tblank=True,\n\t)\nCommand:\nclass Command(BaseCommand):\n\tdef handle(self, *args, **options):\n\t\tlist(AnotherModel.objects.select_related(\"custom\").only(\"custom__name\").all())\nAt django/db/models/sql/query.py in 745 line there is snippet:\nopts = cur_model._meta\nIf I replace it by \nopts = cur_model._meta.concrete_model._meta\nall works as expected.\n\n## Expected Behavior\nNot specified\n\n## Actual Behavior\nNot specified\n\n## Environment\nWindows 10; Python 3.10; Django 4.0.5",
+    "transformation_notes": "Reformatted the issue into the five required sections. The original description provides a summary statement, environment details (Windows 10, Python 3.10, Django 4.0.5), and a code placeholder but does not specify the expected behavior or actual behavior (error message/traceback). Steps to Reproduce are represented by the code placeholder. Environment section preserves all stated details verbatim. [quality check passed on attempt 1/2]",
+    "params": {},
+    "generator": "claude-haiku-4-5-20251001",
+    "transform_version": "5",
+    "generation_mode": "real",
+    "quality_warning": false,
+    "noop": false,
+    "exclusion_reason": null,
+    "generation_cost_usd": 0.001629,
+    "original_sha256": "2ade174953b4185bc7ebb099982940b2b244588d523290a1f468b54fd5c87ea7"
+  },
+  "recorded_from": {
+    "experiment_id": "bc6f1372-2088-45dd-907c-d741c0545d27",
+    "experiment_name": "icse_pilot_v1",
+    "run_id": "54fad7bf-de56-45ee-b7e5-6979f540faa1",
+    "agent_name": "llm_baseline",
+    "execution_mode": "real"
+  }
+}

@@ -1,0 +1,41 @@
+{
+  "status": "success",
+  "patch": "--- a/seaborn/_stats/regression.py\n+++ b/seaborn/_stats/regression.py\n@@ -26,7 +26,8 @@ class PolyFit(Stat):\n     def _fit_predict(self, data):\n \n         x = data[\"x\"]\n         y = data[\"y\"]\n+        finite = x.notna() & y.notna()\n+        x = x[finite]\n+        y = y[finite]\n         if x.nunique() <= self.order:\n             # TODO warn?\n             xx = yy = []\n",
+  "explanation": null,
+  "token_usage": {
+    "input": 2238,
+    "output": 175
+  },
+  "cost_usd": 0.009339,
+  "runtime_seconds": 3.656999999890104,
+  "error_message": null,
+  "raw_logs": "{\"diff\": \"--- a/seaborn/_stats/regression.py\\n+++ b/seaborn/_stats/regression.py\\n@@ -26,7 +26,8 @@ class PolyFit(Stat):\\n     def _fit_predict(self, data):\\n \\n         x = data[\\\"x\\\"]\\n         y = data[\\\"y\\\"]\\n+        finite = x.notna() & y.notna()\\n+        x = x[finite]\\n+        y = y[finite]\\n         if x.nunique() <= self.order:\\n             # TODO warn?\\n             xx = yy = []\\n\"}",
+  "metadata": {
+    "model": "claude-sonnet-4-6",
+    "prompt_version": "issue-to-unified-diff-v3-submit-patch-tool",
+    "stop_reason": "tool_use",
+    "patch_source": "tool"
+  },
+  "variant": {
+    "transformed_text": "```python-traceback\n---------------------------------------------------------------------------\nLinAlgError                               Traceback (most recent call last)\nFile ~/miniconda3/envs/seaborn-py39-latest/lib/python3.9/site-packages/IPython/core/formatters.py:343, in BaseFormatter.__call__(self, obj)\n    341     method = get_real_method(obj, self.print_method)\n    342     if method is not None:\n--> 343         return method()\n    344     return None\n    345 else:\n\nFile ~/code/seaborn/seaborn/_core/plot.py:265, in Plot._repr_png_(self)\n    263 def _repr_png_(self) -> tuple[bytes, dict[str, float]]:\n--> 265     return self.plot()._repr_png_()\n\nFile ~/code/seaborn/seaborn/_core/plot.py:804, in Plot.plot(self, pyplot)\n    800 \"\"\"\n    801 Compile the plot spec and return the Plotter object.\n    802 \"\"\"\n    803 with theme_context(self._theme_with_defaults()):\n--> 804     return self._plot(pyplot)\n\nFile ~/code/seaborn/seaborn/_core/plot.py:822, in Plot._plot(self, pyplot)\n    819 plotter._setup_scales(self, common, layers, coord_vars)\n    821 # Apply statistical transform(s)\n--> 822 plotter._compute_stats(self, layers)\n    824 # Process scale spec for semantic variables and coordinates computed by stat\n    825 plotter._setup_scales(self, common, layers)\n\nFile ~/code/seaborn/seaborn/_core/plot.py:1110, in Plotter._compute_stats(self, spec, layers)\n   1108     grouper = grouping_vars\n   1109 groupby = GroupBy(grouper)\n-> 1110 res = stat(df, groupby, orient, scales)\n   1112 if pair_vars:\n   1113     data.frames[coord_vars] = res\n\nFile ~/code/seaborn/seaborn/_stats/regression.py:41, in PolyFit.__call__(self, data, groupby, orient, scales)\n     39 def __call__(self, data, groupby, orient, scales):\n---> 41     return groupby.apply(data, self._fit_predict)\n\nFile ~/code/seaborn/seaborn/_core/groupby.py:109, in GroupBy.apply(self, data, func, *args, **kwargs)\n    106 grouper, groups = self._get_groups(data)\n    108 if not grouper:\n--> 109     return self._reorder_columns(func(data, *args, **kwargs), data)\n    111 parts = {}\n    112 for key, part_df in data.groupby(grouper, sort=False):\n\nFile ~/code/seaborn/seaborn/_stats/regression.py:30, in PolyFit._fit_predict(self, data)\n     28     xx = yy = []\n     29 else:\n---> 30     p = np.polyfit(x, y, self.order)\n     31     xx = np.linspace(x.min(), x.max(), self.gridsize)\n     32     yy = np.polyval(p, xx)\n\nFile <__array_function__ internals>:180, in polyfit(*args, **kwargs)\n\nFile ~/miniconda3/envs/seaborn-py39-latest/lib/python3.9/site-packages/numpy/lib/polynomial.py:668, in polyfit(x, y, deg, rcond, full, w, cov)\n    666 scale = NX.sqrt((lhs*lhs).sum(axis=0))\n    667 lhs /= scale\n--> 668 c, resids, rank, s = lstsq(lhs, rhs, rcond)\n    669 c = (c.T/scale).T  # broadcast scale coefficients\n    671 # warn on rank reduction, which indicates an ill conditioned matrix\n\nFile <__array_function__ internals>:180, in lstsq(*args, **kwargs)\n\nFile ~/miniconda3/envs/seaborn-py39-latest/lib/python3.9/site-packages/numpy/linalg/linalg.py:2300, in lstsq(a, b, rcond)\n   2297 if n_rhs == 0:\n   2298     # lapack can't handle n_rhs = 0 - so allocate the array one larger in that axis\n   2299     b = zeros(b.shape[:-2] + (m, n_rhs + 1), dtype=b.dtype)\n-> 2300 x, resids, rank, s = gufunc(a, b, rcond, signature=signature, extobj=extobj)\n   2301 if m == 0:\n   2302     x[...] = 0\n\nFile ~/miniconda3/envs/seaborn-py39-latest/lib/python3.9/site-packages/numpy/linalg/linalg.py:101, in _raise_linalgerror_lstsq(err, flag)\n    100 def _raise_linalgerror_lstsq(err, flag):\n--> 101     raise LinAlgError(\"SVD did not converge in Linear Least Squares\")\n\nLinAlgError: SVD did not converge in Linear Least Squares\n\n```\n\n<details><summary>Traceback</summary>\n\n</details>\n\nPolyFit is not robust to missing data\n```python\nso.Plot([1, 2, 3, None, 4], [1, 2, 3, 4, 5]).add(so.Line(), so.PolyFit())\n```",
+    "transformation_notes": "Shuffled 4 paragraph(s) (seed=42); CRLF normalised to LF, fenced code blocks kept whole.",
+    "params": {
+      "seed": 42
+    },
+    "generator": "deterministic",
+    "transform_version": "2",
+    "generation_mode": "real",
+    "quality_warning": false,
+    "noop": false,
+    "exclusion_reason": null,
+    "generation_cost_usd": 0.0,
+    "original_sha256": "71aa98ceff4d378b09f725df7802741eda6523061adade9ecf6931e23eec7092"
+  },
+  "recorded_from": {
+    "experiment_id": "bc6f1372-2088-45dd-907c-d741c0545d27",
+    "experiment_name": "icse_pilot_v1",
+    "run_id": "8c9960a7-c008-424e-8a31-2a060871a3ff",
+    "agent_name": "llm_baseline",
+    "execution_mode": "real"
+  }
+}

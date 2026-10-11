@@ -1,0 +1,21 @@
+issue_id,repo,word_count,paragraph_count,prose_ratio,has_code_block,first_80_chars_of_issue
+pydata__xarray-4094,pydata/xarray,153,10,0.726,True,to_unstacked_dataset broken for single-dim variables <!-- A short summary of the
+pytest-dev__pytest-6116,pytest-dev/pytest,182,5,0.958,False,pytest --collect-only needs a one char shortcut command I find myself needing to
+sphinx-doc__sphinx-8506,sphinx-doc/sphinx,136,7,0.742,True,Sphinx 3.2 complains about option:: syntax that earlier versions accepted Sphinx
+sympy__sympy-21379,sympy/sympy,196,10,0.619,True,Unexpected `PolynomialError` when using simple `subs()` for particular expressio
+psf__requests-2317,psf/requests,131,6,0.999,False,method = builtin_str(method) problem In requests/sessions.py is a command: metho
+scikit-learn__scikit-learn-15512,scikit-learn/scikit-learn,212,7,0.821,True,Return values of non converged affinity propagation clustering The affinity prop
+django__django-12747,django/django,150,2,0.999,False,QuerySet.Delete - inconsistent result when zero objects deleted Description The 
+matplotlib__matplotlib-26011,matplotlib/matplotlib,197,10,0.708,True,xlim_changed not emitted on shared axis <!--To help us understand and resolve yo
+pydata__xarray-5131,pydata/xarray,300,6,0.806,True,Trailing whitespace in DatasetGroupBy text representation When displaying a Data
+pytest-dev__pytest-8906,pytest-dev/pytest,221,14,0.658,True,Improve handling of skip for module level This is potentially about updating doc
+sphinx-doc__sphinx-10325,sphinx-doc/sphinx,174,3,0.989,False,inherited-members should support more than one class **Is your feature request r
+sympy__sympy-24152,sympy/sympy,209,3,0.626,True,Bug in expand of TensorProduct + Workaround + Fix ### Error description The expa
+psf__requests-863,psf/requests,139,2,0.999,False,Allow lists in the dict values of the hooks argument Currently the Request class
+scikit-learn__scikit-learn-10297,scikit-learn/scikit-learn,182,12,0.974,False,linear_model.RidgeClassifierCV's Parameter store_cv_values issue #### Descriptio
+django__django-15781,django/django,137,2,0.999,False,Customizable management command formatters. Description With code like: class Co
+matplotlib__matplotlib-23987,matplotlib/matplotlib,116,23,0.730,True,[Bug]: Constrained layout UserWarning even when False ### Bug summary When using
+sphinx-doc__sphinx-8273,sphinx-doc/sphinx,150,4,0.915,False,Generate man page section directories **Current man page generation does not con
+sympy__sympy-23262,sympy/sympy,119,9,0.651,True,"Python code printer not respecting tuple with one element Hi, Thanks for the rec"
+scikit-learn__scikit-learn-12471,scikit-learn/scikit-learn,229,17,0.763,True,OneHotEncoder ignore unknown error when categories are strings #### Description 
+django__django-13265,django/django,142,2,0.999,False,AlterOrderWithRespectTo() with ForeignKey crash when _order is included in Index

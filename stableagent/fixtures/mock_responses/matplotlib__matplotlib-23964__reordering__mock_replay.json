@@ -1,0 +1,41 @@
+{
+  "status": "success",
+  "patch": "--- a/lib/matplotlib/backends/backend_ps.py\n+++ b/lib/matplotlib/backends/backend_ps.py\n@@ -666,6 +666,8 @@ class RendererPS(RendererBase):\n                 curr_stream = self.create_hinting_dict(font, glyph_ids)\n                 stream.append(curr_stream)\n \n+            if curr_stream is None:\n+                continue\n             curr_stream[1].append(\n                 (ox, glyph_name_or_index)\n             )\n",
+  "explanation": null,
+  "token_usage": {
+    "input": 2192,
+    "output": 169
+  },
+  "cost_usd": 0.009111,
+  "runtime_seconds": 5.813000000081956,
+  "error_message": null,
+  "raw_logs": "{\"diff\": \"--- a/lib/matplotlib/backends/backend_ps.py\\n+++ b/lib/matplotlib/backends/backend_ps.py\\n@@ -666,6 +666,8 @@ class RendererPS(RendererBase):\\n                 curr_stream = self.create_hinting_dict(font, glyph_ids)\\n                 stream.append(curr_stream)\\n \\n+            if curr_stream is None:\\n+                continue\\n             curr_stream[1].append(\\n                 (ox, glyph_name_or_index)\\n             )\\n\"}",
+  "metadata": {
+    "model": "claude-sonnet-4-6",
+    "prompt_version": "issue-to-unified-diff-v3-submit-patch-tool",
+    "stop_reason": "tool_use",
+    "patch_source": "tool"
+  },
+  "variant": {
+    "transformed_text": "_No response_\n\n### Matplotlib Backend\n\nhappens if the figure contains a multi-line text label with an empty line (see example).\n\n3.6.0\n\n### Actual outcome\n\n### Matplotlib Version\n\n### Python version\n\nWindows\n\npip\n\n$ ./venv/Scripts/python save_ps.py\nTraceback (most recent call last):\n  File \"C:\\temp\\matplotlib_save_ps\\save_ps.py\", line 7, in <module>\n    figure.savefig('figure.eps')\n  File \"C:\\temp\\matplotlib_save_ps\\venv\\lib\\site-packages\\matplotlib\\figure.py\", line 3272, in savefig\n    self.canvas.print_figure(fname, **kwargs)\n  File \"C:\\temp\\matplotlib_save_ps\\venv\\lib\\site-packages\\matplotlib\\backend_bases.py\", line 2338, in print_figure\n    result = print_method(\n  File \"C:\\temp\\matplotlib_save_ps\\venv\\lib\\site-packages\\matplotlib\\backend_bases.py\", line 2204, in <lambda>\n    print_method = functools.wraps(meth)(lambda *args, **kwargs: meth(\n  File \"C:\\temp\\matplotlib_save_ps\\venv\\lib\\site-packages\\matplotlib\\_api\\deprecation.py\", line 410, in wrapper\n    return func(*inner_args, **inner_kwargs)\n  File \"C:\\temp\\matplotlib_save_ps\\venv\\lib\\site-packages\\matplotlib\\backends\\backend_ps.py\", line 869, in _print_ps\n    printer(fmt, outfile, dpi=dpi, dsc_comments=dsc_comments,\n  File \"C:\\temp\\matplotlib_save_ps\\venv\\lib\\site-packages\\matplotlib\\backends\\backend_ps.py\", line 927, in _print_figure\n    self.figure.draw(renderer)\n  File \"C:\\temp\\matplotlib_save_ps\\venv\\lib\\site-packages\\matplotlib\\artist.py\", line 74, in draw_wrapper\n    result = draw(artist, renderer, *args, **kwargs)\n  File \"C:\\temp\\matplotlib_save_ps\\venv\\lib\\site-packages\\matplotlib\\artist.py\", line 51, in draw_wrapper\n    return draw(artist, renderer)\n  File \"C:\\temp\\matplotlib_save_ps\\venv\\lib\\site-packages\\matplotlib\\figure.py\", line 3069, in draw\n    mimage._draw_list_compositing_images(\n  File \"C:\\temp\\matplotlib_save_ps\\venv\\lib\\site-packages\\matplotlib\\image.py\", line 131, in _draw_list_compositing_images\n    a.draw(renderer)\n  File \"C:\\temp\\matplotlib_save_ps\\venv\\lib\\site-packages\\matplotlib\\artist.py\", line 51, in draw_wrapper\n    return draw(artist, renderer)\n  File \"C:\\temp\\matplotlib_save_ps\\venv\\lib\\site-packages\\matplotlib\\axes\\_base.py\", line 3106, in draw\n    mimage._draw_list_compositing_images(\n  File \"C:\\temp\\matplotlib_save_ps\\venv\\lib\\site-packages\\matplotlib\\image.py\", line 131, in _draw_list_compositing_images\n    a.draw(renderer)\n  File \"C:\\temp\\matplotlib_save_ps\\venv\\lib\\site-packages\\matplotlib\\artist.py\", line 51, in draw_wrapper\n    return draw(artist, renderer)\n  File \"C:\\temp\\matplotlib_save_ps\\venv\\lib\\site-packages\\matplotlib\\text.py\", line 1995, in draw\n    Text.draw(self, renderer)\n  File \"C:\\temp\\matplotlib_save_ps\\venv\\lib\\site-packages\\matplotlib\\artist.py\", line 51, in draw_wrapper\n    return draw(artist, renderer)\n  File \"C:\\temp\\matplotlib_save_ps\\venv\\lib\\site-packages\\matplotlib\\text.py\", line 736, in draw\n    textrenderer.draw_text(gc, x, y, clean_line,\n  File \"C:\\temp\\matplotlib_save_ps\\venv\\lib\\site-packages\\matplotlib\\backends\\backend_ps.py\", line 248, in wrapper\n    return meth(self, *args, **kwargs)\n  File \"C:\\temp\\matplotlib_save_ps\\venv\\lib\\site-packages\\matplotlib\\backends\\backend_ps.py\", line 673, in draw_text\n    for ps_name, xs_names in stream:\nTypeError: cannot unpack non-iterable NoneType object\n\n### Additional information\n\nWhen saving a figure with the PostScript backend, a\n> TypeError: cannot unpack non-iterable NoneType object\n\n### Jupyter version\n\n### Operating system\n\n- seems to happen if a text label or title contains a linebreak with an empty line\n- works without error for other backends such as PNG, PDF, SVG, Qt\n- works with matplotlib<=3.5.3\n- adding `if curr_stream:` before line 669 of `backend_ps.py` seems to fix the bug \n\n### Installation\n\n```python\nfrom matplotlib.figure import Figure\n\nfigure = Figure()\nax = figure.add_subplot(111)\n# ax.set_title('\\nLower title')  # this would cause an error as well\nax.annotate(text='\\nLower label', xy=(0, 0))\nfigure.savefig('figure.eps')\n```\n\n3.9.13\n\n### Expected outcome\n\nThe figure can be saved as `figure.eps` without error.\n\n[Bug]: Text label with empty line causes a \"TypeError: cannot unpack non-iterable NoneType object\" in PostScript backend\n### Bug summary\n\n### Code for reproduction\n\n_No response_",
+    "transformation_notes": "Shuffled 23 paragraph(s) (seed=42); CRLF normalised to LF, fenced code blocks kept whole.",
+    "params": {
+      "seed": 42
+    },
+    "generator": "deterministic",
+    "transform_version": "2",
+    "generation_mode": "real",
+    "quality_warning": false,
+    "noop": false,
+    "exclusion_reason": null,
+    "generation_cost_usd": 0.0,
+    "original_sha256": "0f8c32f683ad268ccbc81029dfd1a580803a56fea240665e05666d1b12f6dd2f"
+  },
+  "recorded_from": {
+    "experiment_id": "bc6f1372-2088-45dd-907c-d741c0545d27",
+    "experiment_name": "icse_pilot_v1",
+    "run_id": "299aa973-6e9f-4a72-a0f0-c24dfb19a2d4",
+    "agent_name": "llm_baseline",
+    "execution_mode": "real"
+  }
+}

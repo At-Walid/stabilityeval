@@ -1,0 +1,39 @@
+{
+  "status": "success",
+  "patch": "--- a/astropy/modeling/separable.py\n+++ b/astropy/modeling/separable.py\n@@ -290,7 +290,7 @@ def _separable(transform):\n     if (transform_matrix := transform._calculate_separability_matrix()) is not NotImplemented:\n         return transform_matrix\n     elif isinstance(transform, CompoundModel):\n-        sepleft = _separable(transform.left)\n-        sepright = _separable(transform.right)\n+        sepleft = _separable(transform.left) if isinstance(transform.left, CompoundModel) else _coord_matrix(transform.left, 'left', transform.n_outputs)\n+        sepright = _separable(transform.right) if isinstance(transform.right, CompoundModel) else _coord_matrix(transform.right, 'right', transform.n_outputs)\n         return _operators[transform.op](sepleft, sepright)\n     elif isinstance(transform, Model):\n         return _coord_matrix(transform, 'left', transform.n_outputs)\n",
+  "explanation": null,
+  "token_usage": {
+    "input": 1189,
+    "output": 287
+  },
+  "cost_usd": 0.007872,
+  "runtime_seconds": 4.530999999959022,
+  "error_message": null,
+  "raw_logs": "{\"diff\": \"--- a/astropy/modeling/separable.py\\n+++ b/astropy/modeling/separable.py\\n@@ -290,7 +290,7 @@ def _separable(transform):\\n     if (transform_matrix := transform._calculate_separability_matrix()) is not NotImplemented:\\n         return transform_matrix\\n     elif isinstance(transform, CompoundModel):\\n-        sepleft = _separable(transform.left)\\n-        sepright = _separable(transform.right)\\n+        sepleft = _separable(transform.left) if isinstance(transform.left, CompoundModel) else _coord_matrix(transform.left, 'left', transform.n_outputs)\\n+        sepright = _separable(transform.right) if isinstance(transform.right, CompoundModel) else _coord_matrix(transform.right, 'right', transform.n_outputs)\\n         return _operators[transform.op](sepleft, sepright)\\n     elif isinstance(transform, Model):\\n         return _coord_matrix(transform, 'left', transform.n_outputs)\\n\"}",
+  "metadata": {
+    "model": "claude-sonnet-4-6",
+    "prompt_version": "issue-to-unified-diff-v3-submit-patch-tool",
+    "stop_reason": "tool_use",
+    "patch_source": "tool"
+  },
+  "variant": {
+    "transformed_text": "## Summary\nModeling's `separability_matrix` does not compute separability correctly for nested CompoundModels.\n\n## Steps to Reproduce\n1. Create a model as shown:\n\n```python\r\nfrom astropy.modeling import models as m\r\nfrom astropy.modeling.separable import separability_matrix\r\n\r\ncm = m.Linear1D(10) & m.Linear1D(5)\r\n```\n\n2. Check its separability matrix:\n\n```python\r\n>>> separability_matrix(cm)\r\narray([[ True, False],\r\n       [False,  True]])\r\n```\n\n3. Create a more complex model:\n\n```python\r\n>>> separability_matrix(m.Pix2Sky_TAN() & m.Linear1D(10) & m.Linear1D(5))\r\narray([[ True,  True, False, False],\r\n       [ True,  True, False, False],\r\n       [False, False,  True, False],\r\n       [False, False, False,  True]])\r\n```\n\n4. Nest these compound models:\n\n```python\r\n>>> separability_matrix(m.Pix2Sky_TAN() & cm)\r\narray([[ True,  True, False, False],\r\n       [ True,  True, False, False],\r\n       [False, False,  True,  True],\r\n       [False, False,  True,  True]])\r\n```\n\n## Expected Behavior\nThe separability matrix should show that inputs and outputs are separable and independent of each other, consistent with the behavior of non-nested compound models.\n\n## Actual Behavior\nWhen compound models are nested, the separability matrix shows that inputs and outputs are no longer separable.\n\n## Environment\nNot specified",
+    "transformation_notes": "Reformatted the issue into the five required sections. The original issue was structured as a narrative description of steps taken and unexpected results. Steps to Reproduce lists the operations shown in the code placeholders. The Expected Behavior section reflects the stated expectations (diagonal/separable matrices for the non-nested models). The Actual Behavior section describes the unexpected result with nested models. Environment is not specified in the original issue. [quality check passed on attempt 1/2]",
+    "params": {},
+    "generator": "claude-haiku-4-5-20251001",
+    "transform_version": "5",
+    "generation_mode": "real",
+    "quality_warning": false,
+    "noop": false,
+    "exclusion_reason": null,
+    "generation_cost_usd": 0.002246,
+    "original_sha256": "c01334ec1b21a089c650cf2e7b96ab974469076bf1260d23885799e1f0a7551f"
+  },
+  "recorded_from": {
+    "experiment_id": "bc6f1372-2088-45dd-907c-d741c0545d27",
+    "experiment_name": "icse_pilot_v1",
+    "run_id": "7dacc7d7-6f2c-436e-9a35-9e8cef688ffc",
+    "agent_name": "llm_baseline",
+    "execution_mode": "real"
+  }
+}

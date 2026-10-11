@@ -1,0 +1,42 @@
+{
+  "status": "success",
+  "patch": "--- a/django/db/backends/base/schema.py\n+++ b/django/db/backends/base/schema.py\n@@ -375,7 +375,10 @@\n         # constraint matching the columns and constraint type\n         constraints = self.connection.introspection.get_constraints(cursor, table_name)\n         matching_constraints = [\n-            c for c in constraints.values()\n+            c for c in constraints.values()\n+            if c['columns'] == list(columns)\n+            and c['index'] == index\n+            and c['unique'] == unique\n         ]\n         if len(matching_constraints) != 1:\n             raise ValueError(\"Found wrong number (%s) of constraints for %s\"\n",
+  "explanation": null,
+  "token_usage": {
+    "input": 332,
+    "output": 156
+  },
+  "cost_usd": 0.00239,
+  "runtime_seconds": 1.625,
+  "error_message": null,
+  "raw_logs": "{\"diff\": \"--- a/django/db/backends/base/schema.py\\n+++ b/django/db/backends/base/schema.py\\n@@ -375,7 +375,10 @@\\n         # constraint matching the columns and constraint type\\n         constraints = self.connection.introspection.get_constraints(cursor, table_name)\\n         matching_constraints = [\\n-            c for c in constraints.values()\\n+            c for c in constraints.values()\\n+            if c['columns'] == list(columns)\\n+            and c['index'] == index\\n+            and c['unique'] == unique\\n         ]\\n         if len(matching_constraints) != 1:\\n             raise ValueError(\\\"Found wrong number (%s) of constraints for %s\\\"\\n\"}",
+  "metadata": {
+    "model": "gpt-4o",
+    "prompt_version": "issue-to-unified-diff-v3-submit-patch-tool",
+    "stop_reason": "tool_use",
+    "patch_source": "tool",
+    "model_snapshot": "gpt-4o-2024-08-06"
+  },
+  "variant": {
+    "transformed_text": "Migration crashes when deleting `index_together` if `unique_together` exists on the same fields. Django 1.11.10.\n\nSteps to reproduce:\n1) Create models with 2 fields in both `unique_together` and `index_together`\n2) Delete `index_together` → fails\n\nError at django/db/backends/base/schema.py, line 378, in _delete_composed_index(): ValueError: Found wrong number (2) of constraints. The method finds both the _uniq and _idx constraints.\n\nIssue occurs when refactoring to use Options.indexes feature; moving index declaration from `index_together` to `indexes` causes index re-creation instead of declaration relocation.",
+    "transformation_notes": "Removed pleasantries, speculation ('I think', 'The worst in my case'), and redundant explanations. Retained all technical identifiers (Django version, file paths, method names, field names, error message, constraint names). Preserved symptom, reproduction steps, and expected behavior (no re-creation on relocation). [identifier retention passed on attempt 2/3]",
+    "params": {
+      "target_ratio": 0.5
+    },
+    "generator": "claude-haiku-4-5-20251001",
+    "transform_version": "3",
+    "generation_mode": "real",
+    "quality_warning": false,
+    "noop": false,
+    "exclusion_reason": null,
+    "generation_cost_usd": null,
+    "original_sha256": "773681998993eff75a3b69f04821e4e8683f89cfffdee38f19fe11cb3c7a98be"
+  },
+  "recorded_from": {
+    "experiment_id": "9d27f3ef-397a-41b7-b1b2-e09729288a40",
+    "experiment_name": "icse_pilot_model2",
+    "run_id": "efeb4260-687f-4705-b29d-1707d5dec6f6",
+    "agent_name": "llm_baseline",
+    "execution_mode": "real"
+  }
+}

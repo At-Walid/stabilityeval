@@ -1,0 +1,47 @@
+{
+  "status": "success",
+  "patch": "--- a/src/_pytest/mark/evaluate.py\n+++ b/src/_pytest/mark/evaluate.py\n@@ -1,7 +1,6 @@\n import os\n import platform\n import sys\n-import traceback\n from typing import Any\n from typing import Dict\n from typing import List\n@@ -21,22 +20,6 @@ from _pytest.outcomes import fail\n from _pytest.outcomes import TEST_OUTCOME\n \n \n-evalcache_key = StoreKey[Dict[str, Any]]()\n-\n-\n-def cached_eval(config: Config, expr: str, d: Dict[str, object]) -> Any:\n-    default = {}  # type: Dict[str, object]\n-    evalcache = config._store.get(evalcache_key, default)\n-    if expr not in evalcache:\n-        import _pytest._code\n-\n-        exprcode = _pytest._code.compile(expr, mode=\"eval\")\n-        evalcache[expr] = config._store.get(evalcache_key, default)\n-        evalcache[expr] = eval(exprcode, d)\n-        config._store[evalcache_key] = evalcache\n-    return evalcache[expr]\n-\n-\n class MarkEvaluator:\n     def __init__(self, item: Item, name: str) -> None:\n         self.item = item\n@@ -112,7 +95,10 @@ class MarkEvaluator:\n                 if isinstance(expr, str):\n                     d = self._getglobals()\n                     import _pytest._code\n-                    result = cached_eval(self.item.config, expr, d)\n+\n+                    exprcode = _pytest._code.compile(expr, mode=\"eval\")\n+                    result = eval(exprcode, d)\n                 else:\n                     if \"reason\" not in mark.kwargs:\n                         # XXX better be checked at collection time\n",
+  "explanation": null,
+  "token_usage": {
+    "input": 1110,
+    "output": 523
+  },
+  "cost_usd": 0.011175,
+  "runtime_seconds": 7.734000000171363,
+  "error_message": null,
+  "raw_logs": "{\"diff\": \"--- a/src/_pytest/mark/evaluate.py\\n+++ b/src/_pytest/mark/evaluate.py\\n@@ -1,7 +1,6 @@\\n import os\\n import platform\\n import sys\\n-import traceback\\n from typing import Any\\n from typing import Dict\\n from typing import List\\n@@ -21,22 +20,6 @@ from _pytest.outcomes import fail\\n from _pytest.outcomes import TEST_OUTCOME\\n \\n \\n-evalcache_key = StoreKey[Dict[str, Any]]()\\n-\\n-\\n-def cached_eval(config: Config, expr: str, d: Dict[str, object]) -> Any:\\n-    default = {}  # type: Dict[str, object]\\n-    evalcache = config._store.get(evalcache_key, default)\\n-    if expr not in evalcache:\\n-        import _pytest._code\\n-\\n-        exprcode = _pytest._code.compile(expr, mode=\\\"eval\\\")\\n-        evalcache[expr] = config._store.get(evalcache_key, default)\\n-        evalcache[expr] = eval(exprcode, d)\\n-        config._store[evalcache_key] = evalcache\\n-    return evalcache[expr]\\n-\\n-\\n class MarkEvaluator:\\n     def __init__(self, item: Item, name: str) -> None:\\n         self.item = item\\n@@ -112,7 +95,10 @@ class MarkEvaluator:\\n                 if isinstance(expr, str):\\n                     d = self._getglobals()\\n                     import _pytest._code\\n-                    result = cached_eval(self.item.config, expr, d)\\n+\\n+                    exprcode = _pytest._code.compile(expr, mode=\\\"eval\\\")\\n+                    result = eval(exprcode, d)\\n                 else:\\n                     if \\\"reason\\\" not in mark.kwargs:\\n                         # XXX better be checked at collection time\\n\"}",
+  "metadata": {
+    "model": "claude-sonnet-4-6",
+    "prompt_version": "issue-to-unified-diff-v3-submit-patch-tool",
+    "stop_reason": "tool_use",
+    "patch_source": "tool"
+  },
+  "control_repeats": [
+    {
+      "status": "success",
+      "patch": "--- a/src/_pytest/mark/evaluate.py\n+++ b/src/_pytest/mark/evaluate.py\n@@ -1,7 +1,6 @@\n import os\n import platform\n import sys\n-import traceback\n from typing import Any\n from typing import Dict\n from typing import List\n@@ -21,22 +20,6 @@ from _pytest.outcomes import fail\n from _pytest.outcomes import TEST_OUTCOME\n \n \n-evalcache_key = StoreKey[Dict[str, Any]]()\n-\n-\n-def cached_eval(config: Config, expr: str, d: Dict[str, object]) -> Any:\n-    default = {}  # type: Dict[str, Any]\n-    evalcache = config._store.get(evalcache_key, default)\n-    if expr not in evalcache:\n-        import _pytest._code\n-\n-        exprcode = _pytest._code.compile(expr, mode=\"eval\")\n-        evalcache[expr] = config._store.get(evalcache_key, default)\n-        evalcache[expr] = eval(exprcode, d)\n-        config._store[evalcache_key] = evalcache\n-    return evalcache[expr]\n-\n-\n class MarkEvaluator:\n     def __init__(self, item: Item, name: str) -> None:\n         self.item = item\n@@ -112,7 +95,9 @@ class MarkEvaluator:\n                 if isinstance(expr, str):\n                     d = self._getglobals()\n                     import _pytest._code\n-                    result = cached_eval(self.item.config, expr, d)\n+\n+                    exprcode = _pytest._code.compile(expr, mode=\"eval\")\n+                    result = eval(exprcode, d)\n                 else:\n                     if \"reason\" not in mark.kwargs:\n                         # XXX better be checked at collection time\n",
+      "explanation": null,
+      "token_usage": {
+        "input": 1110,
+        "output": 523
+      },
+      "cost_usd": 0.011175,
+      "runtime_seconds": 7.765000000130385,
+      "error_message": null,
+      "raw_logs": "{\"diff\": \"--- a/src/_pytest/mark/evaluate.py\\n+++ b/src/_pytest/mark/evaluate.py\\n@@ -1,7 +1,6 @@\\n import os\\n import platform\\n import sys\\n-import traceback\\n from typing import Any\\n from typing import Dict\\n from typing import List\\n@@ -21,22 +20,6 @@ from _pytest.outcomes import fail\\n from _pytest.outcomes import TEST_OUTCOME\\n \\n \\n-evalcache_key = StoreKey[Dict[str, Any]]()\\n-\\n-\\n-def cached_eval(config: Config, expr: str, d: Dict[str, object]) -> Any:\\n-    default = {}  # type: Dict[str, Any]\\n-    evalcache = config._store.get(evalcache_key, default)\\n-    if expr not in evalcache:\\n-        import _pytest._code\\n-\\n-        exprcode = _pytest._code.compile(expr, mode=\\\"eval\\\")\\n-        evalcache[expr] = config._store.get(evalcache_key, default)\\n-        evalcache[expr] = eval(exprcode, d)\\n-        config._store[evalcache_key] = evalcache\\n-    return evalcache[expr]\\n-\\n-\\n class MarkEvaluator:\\n     def __init__(self, item: Item, name: str) -> None:\\n         self.item = item\\n@@ -112,7 +95,9 @@ class MarkEvaluator:\\n                 if isinstance(expr, str):\\n                     d = self._getglobals()\\n                     import _pytest._code\\n-                    result = cached_eval(self.item.config, expr, d)\\n+\\n+                    exprcode = _pytest._code.compile(expr, mode=\\\"eval\\\")\\n+                    result = eval(exprcode, d)\\n                 else:\\n                     if \\\"reason\\\" not in mark.kwargs:\\n                         # XXX better be checked at collection time\\n\"}",
+      "metadata": {
+        "model": "claude-sonnet-4-6",
+        "prompt_version": "issue-to-unified-diff-v3-submit-patch-tool",
+        "stop_reason": "tool_use",
+        "patch_source": "tool"
+      }
+    }
+  ],
+  "recorded_from": {
+    "experiment_id": "bc6f1372-2088-45dd-907c-d741c0545d27",
+    "experiment_name": "icse_pilot_v1",
+    "run_id": "4e646691-f2d0-43a0-a41d-08dfffcbe3e7",
+    "agent_name": "llm_baseline",
+    "execution_mode": "real"
+  }
+}

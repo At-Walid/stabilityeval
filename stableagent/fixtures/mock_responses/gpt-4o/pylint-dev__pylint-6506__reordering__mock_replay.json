@@ -1,0 +1,42 @@
+{
+  "status": "success",
+  "patch": "--- a/pylint/config/config_initialization.py\n+++ b/pylint/config/config_initialization.py\n@@ -83,7 +83,11 @@ def _config_initialization(\n     if unrecognized_options:\n         # raise error if there are unrecognized options\n         from pylint.config.exceptions import _UnrecognizedOptionError\n-        raise _UnrecognizedOptionError(options=unrecognized_options)\n+        print(\"usage: pylint [options] [file_or_module] [file_or_module] [...]\")\n+        print(\"pylint: error: unrecognized arguments:\", ' '.join(unrecognized_options))\n+        print(\"Try 'pylint --help' for more information.\")\n+        sys.exit(2)\n+\n \n def _load_config_file(\n     config_file: str, options: List[str], args: List[str],",
+  "explanation": null,
+  "token_usage": {
+    "input": 688,
+    "output": 191
+  },
+  "cost_usd": 0.00363,
+  "runtime_seconds": 1.6090000001713634,
+  "error_message": null,
+  "raw_logs": "{\"diff\": \"--- a/pylint/config/config_initialization.py\\n+++ b/pylint/config/config_initialization.py\\n@@ -83,7 +83,11 @@ def _config_initialization(\\n     if unrecognized_options:\\n         # raise error if there are unrecognized options\\n         from pylint.config.exceptions import _UnrecognizedOptionError\\n-        raise _UnrecognizedOptionError(options=unrecognized_options)\\n+        print(\\\"usage: pylint [options] [file_or_module] [file_or_module] [...]\\\")\\n+        print(\\\"pylint: error: unrecognized arguments:\\\", ' '.join(unrecognized_options))\\n+        print(\\\"Try 'pylint --help' for more information.\\\")\\n+        sys.exit(2)\\n+\\n \\n def _load_config_file(\\n     config_file: str, options: List[str], args: List[str],\"}",
+  "metadata": {
+    "model": "gpt-4o",
+    "prompt_version": "issue-to-unified-diff-v3-submit-patch-tool",
+    "stop_reason": "tool_use",
+    "patch_source": "tool",
+    "model_snapshot": "gpt-4o-2024-08-06"
+  },
+  "variant": {
+    "transformed_text": "```shell\n************* Module Command line\nCommand line:1:0: E0015: Unrecognized option found: Q (unrecognized-option)\nTraceback (most recent call last):\n  File \"/Users/markbyrne/venv310/bin/pylint\", line 33, in <module>\n    sys.exit(load_entry_point('pylint', 'console_scripts', 'pylint')())\n  File \"/Users/markbyrne/programming/pylint/pylint/__init__.py\", line 24, in run_pylint\n    PylintRun(argv or sys.argv[1:])\n  File \"/Users/markbyrne/programming/pylint/pylint/lint/run.py\", line 135, in __init__\n    args = _config_initialization(\n  File \"/Users/markbyrne/programming/pylint/pylint/config/config_initialization.py\", line 85, in _config_initialization\n    raise _UnrecognizedOptionError(options=unrecognized_options)\npylint.config.exceptions._UnrecognizedOptionError\n```\n\nThe traceback I don't think is expected & not user-friendly.\nA usage tip, for example:\n```python\nmypy -Q\nusage: mypy [-h] [-v] [-V] [more options; see below]\n            [-m MODULE] [-p PACKAGE] [-c PROGRAM_TEXT] [files ...]\nmypy: error: unrecognized arguments: -Q\n```\n\n```shell\npylint -Q\n```\n\n### Pylint output\n\n### Additional dependencies\n\n_No response_\n\n### OS / Environment\n\nThe top part of the current output is handy:\n`Command line:1:0: E0015: Unrecognized option found: Q (unrecognized-option)`\n\n### Expected behavior\n\nA traceback is printed when an unrecognized option is passed to pylint.\n\n### Configuration\n\n```shell\npylint 2.14.0-dev0\nastroid 2.11.3\nPython 3.10.0b2 (v3.10.0b2:317314165a, May 31 2021, 10:02:22) [Clang 12.0.5 (clang-1205.0.22.9)]\n```\n\n_No response_\n\n### Command used\n\n### Pylint version\n\nTraceback printed for unrecognized option\n### Bug description\n\n_No response_",
+    "transformation_notes": "Shuffled 17 paragraph(s) (seed=42); CRLF normalised to LF, fenced code blocks kept whole.",
+    "params": {
+      "seed": 42
+    },
+    "generator": "deterministic",
+    "transform_version": "2",
+    "generation_mode": "real",
+    "quality_warning": false,
+    "noop": false,
+    "exclusion_reason": null,
+    "generation_cost_usd": 0.0,
+    "original_sha256": "3875271c4f69f705627520a05192ae96a4299c27eca6b036b1a845ac79d687be"
+  },
+  "recorded_from": {
+    "experiment_id": "9d27f3ef-397a-41b7-b1b2-e09729288a40",
+    "experiment_name": "icse_pilot_model2",
+    "run_id": "1988f65a-0eb0-4cf4-8fb1-2927eeb3f8ec",
+    "agent_name": "llm_baseline",
+    "execution_mode": "real"
+  }
+}

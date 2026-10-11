@@ -1,0 +1,39 @@
+{
+  "status": "success",
+  "patch": "--- a/requests/sessions.py\n+++ b/requests/sessions.py\n@@ -426,7 +426,8 @@ class Session(SessionRedirectMixin):\n         :param method: method for the new :class:`Request` object.\n         :param url: URL for the new :class:`Request` object.\n         :param params: (optional) Dictionary or bytes to be sent in the query\n-            string for the :class:`Request`.\n+            string for the :class:`Request`. If ``method`` is a byte string,\n+            it will be decoded to a native string.\n         :param data: (optional) Dictionary, bytes, or file-like object to send\n             in the body of the :class:`Request`.\n         :param headers: (optional) Dictionary of HTTP Headers to send with the\n@@ -455,7 +456,7 @@ class Session(SessionRedirectMixin):\n         \"\"\"\n \n         method = builtin_str(method)\n-\n+        # If method is a bytes object, decode it to a native string.\n+        if isinstance(method, bytes):\n+            method = method.decode('utf-8')\n+\n",
+  "explanation": null,
+  "token_usage": {
+    "input": 1080,
+    "output": 304
+  },
+  "cost_usd": 0.0078,
+  "runtime_seconds": 4.609000000171363,
+  "error_message": null,
+  "raw_logs": "{\"diff\": \"--- a/requests/sessions.py\\n+++ b/requests/sessions.py\\n@@ -426,7 +426,8 @@ class Session(SessionRedirectMixin):\\n         :param method: method for the new :class:`Request` object.\\n         :param url: URL for the new :class:`Request` object.\\n         :param params: (optional) Dictionary or bytes to be sent in the query\\n-            string for the :class:`Request`.\\n+            string for the :class:`Request`. If ``method`` is a byte string,\\n+            it will be decoded to a native string.\\n         :param data: (optional) Dictionary, bytes, or file-like object to send\\n             in the body of the :class:`Request`.\\n         :param headers: (optional) Dictionary of HTTP Headers to send with the\\n@@ -455,7 +456,7 @@ class Session(SessionRedirectMixin):\\n         \\\"\\\"\\\"\\n \\n         method = builtin_str(method)\\n-\\n+        # If method is a bytes object, decode it to a native string.\\n+        if isinstance(method, bytes):\\n+            method = method.decode('utf-8')\\n+\\n\"}",
+  "metadata": {
+    "model": "claude-sonnet-4-6",
+    "prompt_version": "issue-to-unified-diff-v3-submit-patch-tool",
+    "stop_reason": "tool_use",
+    "patch_source": "tool"
+  },
+  "variant": {
+    "transformed_text": "## Summary\nThe `method = builtin_str(method)` command in requests/sessions.py converts binary method values (e.g., `b'GET'`) to literal string representations (e.g., `\"b'GET'\"`), causing requests to send HTTP requests with invalid method names and receive 404 Not Found responses.\n\n## Steps to Reproduce\nNot specified\n\n## Expected Behavior\nRequests should handle binary string method values (e.g., `b'GET'`) correctly and convert them to proper method strings without creating literal string representations.\n\n## Actual Behavior\nWhen a binary method value such as `b'GET'` is passed to requests through python-neutronclient's `utils.safe_encode_list(args)` command, which converts all values to binary strings including method, `builtin_str(method)` converts it to the literal string `\"b'GET'\"` instead of `\"GET\"`. Requests then attempts to use `\"b'GET'\"` as the HTTP method, resulting in a 404 Not Found response.\n\n## Environment\npython3.4, python-neutronclient 2.3.9, requests 2.4.3. The issue does not occur in python2.6.",
+    "transformation_notes": "Extracted the core technical problem from the prose description. Included all technical identifiers verbatim: builtin_str, requests/sessions.py, utils.safe_encode_list, python3.4, python2.6, python-neutronclient 2.3.9, and requests 2.4.3. No explicit reproduction steps provided in the original, so that section states 'Not specified'. The environment section captures the specific versions and the version-dependent nature of the bug. [quality check passed on attempt 2/2]",
+    "params": {},
+    "generator": "claude-haiku-4-5-20251001",
+    "transform_version": "5",
+    "generation_mode": "real",
+    "quality_warning": false,
+    "noop": false,
+    "exclusion_reason": null,
+    "generation_cost_usd": 0.006234,
+    "original_sha256": "9fdbda259c2e75551a5282e979edf4ca93ba378bee22df393fe02998991cfd1a"
+  },
+  "recorded_from": {
+    "experiment_id": "bc6f1372-2088-45dd-907c-d741c0545d27",
+    "experiment_name": "icse_pilot_v1",
+    "run_id": "383bea44-4bc1-4359-92a4-bfd597a854a9",
+    "agent_name": "llm_baseline",
+    "execution_mode": "real"
+  }
+}

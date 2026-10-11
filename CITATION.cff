@@ -1,0 +1,23 @@
+cff-version: 1.2.0
+message: "If you use StableAgent, please cite it with these metadata."
+title: "StableAgent: Behavioral Stability Evaluation of Autonomous Software Engineering Agents"
+type: software
+version: 1.0.0
+license: MIT
+repository-code: "https://github.com/At-Walid/stableagent"
+authors:
+  - family-names: Attaoui
+    given-names: Mohamed Oualid
+    affiliation: LIRMM
+    email: mohammed.attaoui@lirmm.fr
+keywords:
+  - software engineering agents
+  - metamorphic testing
+  - LLM evaluation
+  - SWE-bench
+abstract: >-
+  StableAgent checks whether an autonomous software-engineering agent behaves the same way when
+  the same issue is described in different words. It applies meaning-preserving transformations
+  to SWE-bench Lite issues, runs the agent on the original and on every variant, and reports
+  whether the outcome and the patch change. It ships a Streamlit GUI, a CLI and a replay mode that
+  reproduces the ICSE 2027 pilot without an API key.

@@ -1,0 +1,49 @@
+{
+  "status": "success",
+  "patch": "--- a/seaborn/_core/scales.py\n+++ b/seaborn/_core/scales.py\n@@ -348,7 +348,11 @@\n         vmin, vmax = axis.convert_units((vmin, vmax))\n         a = forward(vmin)\n-        b = forward(vmax) - forward(vmin)\n+        if isinstance(vmin, bool) and isinstance(vmax, bool):\n+            b = int(forward(vmax)) - int(forward(vmin))\n+        else:\n+            b = forward(vmax) - forward(vmin)\n \n         def normalize(x):\n             return (x - a) / b\n",
+  "explanation": null,
+  "token_usage": {
+    "input": 668,
+    "output": 152
+  },
+  "cost_usd": 0.00319,
+  "runtime_seconds": 1.1880000000819564,
+  "error_message": null,
+  "raw_logs": "{\"diff\": \"--- a/seaborn/_core/scales.py\\n+++ b/seaborn/_core/scales.py\\n@@ -348,7 +348,11 @@\\n         vmin, vmax = axis.convert_units((vmin, vmax))\\n         a = forward(vmin)\\n-        b = forward(vmax) - forward(vmin)\\n+        if isinstance(vmin, bool) and isinstance(vmax, bool):\\n+            b = int(forward(vmax)) - int(forward(vmin))\\n+        else:\\n+            b = forward(vmax) - forward(vmin)\\n \\n         def normalize(x):\\n             return (x - a) / b\\n\"}",
+  "metadata": {
+    "model": "gpt-4o",
+    "prompt_version": "issue-to-unified-diff-v3-submit-patch-tool",
+    "stop_reason": "tool_use",
+    "patch_source": "tool",
+    "model_snapshot": "gpt-4o-2024-08-06"
+  },
+  "control_repeats": [
+    {
+      "status": "success",
+      "patch": "--- a/seaborn/_core/scales.py\n+++ b/seaborn/_core/scales.py\n@@ -348,7 +348,11 @@\n         vmin, vmax = axis.convert_units((vmin, vmax))\n         a = forward(vmin)\n \n-        b = forward(vmax) - forward(vmin)\n+        # Handle boolean data by converting to integers\n+        if data.dtype == bool:\n+            vmax, vmin = int(vmax), int(vmin)\n+        \n+        b = forward(vmax) - forward(vmin)\n \n         def normalize(x):\n             return (x - a) / b\n",
+      "explanation": null,
+      "token_usage": {
+        "input": 668,
+        "output": 152
+      },
+      "cost_usd": 0.00319,
+      "runtime_seconds": 1.25,
+      "error_message": null,
+      "raw_logs": "{\"diff\": \"--- a/seaborn/_core/scales.py\\n+++ b/seaborn/_core/scales.py\\n@@ -348,7 +348,11 @@\\n         vmin, vmax = axis.convert_units((vmin, vmax))\\n         a = forward(vmin)\\n \\n-        b = forward(vmax) - forward(vmin)\\n+        # Handle boolean data by converting to integers\\n+        if data.dtype == bool:\\n+            vmax, vmin = int(vmax), int(vmin)\\n+        \\n+        b = forward(vmax) - forward(vmin)\\n \\n         def normalize(x):\\n             return (x - a) / b\\n\"}",
+      "metadata": {
+        "model": "gpt-4o",
+        "prompt_version": "issue-to-unified-diff-v3-submit-patch-tool",
+        "stop_reason": "tool_use",
+        "patch_source": "tool",
+        "model_snapshot": "gpt-4o-2024-08-06"
+      }
+    }
+  ],
+  "recorded_from": {
+    "experiment_id": "9d27f3ef-397a-41b7-b1b2-e09729288a40",
+    "experiment_name": "icse_pilot_model2",
+    "run_id": "134a15dc-e170-47de-9572-07b10ccd3f2a",
+    "agent_name": "llm_baseline",
+    "execution_mode": "real"
+  }
+}

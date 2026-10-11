@@ -1,0 +1,40 @@
+{
+  "status": "success",
+  "patch": "--- a/requests/sessions.py\n+++ b/requests/sessions.py\n@@ -327,7 +327,10 @@\n         Send a given PreparedRequest.\n         \"\"\"\n \n-        method = builtin_str(method)\n+        if isinstance(method, bytes):\n+            method = method.decode('ascii')\n+        else:\n+            method = builtin_str(method)\n \n         # Create the Request.\n         req = Request(\n",
+  "explanation": null,
+  "token_usage": {
+    "input": 396,
+    "output": 106
+  },
+  "cost_usd": 0.00205,
+  "runtime_seconds": 1.3129999998491257,
+  "error_message": null,
+  "raw_logs": "{\"diff\": \"--- a/requests/sessions.py\\n+++ b/requests/sessions.py\\n@@ -327,7 +327,10 @@\\n         Send a given PreparedRequest.\\n         \\\"\\\"\\\"\\n \\n-        method = builtin_str(method)\\n+        if isinstance(method, bytes):\\n+            method = method.decode('ascii')\\n+        else:\\n+            method = builtin_str(method)\\n \\n         # Create the Request.\\n         req = Request(\\n\"}",
+  "metadata": {
+    "model": "gpt-4o",
+    "prompt_version": "issue-to-unified-diff-v3-submit-patch-tool",
+    "stop_reason": "tool_use",
+    "patch_source": "tool",
+    "model_snapshot": "gpt-4o-2024-08-06"
+  },
+  "variant": {
+    "transformed_text": "A problematic line exists in requests/sessions.py:\n\nmethod = builtin_str(method)\n\nThis line transforms method from\nb'GET'\ninto\n\"b'GET'\"\n\nwhich becomes a literal string representation rather than a binary string. Subsequently, when requests attempts to use the method value \"b'GET'\", the server returns a 404 Not Found error.\n\nEnvironment details: python3.4, python-neutronclient (2.3.9), and requests (2.4.3). The neutronclient component fails in this scenario because it invokes utils.safe_encode_list(args), which converts all arguments to binary strings, including the method parameter.\n\nIt is unclear whether this constitutes a defect in neutronclient or requests, though this appears to be the appropriate location to report it. A potential resolution would be for requests to properly handle method values that are already in binary string format.\n\nInterestingly, this issue does not reproduce in python2.6, suggesting a behavioral difference between python 2.6 and 3.4 accounts for the problem.",
+    "transformation_notes": "Restructured the description for clarity while maintaining all technical details: reordered the introduction, expanded abbreviated references, rephrased the problem statement, and reorganized the environment and version information. All technical identifiers, function names, and version numbers remain verbatim. [quality check passed on attempt 1/2]",
+    "params": {},
+    "generator": "claude-haiku-4-5-20251001",
+    "transform_version": "4",
+    "generation_mode": "real",
+    "quality_warning": false,
+    "noop": false,
+    "exclusion_reason": null,
+    "generation_cost_usd": 0.002312,
+    "original_sha256": "9fdbda259c2e75551a5282e979edf4ca93ba378bee22df393fe02998991cfd1a"
+  },
+  "recorded_from": {
+    "experiment_id": "9d27f3ef-397a-41b7-b1b2-e09729288a40",
+    "experiment_name": "icse_pilot_model2",
+    "run_id": "55c17264-e0e7-4662-8a7e-2fff3ad4020f",
+    "agent_name": "llm_baseline",
+    "execution_mode": "real"
+  }
+}

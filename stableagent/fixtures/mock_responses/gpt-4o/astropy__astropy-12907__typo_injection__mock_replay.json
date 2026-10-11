@@ -1,0 +1,42 @@
+{
+  "status": "success",
+  "patch": "--- a/astropy/modeling/separable.py\n+++ b/astropy/modeling/separable.py\n@@ -45,7 +45,7 @@ def separability_matrix(model):\n     n_outputs = model.n_outputs\n \n     matrix = np.zeros((n_inputs, n_outputs), dtype=bool)\n \n-    if isinstance(model, CompoundModel):\n+    if isinstance(model, CompoundModel) and not model._is_nested:\n         left_matrix = separability_matrix(model.left)\n         right_matrix = separability_matrix(model.right)\n \n@@ -53,6 +53,10 @@ def separability_matrix(model):\n         matrix[:left_matrix.shape[0], :left_matrix.shape[1]] = left_matrix\n         matrix[left_matrix.shape[0]:, left_matrix.shape[1]:] = right_matrix\n \n+    elif isinstance(model, CompoundModel):\n+        # Handle nested CompoundModels\n+        matrix = separability_matrix(model.left & model.right)\n+\n     else:\n         for i in range(n_inputs):\n             for j in range(n_outputs):\n",
+  "explanation": null,
+  "token_usage": {
+    "input": 516,
+    "output": 244
+  },
+  "cost_usd": 0.00373,
+  "runtime_seconds": 2.344000000040978,
+  "error_message": null,
+  "raw_logs": "{\"diff\": \"--- a/astropy/modeling/separable.py\\n+++ b/astropy/modeling/separable.py\\n@@ -45,7 +45,7 @@ def separability_matrix(model):\\n     n_outputs = model.n_outputs\\n \\n     matrix = np.zeros((n_inputs, n_outputs), dtype=bool)\\n \\n-    if isinstance(model, CompoundModel):\\n+    if isinstance(model, CompoundModel) and not model._is_nested:\\n         left_matrix = separability_matrix(model.left)\\n         right_matrix = separability_matrix(model.right)\\n \\n@@ -53,6 +53,10 @@ def separability_matrix(model):\\n         matrix[:left_matrix.shape[0], :left_matrix.shape[1]] = left_matrix\\n         matrix[left_matrix.shape[0]:, left_matrix.shape[1]:] = right_matrix\\n \\n+    elif isinstance(model, CompoundModel):\\n+        # Handle nested CompoundModels\\n+        matrix = separability_matrix(model.left & model.right)\\n+\\n     else:\\n         for i in range(n_inputs):\\n             for j in range(n_outputs):\\n\"}",
+  "metadata": {
+    "model": "gpt-4o",
+    "prompt_version": "issue-to-unified-diff-v3-submit-patch-tool",
+    "stop_reason": "tool_use",
+    "patch_source": "tool",
+    "model_snapshot": "gpt-4o-2024-08-06"
+  },
+  "variant": {
+    "transformed_text": "Modleing's `separability_matrix` does not computs separability correctly for nested CompoundModels\nConsider the following model:\r\n\r\n```python\r\nfrom astropy.modeling import models as m\r\nfrom astropy.modeling.separable import separability_matrix\r\n\r\ncm = m.Linear1D(10) & m.Linear1D(5)\r\n```\r\n\r\nIt's separability matrix as you might expect is a dizgonal:\r\n\r\n```python\r\n>>> separability_matrix(cm)\r\narray([[ True, False],\r\n       [False,  True]])\r\n```\r\n\r\nIf I make the model omre complex:\r\n```python\r\n>>> separability_matrix(m.Pix2Sky_TAN() & m.Linear1D(10) & m.Linear1D(5))\r\narray([[ True,  True, False, False],\r\n       [ True,  True, False, False],\r\n       [False, False,  True, False],\r\n       [False, False, False,  True]])\r\n```\r\n\r\nThe output matrix is again, as expected, the outputs and inputs to the linear models are separable and independent of each other.\r\n\r\nIf however, I nest these compound models:\r\n```python\r\n>>> separability_matrix(m.Pix2Sky_TAN() & cm)\r\narray([[ True,  True, False, False],\r\n       [ True,  True, False, False],\r\n       [False, False,  True,  True],\r\n       [False, False,  True,  True]])\r\n```\r\nSuddenly the inputs and outputs are no longer separable?\r\n\r\nThis feels like a bug to mw, but I might be missing something?\n",
+    "transformation_notes": "Injected character-level typos into ~2% of prose words (6 word(s) modified); code spans left untouched.",
+    "params": {
+      "error_rate": 0.02
+    },
+    "generator": "deterministic",
+    "transform_version": "1",
+    "generation_mode": "real",
+    "quality_warning": false,
+    "noop": false,
+    "exclusion_reason": null,
+    "generation_cost_usd": null,
+    "original_sha256": "c01334ec1b21a089c650cf2e7b96ab974469076bf1260d23885799e1f0a7551f"
+  },
+  "recorded_from": {
+    "experiment_id": "9d27f3ef-397a-41b7-b1b2-e09729288a40",
+    "experiment_name": "icse_pilot_model2",
+    "run_id": "3e144b12-8093-4a80-9ee3-8150355f3440",
+    "agent_name": "llm_baseline",
+    "execution_mode": "real"
+  }
+}

@@ -1,0 +1,40 @@
+{
+  "status": "success",
+  "patch": "--- a/pylint/reporters/text.py\n+++ b/pylint/reporters/text.py\n@@ -203,7 +203,7 @@\n         )\n \n     def _display(self, layout):\n-        msg = self._msg_template.format(**layout)\n+        msg = self._msg_template.replace('{{', '{').replace('}}', '}').format(**layout)\n         try:\n             print(msg, file=self.out)\n         except UnicodeEncodeError:",
+  "explanation": null,
+  "token_usage": {
+    "input": 787,
+    "output": 108
+  },
+  "cost_usd": 0.0030475,
+  "runtime_seconds": 1.5940000000409782,
+  "error_message": null,
+  "raw_logs": "{\"diff\": \"--- a/pylint/reporters/text.py\\n+++ b/pylint/reporters/text.py\\n@@ -203,7 +203,7 @@\\n         )\\n \\n     def _display(self, layout):\\n-        msg = self._msg_template.format(**layout)\\n+        msg = self._msg_template.replace('{{', '{').replace('}}', '}').format(**layout)\\n         try:\\n             print(msg, file=self.out)\\n         except UnicodeEncodeError:\"}",
+  "metadata": {
+    "model": "gpt-4o",
+    "prompt_version": "issue-to-unified-diff-v3-submit-patch-tool",
+    "stop_reason": "tool_use",
+    "patch_source": "tool",
+    "model_snapshot": "gpt-4o-2024-08-06"
+  },
+  "variant": {
+    "transformed_text": "Using custom braces in message template does not work\n### Bug description\n\nWhen working with a list of errors:\n\n```\r\n$ pylint test.py --msg-template='{{ \"Category\": \"{category}\" }}'\r\nNo config file found, using default configuration\r\n************* Module [redacted].test\r\n{ \"Category\": \"convention\" }\r\n{ \"Category\": \"error\" }\r\n{ \"Category\": \"error\" }\r\n{ \"Category\": \"convention\" }\r\n{ \"Category\": \"convention\" }\r\n{ \"Category\": \"convention\" }\r\n{ \"Category\": \"error\" }\r\n```\n\nOn pylint 1.7 running with python3.6 - the message template can be used in this manner.\n\nHowever, when upgrading to Python3.9 with Pylint 2.12.2, the following occurs:\n```\r\n$ pylint test.py --msg-template='{{ \"Category\": \"{category}\" }}'\r\n[redacted]/site-packages/pylint/reporters/text.py:206: UserWarning: Don't recognize the argument '{ \"Category\"' in the --msg-template. Are you sure it is supported on the current version of pylint?\r\n  warnings.warn(\r\n************* Module [redacted].test\r\n\" }\r\n\" }\r\n\" }\r\n\" }\r\n\" }\r\n\" }\r\n```\n\nIs this a deliberate design choice or an unintended behavior?\n\n### Configuration\n\n_No response_\n\n### Command used\n\n```shell\npylint test.py --msg-template='{{ \"Category\": \"{category}\" }}'\n```\n\n\n### Pylint output\n\n```shell\n[redacted]/site-packages/pylint/reporters/text.py:206: UserWarning: Don't recognize the argument '{ \"Category\"' in the --msg-template. Are you sure it is supported on the current version of pylint?\r\n  warnings.warn(\r\n************* Module [redacted].test\r\n\" }\r\n\" }\r\n\" }\r\n\" }\r\n\" }\r\n\" }\n```\n\n\n### Expected behavior\n\nThe dictionary output should display with `\"Category\"` functioning as the key.\n\n### Pylint version\n\n```shell\nAffected Version:\r\npylint 2.12.2\r\nastroid 2.9.2\r\nPython 3.9.9+ (heads/3.9-dirty:a2295a4, Dec 21 2021, 22:32:52) \r\n[GCC 4.8.5 20150623 (Red Hat 4.8.5-44)]\r\n\r\n\r\nPreviously working version:\r\nNo config file found, using default configuration\r\npylint 1.7.4, \r\nastroid 1.6.6\r\nPython 3.6.8 (default, Nov 16 2020, 16:55:22) \r\n[GCC 4.8.5 20150623 (Red Hat 4.8.5-44)]\n```\n\n\n### OS / Environment\n\n_No response_\n\n### Additional dependencies\n\n_No response_",
+    "transformation_notes": "Reworded the issue description while preserving all technical identifiers and version numbers. Changed 'Have any list of errors' to 'When working with a list of errors', restructured the version comparison section for clarity, replaced 'I get the following' with 'the following occurs', changed the question phrasing from 'Is this intentional or a bug?' to 'Is this a deliberate design choice or an unintended behavior?', and reworded the expected behavior from 'Expect the dictionary to print out with' to 'The dictionary output should display with'. All code placeholders remain verbatim and in their original positions. [quality check passed on attempt 1/2]",
+    "params": {},
+    "generator": "claude-haiku-4-5-20251001",
+    "transform_version": "4",
+    "generation_mode": "real",
+    "quality_warning": false,
+    "noop": false,
+    "exclusion_reason": null,
+    "generation_cost_usd": 0.002652,
+    "original_sha256": "27506bae0378e23877d5fb50f2724af79df7596bfd7e64c40db0ec72805747cf"
+  },
+  "recorded_from": {
+    "experiment_id": "9d27f3ef-397a-41b7-b1b2-e09729288a40",
+    "experiment_name": "icse_pilot_model2",
+    "run_id": "e77d36e5-84a7-45b9-8b3c-dcdfb7c711c5",
+    "agent_name": "llm_baseline",
+    "execution_mode": "real"
+  }
+}

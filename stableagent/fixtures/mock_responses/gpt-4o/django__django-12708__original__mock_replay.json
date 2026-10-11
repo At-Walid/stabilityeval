@@ -1,0 +1,49 @@
+{
+  "status": "success",
+  "patch": "--- a/django/db/backends/base/schema.py\n+++ b/django/db/backends/base/schema.py\n@@ -375,7 +375,11 @@ class BaseDatabaseSchemaEditor:\n         # This is a total hack, but the easiest way to get the index name\n         # is to pull it out of the CREATE TABLE statement...\n         for sql in self.connection.creation.sql_create_model(model, self.style, self.connection.introspection.table_names(self.connection.cursor())):\n-            if 'CREATE INDEX' in sql and index_name in sql:\n+            if 'CREATE INDEX' in sql and index_name in sql:\n+                # Check if the index is part of a unique_together constraint\n+                if any(index_name in constraint for constraint in self._constraint_names(model, [index_name], unique=True)):\n+                    continue\n+\n                 return self._get_index_name_from_sql(sql)\n         raise ValueError(\"Found wrong number (%s) of constraints for %s\" % (len(constraints), index_name))\n \n@@ -385,6 +389,10 @@ class BaseDatabaseSchemaEditor:\n         constraints = self._constraint_names(model, [index_name])\n         if len(constraints) != 1:\n             raise ValueError(\"Found wrong number (%s) of constraints for %s\" % (len(constraints), index_name))\n \n+        # Ensure the index is not part of a unique_together constraint\n+        if any(index_name in constraint for constraint in self._constraint_names(model, [index_name], unique=True)):\n+            return\n+\n         self.execute(self._delete_constraint_sql(self.sql_delete_index, model, index_name))\n \n     def _create_unique(self, model, fields, name=None):",
+  "explanation": null,
+  "token_usage": {
+    "input": 422,
+    "output": 381
+  },
+  "cost_usd": 0.004865,
+  "runtime_seconds": 4.563000000081956,
+  "error_message": null,
+  "raw_logs": "{\"diff\": \"--- a/django/db/backends/base/schema.py\\n+++ b/django/db/backends/base/schema.py\\n@@ -375,7 +375,11 @@ class BaseDatabaseSchemaEditor:\\n         # This is a total hack, but the easiest way to get the index name\\n         # is to pull it out of the CREATE TABLE statement...\\n         for sql in self.connection.creation.sql_create_model(model, self.style, self.connection.introspection.table_names(self.connection.cursor())):\\n-            if 'CREATE INDEX' in sql and index_name in sql:\\n+            if 'CREATE INDEX' in sql and index_name in sql:\\n+                # Check if the index is part of a unique_together constraint\\n+                if any(index_name in constraint for constraint in self._constraint_names(model, [index_name], unique=True)):\\n+                    continue\\n+\\n                 return self._get_index_name_from_sql(sql)\\n         raise ValueError(\\\"Found wrong number (%s) of constraints for %s\\\" % (len(constraints), index_name))\\n \\n@@ -385,6 +389,10 @@ class BaseDatabaseSchemaEditor:\\n         constraints = self._constraint_names(model, [index_name])\\n         if len(constraints) != 1:\\n             raise ValueError(\\\"Found wrong number (%s) of constraints for %s\\\" % (len(constraints), index_name))\\n \\n+        # Ensure the index is not part of a unique_together constraint\\n+        if any(index_name in constraint for constraint in self._constraint_names(model, [index_name], unique=True)):\\n+            return\\n+\\n         self.execute(self._delete_constraint_sql(self.sql_delete_index, model, index_name))\\n \\n     def _create_unique(self, model, fields, name=None):\"}",
+  "metadata": {
+    "model": "gpt-4o",
+    "prompt_version": "issue-to-unified-diff-v3-submit-patch-tool",
+    "stop_reason": "tool_use",
+    "patch_source": "tool",
+    "model_snapshot": "gpt-4o-2024-08-06"
+  },
+  "control_repeats": [
+    {
+      "status": "success",
+      "patch": "--- a/django/db/backends/base/schema.py\n+++ b/django/db/backends/base/schema.py\n@@ -375,7 +375,11 @@ class BaseDatabaseSchemaEditor:\n         # This is a separate method to facilitate testing\n         def _delete_composed_index(self, model, fields, *args, **kwargs):\n             meta_constraint_names = {constraint.name for constraint in model._meta.constraints}\n-            constraint_names = self._constraint_names(model, fields, index=True, primary_key=False, unique=False)\n+            constraint_names = self._constraint_names(model, fields, index=True, primary_key=False, unique=False)\n+\n+            # Filter out unique constraints from the constraint names\n+            unique_constraint_names = self._constraint_names(model, fields, index=False, primary_key=False, unique=True)\n+            constraint_names = [name for name in constraint_names if name not in unique_constraint_names]\n \n             # Check for any meta constraints that might conflict\n             for constraint_name in list(constraint_names):\n",
+      "explanation": null,
+      "token_usage": {
+        "input": 422,
+        "output": 225
+      },
+      "cost_usd": 0.003305,
+      "runtime_seconds": 1.75,
+      "error_message": null,
+      "raw_logs": "{\"diff\": \"--- a/django/db/backends/base/schema.py\\n+++ b/django/db/backends/base/schema.py\\n@@ -375,7 +375,11 @@ class BaseDatabaseSchemaEditor:\\n         # This is a separate method to facilitate testing\\n         def _delete_composed_index(self, model, fields, *args, **kwargs):\\n             meta_constraint_names = {constraint.name for constraint in model._meta.constraints}\\n-            constraint_names = self._constraint_names(model, fields, index=True, primary_key=False, unique=False)\\n+            constraint_names = self._constraint_names(model, fields, index=True, primary_key=False, unique=False)\\n+\\n+            # Filter out unique constraints from the constraint names\\n+            unique_constraint_names = self._constraint_names(model, fields, index=False, primary_key=False, unique=True)\\n+            constraint_names = [name for name in constraint_names if name not in unique_constraint_names]\\n \\n             # Check for any meta constraints that might conflict\\n             for constraint_name in list(constraint_names):\\n\"}",
+      "metadata": {
+        "model": "gpt-4o",
+        "prompt_version": "issue-to-unified-diff-v3-submit-patch-tool",
+        "stop_reason": "tool_use",
+        "patch_source": "tool",
+        "model_snapshot": "gpt-4o-2024-08-06"
+      }
+    }
+  ],
+  "recorded_from": {
+    "experiment_id": "9d27f3ef-397a-41b7-b1b2-e09729288a40",
+    "experiment_name": "icse_pilot_model2",
+    "run_id": "545c8a18-583b-4377-a19d-26881e3d73c8",
+    "agent_name": "llm_baseline",
+    "execution_mode": "real"
+  }
+}

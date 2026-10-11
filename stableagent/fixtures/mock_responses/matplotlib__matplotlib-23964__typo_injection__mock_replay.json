@@ -1,0 +1,41 @@
+{
+  "status": "success",
+  "patch": "--- a/lib/matplotlib/backends/backend_ps.py\n+++ b/lib/matplotlib/backends/backend_ps.py\n@@ -666,6 +666,8 @@ class RendererPS(RendererBase):\n                 curr_stream.append((name, points))\n             else:\n                 if curr_stream:\n+                    if not curr_stream:\n+                        continue\n                     stream.append(curr_stream)\n                 curr_stream = []\n         if curr_stream:\n@@ -666,10 +666,8 @@ class RendererPS(RendererBase):\n                 curr_stream.append((name, points))\n             else:\n                 if curr_stream:\n-                    if not curr_stream:\n-                        continue\n                     stream.append(curr_stream)\n                 curr_stream = []\n         if curr_stream:\n",
+  "explanation": null,
+  "token_usage": {
+    "input": 2199,
+    "output": 247
+  },
+  "cost_usd": 0.010302,
+  "runtime_seconds": 3.7659999998286366,
+  "error_message": null,
+  "raw_logs": "{\"diff\": \"--- a/lib/matplotlib/backends/backend_ps.py\\n+++ b/lib/matplotlib/backends/backend_ps.py\\n@@ -666,6 +666,8 @@ class RendererPS(RendererBase):\\n                 curr_stream.append((name, points))\\n             else:\\n                 if curr_stream:\\n+                    if not curr_stream:\\n+                        continue\\n                     stream.append(curr_stream)\\n                 curr_stream = []\\n         if curr_stream:\\n@@ -666,10 +666,8 @@ class RendererPS(RendererBase):\\n                 curr_stream.append((name, points))\\n             else:\\n                 if curr_stream:\\n-                    if not curr_stream:\\n-                        continue\\n                     stream.append(curr_stream)\\n                 curr_stream = []\\n         if curr_stream:\\n\"}",
+  "metadata": {
+    "model": "claude-sonnet-4-6",
+    "prompt_version": "issue-to-unified-diff-v3-submit-patch-tool",
+    "stop_reason": "tool_use",
+    "patch_source": "tool"
+  },
+  "variant": {
+    "transformed_text": "[Bug]: Text label with empty line causes a \"TypeError: cannt unpack non-iterable NoneType object\" in PostScript backend\n### Bug summary\n\nWhen saving a figure with the PostScript backend, a\r\n> TypeError: cannot unpack non-iterable NoneType object\r\n\r\nhappens if the figure contains a multi-line text label with an empty line (see example).\n\n### Code for reproduction\n\n```python\nfrom matplotlib.figure import Figure\r\n\r\nfigure = Figure()\r\nax = figure.add_subplot(111)\r\n# ax.set_title('\\nLower title')  # this would cause an error as well\r\nax.annotate(text='\\nLower label', xy=(0, 0))\r\nfigure.savefig('figure.eps')\n```\n\n\n### Actual outcome\n\n$ ./venv/Scripts/python save_ps.py\r\nTraceback (most recent call last):\r\n  File \"C:\\temp\\matplotlib_save_ps\\save_ps.py\", line 7, in <module>\r\n    figure.savefig('figure.eps')\r\n  File \"C:\\temp\\matplotlib_save_ps\\venv\\lib\\site-packages\\matplotlib\\figure.py\", line 3272, in savefig\r\n    self.canvas.print_figure(fname, **kwargs)\r\n  File \"C:\\temp\\matplotlib_save_ps\\venv\\lib\\site-packages\\matplotlib\\backend_bases.py\", line 2338, in print_figure\r\n    result = print_method(\r\n  File \"C:\\temp\\matplotlib_save_ps\\venv\\lib\\site-packages\\matplotlib\\backend_bases.py\", line 2204, in <lambda>\r\n    print_method = functools.wraps(meth)(lambda *args, **kwargs: meth(\r\n  File \"C:\\temp\\matplotlib_save_ps\\venv\\lib\\site-packagez\\matplotlib\\_api\\deprecation.py\", line 410, in wrapper\r\n    return func(*inner_args, **inner_kwargs)\r\n  File \"C:\\temp\\matplotlib_save_ps\\venv\\lib\\site-packages\\matplotlib\\backends\\backend_ps.py\", line 869, in _print_ps\r\n    printer(fmt, outfile, dpi=dpi, dsc_comments=dsc_comments,\r\n  File \"C:\\temp\\matplotlib_save_ps\\venv\\lib\\site-packages\\matplotlib\\backends\\backend_ps.py\", line 927, in _print_figure\r\n    self.figure.draw(renderer)\r\n  File \"C:\\temp\\matplotlib_save_ps\\venv\\lib\\site-packages\\matplotlib\\artist.py\", linr 74, in draw_wrapper\r\n    result = draw(artist, renderer, *args, **kwargs)\r\n  File \"C:\\temp\\matplotlib_save_ps\\venv\\lib\\site-packages\\matplotlib\\artist.py\", line 51, in draw_wrapper\r\n    return draw(artist, renderer)\r\n  File \"C:\\temp\\matplotlib_save_ps\\venv\\lib\\site-packages\\matplotlib\\figure.py\", line 3069, in draw\r\n    mimage._draw_list_compositing_images(\r\n  File \"C:\\temp\\matplotlib_save_ps\\venv\\lib\\site-packages\\matplotlib\\image.py\", line 131, in _draw_list_compositing_images\r\n    a.draw(renderer)\r\n  File \"C:\\temp\\matplotlib_save_ps\\venv\\lib\\site-packages\\matplotlib\\artist.py\", line 51, in draw_wrapper\r\n    return draw(artist, renderer)\r\n  File \"C:\\temp\\matplotlib_save_ps\\venv\\lib\\site-packages\\matplotlib\\axes\\_base.py\", line 3106, in draw\r\n    mimage._draw_list_compositing_images(\r\n  File \"C:\\temp\\matplotlib_save_ps\\venv\\lib\\site-packages\\matplotlib\\image.py\", line 131, in _draw_list_compositing_images\r\n    a.draw(renderer)\r\n  File \"C:\\temp\\matplotlib_save_ps\\venv\\lib\\site-packages\\matplotlib\\artist.py\", line 51, in draw_wrapper\r\n    return draw(artist, renderer)\r\n  File \"C:\\temp\\matplotlib_save_ps\\venv\\lib\\site-packages\\matplotlib\\text.py\", line 1995, in draw\r\n    Text.draw(self, renderer)\r\n  File \"C:\\temp\\matplotlib_save_ps\\venv\\lib\\site-packages\\matplotlib\\artist.py\", line 51, in draw_wrapper\r\n    return draw(artist, renderer)\r\n  File \"C:\\temp\\matplotlib_save_ps\\venv\\lib\\site-packages\\matplotlib\\text.py\", line 736, in draw\r\n    textrehderer.draw_text(gc, x, y, clean_line,\r\n  File \"C:\\temp\\matplotlib_save_ps\\venv\\lib\\site-packages\\matplotlib\\backends\\backend_ps.py\", line 248, in wrapper\r\n    return meth(self, *args, **kwargs)\r\n  File \"C:\\temp\\matplotlib_save_ps\\venv\\lib\\site-packages\\matplotlib\\backends\\backend_ps.py\", line 673, in draw_text\r\n    for ps_name, xs_names in stream:\r\nTypeError: cannot unpack non-iterable NoneType object\r\n\n\n### Expected outcome\n\nThe figure can be saved as `figure.eps` without errro.\n\n### Additional information\n\n- seems to happen if a text label or title contains a linebreak with an empty line\r\n- works without error for other backends such as PNG, PDF, SVG, Qt\r\n- works with matplotlib<=3.5.3\r\n- adding `if curr_stream:` before line 669 of `backend_ps.py` seems to fix the bug \n\n### Operating system\n\nWindows\n\n### Matplotlib Version\n\n3.6.0\n\n### Matplotlib Backend\n\n_No response_\n\n### Python version\n\n3.9.13\n\n### Jupyter version\n\n_No response_\n\n### Instalation\n\npip\n",
+    "transformation_notes": "Injected character-level typos into ~2% of prose words (8 word(s) modified); code spans left untouched.",
+    "params": {
+      "error_rate": 0.02
+    },
+    "generator": "deterministic",
+    "transform_version": "1",
+    "generation_mode": "real",
+    "quality_warning": false,
+    "noop": false,
+    "exclusion_reason": null,
+    "generation_cost_usd": 0.0,
+    "original_sha256": "0f8c32f683ad268ccbc81029dfd1a580803a56fea240665e05666d1b12f6dd2f"
+  },
+  "recorded_from": {
+    "experiment_id": "bc6f1372-2088-45dd-907c-d741c0545d27",
+    "experiment_name": "icse_pilot_v1",
+    "run_id": "34b61acc-dbb7-4f44-b61b-35a101f3e615",
+    "agent_name": "llm_baseline",
+    "execution_mode": "real"
+  }
+}

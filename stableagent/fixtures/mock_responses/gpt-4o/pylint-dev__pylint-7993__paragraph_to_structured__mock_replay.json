@@ -1,0 +1,40 @@
+{
+  "status": "success",
+  "patch": "--- a/pylint/reporters/text.py\n+++ b/pylint/reporters/text.py\n@@ -203,7 +203,7 @@\n         )\n \n     def _display(self, layout):\n-        msg = self._template % layout\n+        msg = self._template.format(**layout)\n         self._output.write(msg)\n \n     def handle_message(self, msg):\n@@ -213,7 +213,7 @@\n             \"Don't recognize the argument '%s' in the --msg-template. Are you sure it is supported on the current version of pylint?\",\n             arg,\n         )\n-        return \"{%s}\" % arg\n+        return \"{{%s}}\" % arg\n \n     def _display_reports(self, layout):\n         if self._reporter is not None:\n",
+  "explanation": null,
+  "token_usage": {
+    "input": 770,
+    "output": 190
+  },
+  "cost_usd": 0.003825,
+  "runtime_seconds": 1.718000000109896,
+  "error_message": null,
+  "raw_logs": "{\"diff\": \"--- a/pylint/reporters/text.py\\n+++ b/pylint/reporters/text.py\\n@@ -203,7 +203,7 @@\\n         )\\n \\n     def _display(self, layout):\\n-        msg = self._template % layout\\n+        msg = self._template.format(**layout)\\n         self._output.write(msg)\\n \\n     def handle_message(self, msg):\\n@@ -213,7 +213,7 @@\\n             \\\"Don't recognize the argument '%s' in the --msg-template. Are you sure it is supported on the current version of pylint?\\\",\\n             arg,\\n         )\\n-        return \\\"{%s}\\\" % arg\\n+        return \\\"{{%s}}\\\" % arg\\n \\n     def _display_reports(self, layout):\\n         if self._reporter is not None:\\n\"}",
+  "metadata": {
+    "model": "gpt-4o",
+    "prompt_version": "issue-to-unified-diff-v3-submit-patch-tool",
+    "stop_reason": "tool_use",
+    "patch_source": "tool",
+    "model_snapshot": "gpt-4o-2024-08-06"
+  },
+  "variant": {
+    "transformed_text": "## Summary\nCustom braces in message template do not work in Pylint 2.12.2 with Python3.9, whereas they worked in Pylint 1.7 with python3.6.\n\n## Steps to Reproduce\n1. Use message template:\n\n```\r\n$ pylint test.py --msg-template='{{ \"Category\": \"{category}\" }}'\r\nNo config file found, using default configuration\r\n************* Module [redacted].test\r\n{ \"Category\": \"convention\" }\r\n{ \"Category\": \"error\" }\r\n{ \"Category\": \"error\" }\r\n{ \"Category\": \"convention\" }\r\n{ \"Category\": \"convention\" }\r\n{ \"Category\": \"convention\" }\r\n{ \"Category\": \"error\" }\r\n```\n\n2. Run:\n\n```shell\npylint test.py --msg-template='{{ \"Category\": \"{category}\" }}'\n```\n\n## Expected Behavior\nExpect the dictionary to print out with `\"Category\"` as the key.\n\n## Actual Behavior\n```\r\n$ pylint test.py --msg-template='{{ \"Category\": \"{category}\" }}'\r\n[redacted]/site-packages/pylint/reporters/text.py:206: UserWarning: Don't recognize the argument '{ \"Category\"' in the --msg-template. Are you sure it is supported on the current version of pylint?\r\n  warnings.warn(\r\n************* Module [redacted].test\r\n\" }\r\n\" }\r\n\" }\r\n\" }\r\n\" }\r\n\" }\r\n```\n\n```shell\n[redacted]/site-packages/pylint/reporters/text.py:206: UserWarning: Don't recognize the argument '{ \"Category\"' in the --msg-template. Are you sure it is supported on the current version of pylint?\r\n  warnings.warn(\r\n************* Module [redacted].test\r\n\" }\r\n\" }\r\n\" }\r\n\" }\r\n\" }\r\n\" }\n```\n\n## Environment\nPylint version:\n```shell\nAffected Version:\r\npylint 2.12.2\r\nastroid 2.9.2\r\nPython 3.9.9+ (heads/3.9-dirty:a2295a4, Dec 21 2021, 22:32:52) \r\n[GCC 4.8.5 20150623 (Red Hat 4.8.5-44)]\r\n\r\n\r\nPreviously working version:\r\nNo config file found, using default configuration\r\npylint 1.7.4, \r\nastroid 1.6.6\r\nPython 3.6.8 (default, Nov 16 2020, 16:55:22) \r\n[GCC 4.8.5 20150623 (Red Hat 4.8.5-44)]\n```\nConfiguration: _No response_\nCommand used: _No response_\nOS / Environment: _No response_\nAdditional dependencies: _No response_",
+    "transformation_notes": "Reformatted the issue into the five required sections using only information present in the original. Preserved all technical identifiers and version numbers verbatim (Python3.9, python3.6, Pylint 1.7, Pylint 2.12.2). Included '_No response_' entries where the original explicitly stated them for Configuration, OS/Environment, and Additional dependencies sections. All code placeholders appear exactly once. [quality check passed on attempt 2/2]",
+    "params": {},
+    "generator": "claude-haiku-4-5-20251001",
+    "transform_version": "5",
+    "generation_mode": "real",
+    "quality_warning": false,
+    "noop": false,
+    "exclusion_reason": null,
+    "generation_cost_usd": 0.00496,
+    "original_sha256": "27506bae0378e23877d5fb50f2724af79df7596bfd7e64c40db0ec72805747cf"
+  },
+  "recorded_from": {
+    "experiment_id": "9d27f3ef-397a-41b7-b1b2-e09729288a40",
+    "experiment_name": "icse_pilot_model2",
+    "run_id": "c62c8c6b-5726-4063-abc6-be47daf7a09b",
+    "agent_name": "llm_baseline",
+    "execution_mode": "real"
+  }
+}

@@ -1,0 +1,49 @@
+{
+  "status": "success",
+  "patch": "--- a/lib/matplotlib/colors.py\n+++ b/lib/matplotlib/colors.py\n@@ -727,9 +727,9 @@\n         # nans and out of range indices are set to _i_bad\n         mask_bad = xa.mask\n         xa = np.array(xa, copy=False)\n-        xa[xa > self.N - 1] = self._i_over\n-        xa[xa < 0] = self._i_under\n-        xa[mask_bad] = self._i_bad\n+        xa[xa > self.N - 1] = np.array(self._i_over, dtype=xa.dtype)\n+        xa[xa < 0] = np.array(self._i_under, dtype=xa.dtype)\n+        xa[mask_bad] = np.array(self._i_bad, dtype=xa.dtype)\n         return xa\n \n \n",
+  "explanation": null,
+  "token_usage": {
+    "input": 618,
+    "output": 193
+  },
+  "cost_usd": 0.003475,
+  "runtime_seconds": 1.9690000000409782,
+  "error_message": null,
+  "raw_logs": "{\"diff\": \"--- a/lib/matplotlib/colors.py\\n+++ b/lib/matplotlib/colors.py\\n@@ -727,9 +727,9 @@\\n         # nans and out of range indices are set to _i_bad\\n         mask_bad = xa.mask\\n         xa = np.array(xa, copy=False)\\n-        xa[xa > self.N - 1] = self._i_over\\n-        xa[xa < 0] = self._i_under\\n-        xa[mask_bad] = self._i_bad\\n+        xa[xa > self.N - 1] = np.array(self._i_over, dtype=xa.dtype)\\n+        xa[xa < 0] = np.array(self._i_under, dtype=xa.dtype)\\n+        xa[mask_bad] = np.array(self._i_bad, dtype=xa.dtype)\\n         return xa\\n \\n \\n\"}",
+  "metadata": {
+    "model": "gpt-4o",
+    "prompt_version": "issue-to-unified-diff-v3-submit-patch-tool",
+    "stop_reason": "tool_use",
+    "patch_source": "tool",
+    "model_snapshot": "gpt-4o-2024-08-06"
+  },
+  "control_repeats": [
+    {
+      "status": "success",
+      "patch": "--- a/lib/matplotlib/colors.py\n+++ b/lib/matplotlib/colors.py\n@@ -727,9 +727,9 @@\n         # Set the over-range indices before the under-range;\n         # otherwise the under-range values get converted to over-range.\n         xa = np.array(value, copy=True)\n-        xa[xa > self.N - 1] = self._i_over\n-        xa[xa < 0] = self._i_under\n-        xa[mask_bad] = self._i_bad\n+        xa[xa > self.N - 1] = np.uint8(self._i_over)\n+        xa[xa < 0] = np.uint8(self._i_under)\n+        xa[mask_bad] = np.uint8(self._i_bad)\n         return xa\n \n     def __call__(self, X, alpha=None, bytes=False)",
+      "explanation": null,
+      "token_usage": {
+        "input": 618,
+        "output": 197
+      },
+      "cost_usd": 0.003515,
+      "runtime_seconds": 1.625,
+      "error_message": null,
+      "raw_logs": "{\"diff\": \"--- a/lib/matplotlib/colors.py\\n+++ b/lib/matplotlib/colors.py\\n@@ -727,9 +727,9 @@\\n         # Set the over-range indices before the under-range;\\n         # otherwise the under-range values get converted to over-range.\\n         xa = np.array(value, copy=True)\\n-        xa[xa > self.N - 1] = self._i_over\\n-        xa[xa < 0] = self._i_under\\n-        xa[mask_bad] = self._i_bad\\n+        xa[xa > self.N - 1] = np.uint8(self._i_over)\\n+        xa[xa < 0] = np.uint8(self._i_under)\\n+        xa[mask_bad] = np.uint8(self._i_bad)\\n         return xa\\n \\n     def __call__(self, X, alpha=None, bytes=False)\"}",
+      "metadata": {
+        "model": "gpt-4o",
+        "prompt_version": "issue-to-unified-diff-v3-submit-patch-tool",
+        "stop_reason": "tool_use",
+        "patch_source": "tool",
+        "model_snapshot": "gpt-4o-2024-08-06"
+      }
+    }
+  ],
+  "recorded_from": {
+    "experiment_id": "9d27f3ef-397a-41b7-b1b2-e09729288a40",
+    "experiment_name": "icse_pilot_model2",
+    "run_id": "e0368a9c-1c96-47b7-b749-226f4fe8700c",
+    "agent_name": "llm_baseline",
+    "execution_mode": "real"
+  }
+}

@@ -1,0 +1,39 @@
+{
+  "status": "success",
+  "patch": "--- a/pylint/reporters/text.py\n+++ b/pylint/reporters/text.py\n@@ -175,14 +175,16 @@ class TextReporter(BaseReporter):\n     def on_set_current_module(self, module: str, filepath: Optional[str]) -> None:\n         \"\"\"Set the format template to be used and check for unrecognized arguments.\"\"\"\n         template = str(self.linter.config.msg_template or self._template)\n+\n+        # Expand escaped braces to avoid them being interpreted as format fields\n+        # We temporarily replace {{ and }} with placeholders\n+        template_for_parsing = template.replace(\"{{\", \"\\x00\").replace(\"}}\", \"\\x01\")\n+\n         # Return early if the template is the same as the previous one\n         if template == self._template:\n             return\n         self._template = template\n-        # check for possible unrecognized arguments\n-        arguments = re.findall(r\"\\{(\\w*)\\}\", template)\n+\n+        # Check for possible unrecognized arguments (ignoring escaped braces)\n+        arguments = re.findall(r\"\\{(\\w*)\\}\", template_for_parsing)\n         for argument in arguments:\n             if argument not in MESSAGE_FIELDS:\n                 warnings.warn(\n",
+  "explanation": null,
+  "token_usage": {
+    "input": 1464,
+    "output": 344
+  },
+  "cost_usd": 0.009552,
+  "runtime_seconds": 6.327999999979511,
+  "error_message": null,
+  "raw_logs": "{\"diff\": \"--- a/pylint/reporters/text.py\\n+++ b/pylint/reporters/text.py\\n@@ -175,14 +175,16 @@ class TextReporter(BaseReporter):\\n     def on_set_current_module(self, module: str, filepath: Optional[str]) -> None:\\n         \\\"\\\"\\\"Set the format template to be used and check for unrecognized arguments.\\\"\\\"\\\"\\n         template = str(self.linter.config.msg_template or self._template)\\n+\\n+        # Expand escaped braces to avoid them being interpreted as format fields\\n+        # We temporarily replace {{ and }} with placeholders\\n+        template_for_parsing = template.replace(\\\"{{\\\", \\\"\\\\x00\\\").replace(\\\"}}\\\", \\\"\\\\x01\\\")\\n+\\n         # Return early if the template is the same as the previous one\\n         if template == self._template:\\n             return\\n         self._template = template\\n-        # check for possible unrecognized arguments\\n-        arguments = re.findall(r\\\"\\\\{(\\\\w*)\\\\}\\\", template)\\n+\\n+        # Check for possible unrecognized arguments (ignoring escaped braces)\\n+        arguments = re.findall(r\\\"\\\\{(\\\\w*)\\\\}\\\", template_for_parsing)\\n         for argument in arguments:\\n             if argument not in MESSAGE_FIELDS:\\n                 warnings.warn(\\n\"}",
+  "metadata": {
+    "model": "claude-sonnet-4-6",
+    "prompt_version": "issue-to-unified-diff-v3-submit-patch-tool",
+    "stop_reason": "tool_use",
+    "patch_source": "tool"
+  },
+  "variant": {
+    "transformed_text": "## Summary\nCustom braces in message template do not work in Pylint 2.12.2 with Python3.9, whereas they worked in Pylint 1.7 with python3.6.\n\n## Steps to Reproduce\n1. Use message template:\n\n```\r\n$ pylint test.py --msg-template='{{ \"Category\": \"{category}\" }}'\r\nNo config file found, using default configuration\r\n************* Module [redacted].test\r\n{ \"Category\": \"convention\" }\r\n{ \"Category\": \"error\" }\r\n{ \"Category\": \"error\" }\r\n{ \"Category\": \"convention\" }\r\n{ \"Category\": \"convention\" }\r\n{ \"Category\": \"convention\" }\r\n{ \"Category\": \"error\" }\r\n```\n\n2. Run:\n\n```shell\npylint test.py --msg-template='{{ \"Category\": \"{category}\" }}'\n```\n\n## Expected Behavior\nExpect the dictionary to print out with `\"Category\"` as the key.\n\n## Actual Behavior\n```\r\n$ pylint test.py --msg-template='{{ \"Category\": \"{category}\" }}'\r\n[redacted]/site-packages/pylint/reporters/text.py:206: UserWarning: Don't recognize the argument '{ \"Category\"' in the --msg-template. Are you sure it is supported on the current version of pylint?\r\n  warnings.warn(\r\n************* Module [redacted].test\r\n\" }\r\n\" }\r\n\" }\r\n\" }\r\n\" }\r\n\" }\r\n```\n\n```shell\n[redacted]/site-packages/pylint/reporters/text.py:206: UserWarning: Don't recognize the argument '{ \"Category\"' in the --msg-template. Are you sure it is supported on the current version of pylint?\r\n  warnings.warn(\r\n************* Module [redacted].test\r\n\" }\r\n\" }\r\n\" }\r\n\" }\r\n\" }\r\n\" }\n```\n\n## Environment\nPylint version:\n```shell\nAffected Version:\r\npylint 2.12.2\r\nastroid 2.9.2\r\nPython 3.9.9+ (heads/3.9-dirty:a2295a4, Dec 21 2021, 22:32:52) \r\n[GCC 4.8.5 20150623 (Red Hat 4.8.5-44)]\r\n\r\n\r\nPreviously working version:\r\nNo config file found, using default configuration\r\npylint 1.7.4, \r\nastroid 1.6.6\r\nPython 3.6.8 (default, Nov 16 2020, 16:55:22) \r\n[GCC 4.8.5 20150623 (Red Hat 4.8.5-44)]\n```\nConfiguration: _No response_\nCommand used: _No response_\nOS / Environment: _No response_\nAdditional dependencies: _No response_",
+    "transformation_notes": "Reformatted the issue into the five required sections using only information present in the original. Preserved all technical identifiers and version numbers verbatim (Python3.9, python3.6, Pylint 1.7, Pylint 2.12.2). Included '_No response_' entries where the original explicitly stated them for Configuration, OS/Environment, and Additional dependencies sections. All code placeholders appear exactly once. [quality check passed on attempt 2/2]",
+    "params": {},
+    "generator": "claude-haiku-4-5-20251001",
+    "transform_version": "5",
+    "generation_mode": "real",
+    "quality_warning": false,
+    "noop": false,
+    "exclusion_reason": null,
+    "generation_cost_usd": 0.00496,
+    "original_sha256": "27506bae0378e23877d5fb50f2724af79df7596bfd7e64c40db0ec72805747cf"
+  },
+  "recorded_from": {
+    "experiment_id": "bc6f1372-2088-45dd-907c-d741c0545d27",
+    "experiment_name": "icse_pilot_v1",
+    "run_id": "2e557239-cafe-4efd-8861-c4d5d5b7cc85",
+    "agent_name": "llm_baseline",
+    "execution_mode": "real"
+  }
+}

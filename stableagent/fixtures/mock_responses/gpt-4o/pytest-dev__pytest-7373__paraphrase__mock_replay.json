@@ -1,0 +1,40 @@
+{
+  "status": "success",
+  "patch": "--- a/src/_pytest/mark/evaluate.py\n+++ b/src/_pytest/mark/evaluate.py\n@@ -1,6 +1,5 @@\n import ast\n import sys\n-import _pytest._code\n from _pytest.compat import _PytestWrapper\n from _pytest.outcomes import fail\n \n@@ -13,7 +12,6 @@\n     \"\"\"\n     cache = {}\n \n-\n def cached_eval(expr, namespace, filename=\"<string>\"):\n     # type: (str, Dict[str, Any], str) -> Any\n     \"\"\"\n@@ -21,7 +19,6 @@\n     :param expr: The expression to evaluate.\n     :param namespace: The namespace in which to evaluate the expression.\n     :param filename: The filename to use in the error message.\n-    :return: The result of the evaluation.\n     \"\"\"\n     code = compile(expr, filename, \"eval\")\n     return eval(code, namespace)\n@@ -29,7 +26,6 @@\n \n \n class MarkEvaluator:\n-    def __init__(self, item, mark):\n+    def __init__(self, item, mark):\n         self.item = item\n         self.mark = mark\n \n@@ -38,7 +34,7 @@\n         return self._istrue()\n \n     def _istrue(self):\n-        expr = self.mark.args[0]\n+        expr = self.mark.args[0]\n         try:\n-            result = cached_eval(expr, self.item._globals)\n+            result = eval(expr, self.item._globals)\n         except Exception as exc:\n             fail(\"Error evaluating %r expression: %s\" % (expr, exc), pytrace=False)\n         return result\n",
+  "explanation": null,
+  "token_usage": {
+    "input": 448,
+    "output": 405
+  },
+  "cost_usd": 0.00517,
+  "runtime_seconds": 2.672000000020489,
+  "error_message": null,
+  "raw_logs": "{\"diff\": \"--- a/src/_pytest/mark/evaluate.py\\n+++ b/src/_pytest/mark/evaluate.py\\n@@ -1,6 +1,5 @@\\n import ast\\n import sys\\n-import _pytest._code\\n from _pytest.compat import _PytestWrapper\\n from _pytest.outcomes import fail\\n \\n@@ -13,7 +12,6 @@\\n     \\\"\\\"\\\"\\n     cache = {}\\n \\n-\\n def cached_eval(expr, namespace, filename=\\\"<string>\\\"):\\n     # type: (str, Dict[str, Any], str) -> Any\\n     \\\"\\\"\\\"\\n@@ -21,7 +19,6 @@\\n     :param expr: The expression to evaluate.\\n     :param namespace: The namespace in which to evaluate the expression.\\n     :param filename: The filename to use in the error message.\\n-    :return: The result of the evaluation.\\n     \\\"\\\"\\\"\\n     code = compile(expr, filename, \\\"eval\\\")\\n     return eval(code, namespace)\\n@@ -29,7 +26,6 @@\\n \\n \\n class MarkEvaluator:\\n-    def __init__(self, item, mark):\\n+    def __init__(self, item, mark):\\n         self.item = item\\n         self.mark = mark\\n \\n@@ -38,7 +34,7 @@\\n         return self._istrue()\\n \\n     def _istrue(self):\\n-        expr = self.mark.args[0]\\n+        expr = self.mark.args[0]\\n         try:\\n-            result = cached_eval(expr, self.item._globals)\\n+            result = eval(expr, self.item._globals)\\n         except Exception as exc:\\n             fail(\\\"Error evaluating %r expression: %s\\\" % (expr, exc), pytrace=False)\\n         return result\\n\"}",
+  "metadata": {
+    "model": "gpt-4o",
+    "prompt_version": "issue-to-unified-diff-v3-submit-patch-tool",
+    "stop_reason": "tool_use",
+    "patch_source": "tool",
+    "model_snapshot": "gpt-4o-2024-08-06"
+  },
+  "variant": {
+    "transformed_text": "Improper caching of skipif/xfail string condition evaluation\nVersion: pytest 5.4.3, current master\n\npytest stores the result of evaluating the string used in constructs like `@pytest.mark.skipif(\"sys.platform == 'win32'\")`. The cache lookup is performed using only the string as a key (refer to `cached_eval` within `_pytest/mark/evaluate.py`). Since the evaluation depends on the item's globals dictionary, this caching mechanism can produce incorrect outcomes. Illustration:\n\n```py\r\n# test_module_1.py\r\nimport pytest\r\n\r\nskip = True\r\n\r\n@pytest.mark.skipif(\"skip\")\r\ndef test_should_skip():\r\n    assert False\r\n```\n\n```py\r\n# test_module_2.py\r\nimport pytest\r\n\r\nskip = False\r\n\r\n@pytest.mark.skipif(\"skip\")\r\ndef test_should_not_skip():\r\n    assert False\r\n```\n\nExecuting `pytest test_module_1.py test_module_2.py`.\n\nExpected behavior: `test_should_skip` should be marked as skipped, while `test_should_not_skip` should not be skipped.\n\nActual behavior: both are marked as skipped.\n\n---\n\nThe optimal resolution appears to be eliminating the caching altogether, as it provides minimal practical benefit. The suggested approach is to incorporate `cached_eval` directly into `MarkEvaluator._istrue`.",
+    "transformation_notes": "Restructured the issue description by rephrasing technical explanations while maintaining all code placeholders verbatim and preserving the exact technical meaning. Changed 'caches the evaluation' to 'stores the result of evaluating', 'caching key is only the string itself' to 'cache lookup is performed using only the string as a key', and restructured the solution section. All placeholders remain in their logical positions with identical formatting. [quality check passed on attempt 1/2]",
+    "params": {},
+    "generator": "claude-haiku-4-5-20251001",
+    "transform_version": "4",
+    "generation_mode": "real",
+    "quality_warning": false,
+    "noop": false,
+    "exclusion_reason": null,
+    "generation_cost_usd": 0.0023,
+    "original_sha256": "cd8053cca6079b776ea53538580a40f748a5813c82f42208d250af90a2cc5797"
+  },
+  "recorded_from": {
+    "experiment_id": "9d27f3ef-397a-41b7-b1b2-e09729288a40",
+    "experiment_name": "icse_pilot_model2",
+    "run_id": "0cb68e60-7105-4c19-97ed-25a3506e0b88",
+    "agent_name": "llm_baseline",
+    "execution_mode": "real"
+  }
+}

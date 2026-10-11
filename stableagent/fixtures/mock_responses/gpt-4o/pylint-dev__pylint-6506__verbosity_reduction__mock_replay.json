@@ -1,0 +1,42 @@
+{
+  "status": "success",
+  "patch": "--- a/pylint/lint/run.py\n+++ b/pylint/lint/run.py\n@@ -133,7 +133,11 @@\n         linter.load_default_plugins()\n \n         # initialize configuration\n-        args = _config_initialization(\n+        try:\n+            args = _config_initialization(\n+                linter, argv, config)\n+        except _UnrecognizedOptionError as e:\n+            print(e)\n+            print(\"usage: pylint [options] [modules or packages]\")\n+            sys.exit(2)\n             linter, argv, config\n         )\n \n--- a/pylint/config/config_initialization.py\n+++ b/pylint/config/config_initialization.py\n@@ -83,7 +83,7 @@\n     if unrecognized_options:\n         from pylint.config.exceptions import _UnrecognizedOptionError\n \n-        raise _UnrecognizedOptionError(options=unrecognized_options)\n+        raise _UnrecognizedOptionError(f\"Unrecognized option(s) found: {', '.join(unrecognized_options)}\")\n \n     return args, config",
+  "explanation": null,
+  "token_usage": {
+    "input": 651,
+    "output": 249
+  },
+  "cost_usd": 0.0041175,
+  "runtime_seconds": 1.7659999998286366,
+  "error_message": null,
+  "raw_logs": "{\"diff\": \"--- a/pylint/lint/run.py\\n+++ b/pylint/lint/run.py\\n@@ -133,7 +133,11 @@\\n         linter.load_default_plugins()\\n \\n         # initialize configuration\\n-        args = _config_initialization(\\n+        try:\\n+            args = _config_initialization(\\n+                linter, argv, config)\\n+        except _UnrecognizedOptionError as e:\\n+            print(e)\\n+            print(\\\"usage: pylint [options] [modules or packages]\\\")\\n+            sys.exit(2)\\n             linter, argv, config\\n         )\\n \\n--- a/pylint/config/config_initialization.py\\n+++ b/pylint/config/config_initialization.py\\n@@ -83,7 +83,7 @@\\n     if unrecognized_options:\\n         from pylint.config.exceptions import _UnrecognizedOptionError\\n \\n-        raise _UnrecognizedOptionError(options=unrecognized_options)\\n+        raise _UnrecognizedOptionError(f\\\"Unrecognized option(s) found: {', '.join(unrecognized_options)}\\\")\\n \\n     return args, config\"}",
+  "metadata": {
+    "model": "gpt-4o",
+    "prompt_version": "issue-to-unified-diff-v3-submit-patch-tool",
+    "stop_reason": "tool_use",
+    "patch_source": "tool",
+    "model_snapshot": "gpt-4o-2024-08-06"
+  },
+  "variant": {
+    "transformed_text": "A traceback is printed when an unrecognized option is passed to pylint.\n\nConfiguration: _No response_\n\nCommand used:\n```shell\npylint -Q\n```\n\nPylint output:\n```shell\n************* Module Command line\r\nCommand line:1:0: E0015: Unrecognized option found: Q (unrecognized-option)\r\nTraceback (most recent call last):\r\n  File \"/Users/markbyrne/venv310/bin/pylint\", line 33, in <module>\r\n    sys.exit(load_entry_point('pylint', 'console_scripts', 'pylint')())\r\n  File \"/Users/markbyrne/programming/pylint/pylint/__init__.py\", line 24, in run_pylint\r\n    PylintRun(argv or sys.argv[1:])\r\n  File \"/Users/markbyrne/programming/pylint/pylint/lint/run.py\", line 135, in __init__\r\n    args = _config_initialization(\r\n  File \"/Users/markbyrne/programming/pylint/pylint/config/config_initialization.py\", line 85, in _config_initialization\r\n    raise _UnrecognizedOptionError(options=unrecognized_options)\r\npylint.config.exceptions._UnrecognizedOptionError\n```\n\nExpected behavior:\n`Command line:1:0: E0015: Unrecognized option found: Q (unrecognized-option)`\n\nThe traceback is not user-friendly. A usage tip would be preferable:\n```python\r\nmypy -Q\r\nusage: mypy [-h] [-v] [-V] [more options; see below]\r\n            [-m MODULE] [-p PACKAGE] [-c PROGRAM_TEXT] [files ...]\r\nmypy: error: unrecognized arguments: -Q\r\n```\n\nPylint version:\n```shell\npylint 2.14.0-dev0\r\nastroid 2.11.3\r\nPython 3.10.0b2 (v3.10.0b2:317314165a, May 31 2021, 10:02:22) [Clang 12.0.5 (clang-1205.0.22.9)]\n```\n\nOS / Environment: _No response_",
+    "transformation_notes": "Removed boilerplate section headers and filler text while preserving '_No response_' entries and all code placeholders verbatim, condensed to approximately 0.5× original length. [quality check passed on attempt 2/2]",
+    "params": {
+      "target_ratio": 0.5
+    },
+    "generator": "claude-haiku-4-5-20251001",
+    "transform_version": "4",
+    "generation_mode": "real",
+    "quality_warning": false,
+    "noop": false,
+    "exclusion_reason": null,
+    "generation_cost_usd": 0.0034260000000000002,
+    "original_sha256": "3875271c4f69f705627520a05192ae96a4299c27eca6b036b1a845ac79d687be"
+  },
+  "recorded_from": {
+    "experiment_id": "9d27f3ef-397a-41b7-b1b2-e09729288a40",
+    "experiment_name": "icse_pilot_model2",
+    "run_id": "572817f8-eac7-4b95-bbdf-ac0bf4aac64f",
+    "agent_name": "llm_baseline",
+    "execution_mode": "real"
+  }
+}

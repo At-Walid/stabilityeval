@@ -1,0 +1,49 @@
+{
+  "status": "success",
+  "patch": "--- a/django/db/models/sql/query.py\n+++ b/django/db/models/sql/query.py\n@@ -742,7 +742,7 @@\n                 if not field:\n                     # Leave the loop if there are no more joins.\n                     break\n-                opts = cur_model._meta\n+                opts = cur_model._meta.concrete_model._meta\n                 alias = self.tables[join_pos]\n                 if not check_alias(alias):\n                     continue\n",
+  "explanation": null,
+  "token_usage": {
+    "input": 943,
+    "output": 103
+  },
+  "cost_usd": 0.0033875,
+  "runtime_seconds": 1.172000000020489,
+  "error_message": null,
+  "raw_logs": "{\"diff\": \"--- a/django/db/models/sql/query.py\\n+++ b/django/db/models/sql/query.py\\n@@ -742,7 +742,7 @@\\n                 if not field:\\n                     # Leave the loop if there are no more joins.\\n                     break\\n-                opts = cur_model._meta\\n+                opts = cur_model._meta.concrete_model._meta\\n                 alias = self.tables[join_pos]\\n                 if not check_alias(alias):\\n                     continue\\n\"}",
+  "metadata": {
+    "model": "gpt-4o",
+    "prompt_version": "issue-to-unified-diff-v3-submit-patch-tool",
+    "stop_reason": "tool_use",
+    "patch_source": "tool",
+    "model_snapshot": "gpt-4o-2024-08-06"
+  },
+  "control_repeats": [
+    {
+      "status": "success",
+      "patch": "--- a/django/db/models/sql/query.py\n+++ b/django/db/models/sql/query.py\n@@ -742,7 +742,7 @@\n                 if not field:\n                     # Leave the loop if there are no more joins.\n                     break\n-                opts = cur_model._meta\n+                opts = cur_model._meta.concrete_model._meta\n                 alias = self.tables[join_pos]\n                 if not check_alias(alias):\n                     break\n                 join_list.append((opts, alias, field))",
+      "explanation": null,
+      "token_usage": {
+        "input": 943,
+        "output": 114
+      },
+      "cost_usd": 0.0034975,
+      "runtime_seconds": 1.3439999998081475,
+      "error_message": null,
+      "raw_logs": "{\"diff\": \"--- a/django/db/models/sql/query.py\\n+++ b/django/db/models/sql/query.py\\n@@ -742,7 +742,7 @@\\n                 if not field:\\n                     # Leave the loop if there are no more joins.\\n                     break\\n-                opts = cur_model._meta\\n+                opts = cur_model._meta.concrete_model._meta\\n                 alias = self.tables[join_pos]\\n                 if not check_alias(alias):\\n                     break\\n                 join_list.append((opts, alias, field))\"}",
+      "metadata": {
+        "model": "gpt-4o",
+        "prompt_version": "issue-to-unified-diff-v3-submit-patch-tool",
+        "stop_reason": "tool_use",
+        "patch_source": "tool",
+        "model_snapshot": "gpt-4o-2024-08-06"
+      }
+    }
+  ],
+  "recorded_from": {
+    "experiment_id": "9d27f3ef-397a-41b7-b1b2-e09729288a40",
+    "experiment_name": "icse_pilot_model2",
+    "run_id": "3bc0fc9a-bf4f-4e3c-a573-5ebb62ad8ddb",
+    "agent_name": "llm_baseline",
+    "execution_mode": "real"
+  }
+}

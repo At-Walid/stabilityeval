@@ -1,0 +1,47 @@
+{
+  "status": "success",
+  "patch": "--- a/pylint/config/config_initialization.py\n+++ b/pylint/config/config_initialization.py\n@@ -82,7 +82,9 @@ def _config_initialization(\n         unrecognized_options_message = \", \".join(unrecognized_options)\n         linter.add_message(\n             \"unrecognized-option\", args=unrecognized_options_message, line=0\n         )\n-        raise _UnrecognizedOptionError(options=unrecognized_options)\n+        print(f\"Usage: pylint [options]\")\n+        sys.exit(32)\n \n     # Set the current module to configuration as we don't know where\n     # the --errors-only option comes from\n",
+  "explanation": null,
+  "token_usage": {
+    "input": 1387,
+    "output": 213
+  },
+  "cost_usd": 0.007356,
+  "runtime_seconds": 4.016000000061467,
+  "error_message": null,
+  "raw_logs": "{\"diff\": \"--- a/pylint/config/config_initialization.py\\n+++ b/pylint/config/config_initialization.py\\n@@ -82,7 +82,9 @@ def _config_initialization(\\n         unrecognized_options_message = \\\", \\\".join(unrecognized_options)\\n         linter.add_message(\\n             \\\"unrecognized-option\\\", args=unrecognized_options_message, line=0\\n         )\\n-        raise _UnrecognizedOptionError(options=unrecognized_options)\\n+        print(f\\\"Usage: pylint [options]\\\")\\n+        sys.exit(32)\\n \\n     # Set the current module to configuration as we don't know where\\n     # the --errors-only option comes from\\n\"}",
+  "metadata": {
+    "model": "claude-sonnet-4-6",
+    "prompt_version": "issue-to-unified-diff-v3-submit-patch-tool",
+    "stop_reason": "tool_use",
+    "patch_source": "tool"
+  },
+  "control_repeats": [
+    {
+      "status": "success",
+      "patch": "--- a/pylint/config/config_initialization.py\n+++ b/pylint/config/config_initialization.py\n@@ -82,7 +82,9 @@ def _config_initialization(\n         unrecognized_options_message = \", \".join(unrecognized_options)\n         linter.add_message(\n             \"unrecognized-option\", args=unrecognized_options_message, line=0\n         )\n-        raise _UnrecognizedOptionError(options=unrecognized_options)\n+        linter.generate_reports()\n+        sys.exit(32)\n \n     return parsed_args_list\n",
+      "explanation": null,
+      "token_usage": {
+        "input": 1387,
+        "output": 190
+      },
+      "cost_usd": 0.007011,
+      "runtime_seconds": 3.593000000109896,
+      "error_message": null,
+      "raw_logs": "{\"diff\": \"--- a/pylint/config/config_initialization.py\\n+++ b/pylint/config/config_initialization.py\\n@@ -82,7 +82,9 @@ def _config_initialization(\\n         unrecognized_options_message = \\\", \\\".join(unrecognized_options)\\n         linter.add_message(\\n             \\\"unrecognized-option\\\", args=unrecognized_options_message, line=0\\n         )\\n-        raise _UnrecognizedOptionError(options=unrecognized_options)\\n+        linter.generate_reports()\\n+        sys.exit(32)\\n \\n     return parsed_args_list\\n\"}",
+      "metadata": {
+        "model": "claude-sonnet-4-6",
+        "prompt_version": "issue-to-unified-diff-v3-submit-patch-tool",
+        "stop_reason": "tool_use",
+        "patch_source": "tool"
+      }
+    }
+  ],
+  "recorded_from": {
+    "experiment_id": "bc6f1372-2088-45dd-907c-d741c0545d27",
+    "experiment_name": "icse_pilot_v1",
+    "run_id": "21133357-3cc5-4090-ab31-510a2345f49c",
+    "agent_name": "llm_baseline",
+    "execution_mode": "real"
+  }
+}

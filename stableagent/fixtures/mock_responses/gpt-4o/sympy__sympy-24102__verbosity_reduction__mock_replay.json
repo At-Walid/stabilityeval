@@ -1,0 +1,42 @@
+{
+  "status": "success",
+  "patch": "--- a/sympy/parsing/mathematica.py\n+++ b/sympy/parsing/mathematica.py\n@@ -45,6 +45,8 @@\n \n def parse_mathematica(s):\n     \"\"\"Parse a Mathematica expression string into a SymPy expression.\"\"\"\n+    # Ensure Greek characters are handled correctly\n+    s = s.encode('unicode_escape').decode('ascii')\n     try:\n         # Attempt to parse the expression\n         expr = ast.parse(s, mode='eval')\n",
+  "explanation": null,
+  "token_usage": {
+    "input": 470,
+    "output": 123
+  },
+  "cost_usd": 0.002405,
+  "runtime_seconds": 1.5309999999590218,
+  "error_message": null,
+  "raw_logs": "{\"diff\": \"--- a/sympy/parsing/mathematica.py\\n+++ b/sympy/parsing/mathematica.py\\n@@ -45,6 +45,8 @@\\n \\n def parse_mathematica(s):\\n     \\\"\\\"\\\"Parse a Mathematica expression string into a SymPy expression.\\\"\\\"\\\"\\n+    # Ensure Greek characters are handled correctly\\n+    s = s.encode('unicode_escape').decode('ascii')\\n     try:\\n         # Attempt to parse the expression\\n         expr = ast.parse(s, mode='eval')\\n\"}",
+  "metadata": {
+    "model": "gpt-4o",
+    "prompt_version": "issue-to-unified-diff-v3-submit-patch-tool",
+    "stop_reason": "tool_use",
+    "patch_source": "tool",
+    "model_snapshot": "gpt-4o-2024-08-06"
+  },
+  "variant": {
+    "transformed_text": "`mathematica` in `sympy.parsing.mathematica` parsed Greek characters:\n```\r\nfrom sympy.parsing.mathematica import mathematica\r\nmathematica('λ')\r\nOut[]: \r\nλ\r\n```\n\nSymPy v. 1.11 deprecated `mathematica`, replacing it with `parse_mathematica`. The replacement fails on this example:\n```\r\nfrom sympy.parsing.mathematica import parse_mathematica\r\nparse_mathematica('λ')\r\nTraceback (most recent call last):\r\n...\r\nFile \"<string>\", line unknown\r\nSyntaxError: unable to create a single AST for the expression\r\n```\n\nThe issue appears to be a bug in `parse_mathematica`.\n\n`mathematica` in `sympy.parsing.mathematica` parsed Greek characters:\n```\r\nfrom sympy.parsing.mathematica import mathematica\r\nmathematica('λ')\r\nOut[]: \r\nλ\r\n```\n\nSymPy v. 1.11 deprecated `mathematica`, replacing it with `parse_mathematica`. The replacement fails:\n```\r\nfrom sympy.parsing.mathematica import parse_mathematica\r\nparse_mathematica('λ')\r\nTraceback (most recent call last):\r\n...\r\nFile \"<string>\", line unknown\r\nSyntaxError: unable to create a single AST for the expression\r\n```\n\nBug in `parse_mathematica`.",
+    "transformation_notes": "Removed redundant title repetition, pleasantries, and filler phrases while preserving all 14 code placeholders exactly as given. Condensed explanation from approximately 180 words to 90 words. [quality check passed on attempt 2/2]",
+    "params": {
+      "target_ratio": 0.5
+    },
+    "generator": "claude-haiku-4-5-20251001",
+    "transform_version": "4",
+    "generation_mode": "real",
+    "quality_warning": false,
+    "noop": false,
+    "exclusion_reason": null,
+    "generation_cost_usd": 0.003971,
+    "original_sha256": "1c59678bf32d77d45874aa931fa806c5f7f6e599c01ab7f93d144a48a84273ea"
+  },
+  "recorded_from": {
+    "experiment_id": "9d27f3ef-397a-41b7-b1b2-e09729288a40",
+    "experiment_name": "icse_pilot_model2",
+    "run_id": "bcd5bb49-14fa-4e4a-bf90-a83f088d69e5",
+    "agent_name": "llm_baseline",
+    "execution_mode": "real"
+  }
+}

@@ -1,0 +1,41 @@
+{
+  "status": "success",
+  "patch": "--- a/astropy/modeling/separable.py\n+++ b/astropy/modeling/separable.py\n@@ -290,7 +290,7 @@ def _cstack(left, right):\n     cright = _coord_matrix(right, 'right', noutp)\n     for i in range(left.shape[0]):\n         for j in range(right.shape[0]):\n-            cright[i + left.shape[0], j + left.shape[1]] = right[i, j]\n+            cright[i + left.shape[0], j + left.shape[1]] = right[i, j]  # noqa: E501\n \n     return np.hstack([cleft, cright])\n \n@@ -242,7 +242,7 @@ def _coord_matrix(model, pos, noutp):\n     else:\n         if not model.separable:\n             # this does not work for more than 2 coordinates\n-            mat = np.zeros((noutp, model.n_inputs))\n+            mat = np.zeros((model.n_outputs, model.n_inputs))\n             mat[:] = 1\n             return mat\n         else:\n@@ -250,7 +250,7 @@ def _coord_matrix(model, pos, noutp):\n                 mat[i, i] = 1\n             return mat\n \n-    if pos == 'left':\n+    if pos == 'left':  # noqa: E501\n         mat = np.zeros((noutp, model.n_inputs))\n         for i in range(model.n_outputs):\n             mat[i, i] = 1\n",
+  "explanation": null,
+  "token_usage": {
+    "input": 1127,
+    "output": 435
+  },
+  "cost_usd": 0.009906,
+  "runtime_seconds": 6.609999999869615,
+  "error_message": null,
+  "raw_logs": "{\"diff\": \"--- a/astropy/modeling/separable.py\\n+++ b/astropy/modeling/separable.py\\n@@ -290,7 +290,7 @@ def _cstack(left, right):\\n     cright = _coord_matrix(right, 'right', noutp)\\n     for i in range(left.shape[0]):\\n         for j in range(right.shape[0]):\\n-            cright[i + left.shape[0], j + left.shape[1]] = right[i, j]\\n+            cright[i + left.shape[0], j + left.shape[1]] = right[i, j]  # noqa: E501\\n \\n     return np.hstack([cleft, cright])\\n \\n@@ -242,7 +242,7 @@ def _coord_matrix(model, pos, noutp):\\n     else:\\n         if not model.separable:\\n             # this does not work for more than 2 coordinates\\n-            mat = np.zeros((noutp, model.n_inputs))\\n+            mat = np.zeros((model.n_outputs, model.n_inputs))\\n             mat[:] = 1\\n             return mat\\n         else:\\n@@ -250,7 +250,7 @@ def _coord_matrix(model, pos, noutp):\\n                 mat[i, i] = 1\\n             return mat\\n \\n-    if pos == 'left':\\n+    if pos == 'left':  # noqa: E501\\n         mat = np.zeros((noutp, model.n_inputs))\\n         for i in range(model.n_outputs):\\n             mat[i, i] = 1\\n\"}",
+  "metadata": {
+    "model": "claude-sonnet-4-6",
+    "prompt_version": "issue-to-unified-diff-v3-submit-patch-tool",
+    "stop_reason": "tool_use",
+    "patch_source": "tool"
+  },
+  "variant": {
+    "transformed_text": "Modeling's `separability_matrix` does not compute separability correctly for nested CompoundModels.\n\n```python\r\nfrom astropy.modeling import models as m\r\nfrom astropy.modeling.separable import separability_matrix\r\n\r\ncm = m.Linear1D(10) & m.Linear1D(5)\r\n```\n\nExpected separability matrix:\n```python\r\n>>> separability_matrix(cm)\r\narray([[ True, False],\r\n       [False,  True]])\r\n```\n\nWith a more complex model:\n```python\r\n>>> separability_matrix(m.Pix2Sky_TAN() & m.Linear1D(10) & m.Linear1D(5))\r\narray([[ True,  True, False, False],\r\n       [ True,  True, False, False],\r\n       [False, False,  True, False],\r\n       [False, False, False,  True]])\r\n```\n\nThe output matrix correctly shows outputs and inputs to linear models are separable and independent.\n\nWith nested compound models:\n```python\r\n>>> separability_matrix(m.Pix2Sky_TAN() & cm)\r\narray([[ True,  True, False, False],\r\n       [ True,  True, False, False],\r\n       [False, False,  True,  True],\r\n       [False, False,  True,  True]])\r\n```\n\nInputs and outputs are incorrectly marked as non-separable.",
+    "transformation_notes": "Removed pleasantries ('as you might expect', 'feels like a bug to me', 'but I might be missing something') and speculation. Kept all code placeholders, technical terms (CompoundModels, separability matrix), and the symptom (inputs/outputs incorrectly marked as non-separable). Reduced word count to approximately 0.5× original length. [quality check passed on attempt 1/2]",
+    "params": {
+      "target_ratio": 0.5
+    },
+    "generator": "claude-haiku-4-5-20251001",
+    "transform_version": "4",
+    "generation_mode": "real",
+    "quality_warning": false,
+    "noop": false,
+    "exclusion_reason": null,
+    "generation_cost_usd": 0.001809,
+    "original_sha256": "c01334ec1b21a089c650cf2e7b96ab974469076bf1260d23885799e1f0a7551f"
+  },
+  "recorded_from": {
+    "experiment_id": "bc6f1372-2088-45dd-907c-d741c0545d27",
+    "experiment_name": "icse_pilot_v1",
+    "run_id": "8cf0d138-2741-4975-ab2f-1e2d9b845b0b",
+    "agent_name": "llm_baseline",
+    "execution_mode": "real"
+  }
+}

@@ -1,0 +1,39 @@
+{
+  "status": "success",
+  "patch": "--- a/astropy/modeling/separable.py\n+++ b/astropy/modeling/separable.py\n@@ -290,7 +290,7 @@ def _separable(transform):\n     if (transform_matrix := transform._calculate_separability_matrix()) is not NotImplemented:\n         return transform_matrix\n     elif isinstance(transform, CompoundModel):\n-        sepleft = _separable(transform.left)\n-        sepright = _separable(transform.right)\n+        sepleft = _separable(transform.left)\n+        sepright = _separable(transform.right)\n         return _operators[transform.op](sepleft, sepright)\n     else:\n         return _coord_matrix(transform, 'left', transform.n_outputs)\n",
+  "explanation": null,
+  "token_usage": {
+    "input": 1177,
+    "output": 220
+  },
+  "cost_usd": 0.006831,
+  "runtime_seconds": 4.155999999959022,
+  "error_message": null,
+  "raw_logs": "{\"diff\": \"--- a/astropy/modeling/separable.py\\n+++ b/astropy/modeling/separable.py\\n@@ -290,7 +290,7 @@ def _separable(transform):\\n     if (transform_matrix := transform._calculate_separability_matrix()) is not NotImplemented:\\n         return transform_matrix\\n     elif isinstance(transform, CompoundModel):\\n-        sepleft = _separable(transform.left)\\n-        sepright = _separable(transform.right)\\n+        sepleft = _separable(transform.left)\\n+        sepright = _separable(transform.right)\\n         return _operators[transform.op](sepleft, sepright)\\n     else:\\n         return _coord_matrix(transform, 'left', transform.n_outputs)\\n\"}",
+  "metadata": {
+    "model": "claude-sonnet-4-6",
+    "prompt_version": "issue-to-unified-diff-v3-submit-patch-tool",
+    "stop_reason": "tool_use",
+    "patch_source": "tool"
+  },
+  "variant": {
+    "transformed_text": "The `separability_matrix` function in Modeling incorrectly determines separability when processing nested CompoundModels.\n\nWhen using a straightforward compound model:\n\n```python\nfrom astropy.modeling import models as m\nfrom astropy.modeling.separable import separability_matrix\n\ncm = m.Linear1D(10) & m.Linear1D(5)\n```\n\nThe resulting separability matrix correctly shows diagonal independence:\n\n```python\n>>> separability_matrix(cm)\narray([[ True, False],\n       [False,  True]])\n```\n\nWith a more elaborate model structure:\n```python\n>>> separability_matrix(m.Pix2Sky_TAN() & m.Linear1D(10) & m.Linear1D(5))\narray([[ True,  True, False, False],\n       [ True,  True, False, False],\n       [False, False,  True, False],\n       [False, False, False,  True]])\n```\n\nThe matrix appropriately reflects that the linear model outputs remain independent and separable from the projection model.\n\nHowever, when nesting the compound models:\n```python\n>>> separability_matrix(m.Pix2Sky_TAN() & cm)\narray([[ True,  True, False, False],\n       [ True,  True, False, False],\n       [False, False,  True,  True],\n       [False, False,  True,  True]])\n```\n\nThe function incorrectly reports that inputs and outputs lack separability, contradicting the expected behavior.\n\nThis appears to be a defect, though clarification on the intended behavior would be appreciated.",
+    "transformation_notes": "Restructured the issue narrative by rephrasing the problem statement and observations while preserving all technical identifiers (`separability_matrix`, `m.Linear1D`, `m.Pix2Sky_TAN`, `CompoundModels`), code blocks, and array outputs verbatim. The semantic meaning—that nested CompoundModels produce incorrect separability matrices—is fully maintained. [identifier retention passed on attempt 1/3]",
+    "params": {},
+    "generator": "claude-haiku-4-5-20251001",
+    "transform_version": "3",
+    "generation_mode": "real",
+    "quality_warning": false,
+    "noop": false,
+    "exclusion_reason": null,
+    "generation_cost_usd": null,
+    "original_sha256": "c01334ec1b21a089c650cf2e7b96ab974469076bf1260d23885799e1f0a7551f"
+  },
+  "recorded_from": {
+    "experiment_id": "bc6f1372-2088-45dd-907c-d741c0545d27",
+    "experiment_name": "icse_pilot_v1",
+    "run_id": "cd0db07a-3ad0-402e-a5e9-10cc338bf709",
+    "agent_name": "llm_baseline",
+    "execution_mode": "real"
+  }
+}

@@ -1,0 +1,47 @@
+{
+  "status": "success",
+  "patch": "--- a/astropy/io/ascii/qdp.py\n+++ b/astropy/io/ascii/qdp.py\n@@ -60,7 +60,7 @@ def _line_type(line, delimiter=None):\n     _new_re = rf\"NO({sep}NO)+\"\n     _data_re = rf\"({_decimal_re}|NO|[-+]?nan)({sep}({_decimal_re}|NO|[-+]?nan))*)\"\n     _type_re = rf\"^\\s*((?P<command>{_command_re})|(?P<new>{_new_re})|(?P<data>{_data_re})\\s*$\"\n-    _line_type_re = re.compile(_type_re)\n+    _line_type_re = re.compile(_type_re, re.IGNORECASE)\n     line = line.strip()\n     if not line:\n         return \"comment\"\n@@ -68,7 +68,7 @@ def _line_type(line, delimiter=None):\n         return \"comment\"\n     match = _line_type_re.match(line)\n     if match is None:\n-        raise ValueError(f\"Unrecognized QDP line: {line}\")\n+        raise ValueError(f\"Unrecognized QDP line: {line!r}\")\n     for type_, val in match.groupdict().items():\n         if val is None:\n             continue\n@@ -98,7 +98,7 @@ def _get_type_from_list_of_lines(lines, delimiter=None):\n \n \n def _get_lines_from_file(qdp_file):\n-    if \"\\n\" in qdp_file:\n+    if \"\\n\" in qdp_file or \"\\r\" in qdp_file:\n         lines = qdp_file.split(\"\\n\")\n         return lines\n     elif os.path.exists(qdp_file):\n@@ -160,7 +160,7 @@ def _interpret_err_lines(err_specs, ncols, names=None):\n \n def _read_table_qdp(qdp_file, names=None, table_id=None, delimiter=None):\n     \"\"\"Read a table from a QDP file\n-\n+\n     Parameters\n     ----------\n     qdp_file : str\n@@ -225,7 +225,7 @@ def _read_table_qdp(qdp_file, names=None, table_id=None, delimiter=None):\n         if line_type == \"command\":\n             # The first time I find a command, I assume that the\n             # temporary table is complete\n-            command = line.split()\n+            command = line.upper().split()\n             if err_specs != {} and command[0] == \"READ\":\n                 warnings.warn(\"Multiple READ commands\", AstropyUserWarning)\n             if command[0] == \"READ\":\n",
+  "explanation": null,
+  "token_usage": {
+    "input": 1304,
+    "output": 754
+  },
+  "cost_usd": 0.015222,
+  "runtime_seconds": 11.530999999959022,
+  "error_message": null,
+  "raw_logs": "{\"diff\": \"--- a/astropy/io/ascii/qdp.py\\n+++ b/astropy/io/ascii/qdp.py\\n@@ -60,7 +60,7 @@ def _line_type(line, delimiter=None):\\n     _new_re = rf\\\"NO({sep}NO)+\\\"\\n     _data_re = rf\\\"({_decimal_re}|NO|[-+]?nan)({sep}({_decimal_re}|NO|[-+]?nan))*)\\\"\\n     _type_re = rf\\\"^\\\\s*((?P<command>{_command_re})|(?P<new>{_new_re})|(?P<data>{_data_re})\\\\s*$\\\"\\n-    _line_type_re = re.compile(_type_re)\\n+    _line_type_re = re.compile(_type_re, re.IGNORECASE)\\n     line = line.strip()\\n     if not line:\\n         return \\\"comment\\\"\\n@@ -68,7 +68,7 @@ def _line_type(line, delimiter=None):\\n         return \\\"comment\\\"\\n     match = _line_type_re.match(line)\\n     if match is None:\\n-        raise ValueError(f\\\"Unrecognized QDP line: {line}\\\")\\n+        raise ValueError(f\\\"Unrecognized QDP line: {line!r}\\\")\\n     for type_, val in match.groupdict().items():\\n         if val is None:\\n             continue\\n@@ -98,7 +98,7 @@ def _get_type_from_list_of_lines(lines, delimiter=None):\\n \\n \\n def _get_lines_from_file(qdp_file):\\n-    if \\\"\\\\n\\\" in qdp_file:\\n+    if \\\"\\\\n\\\" in qdp_file or \\\"\\\\r\\\" in qdp_file:\\n         lines = qdp_file.split(\\\"\\\\n\\\")\\n         return lines\\n     elif os.path.exists(qdp_file):\\n@@ -160,7 +160,7 @@ def _interpret_err_lines(err_specs, ncols, names=None):\\n \\n def _read_table_qdp(qdp_file, names=None, table_id=None, delimiter=None):\\n     \\\"\\\"\\\"Read a table from a QDP file\\n-\\n+\\n     Parameters\\n     ----------\\n     qdp_file : str\\n@@ -225,7 +225,7 @@ def _read_table_qdp(qdp_file, names=None, table_id=None, delimiter=None):\\n         if line_type == \\\"command\\\":\\n             # The first time I find a command, I assume that the\\n             # temporary table is complete\\n-            command = line.split()\\n+            command = line.upper().split()\\n             if err_specs != {} and command[0] == \\\"READ\\\":\\n                 warnings.warn(\\\"Multiple READ commands\\\", AstropyUserWarning)\\n             if command[0] == \\\"READ\\\":\\n\"}",
+  "metadata": {
+    "model": "claude-sonnet-4-6",
+    "prompt_version": "issue-to-unified-diff-v3-submit-patch-tool",
+    "stop_reason": "tool_use",
+    "patch_source": "tool"
+  },
+  "control_repeats": [
+    {
+      "status": "success",
+      "patch": "--- a/astropy/io/ascii/qdp.py\n+++ b/astropy/io/ascii/qdp.py\n@@ -60,7 +60,7 @@ def _line_type(line, delimiter=None):\n     _new_re = rf\"NO({sep}NO)+\"\n     _data_re = rf\"({_decimal_re}|NO|[-+]?nan)({sep}({_decimal_re}|NO|[-+]?nan))*)\"\n     _type_re = rf\"^\\s*((?P<command>{_command_re})|(?P<new>{_new_re})|(?P<data>{_data_re})\\s*$\"\n-    _line_type_re = re.compile(_type_re)\n+    _line_type_re = re.compile(_type_re, re.IGNORECASE)\n     line = line.strip()\n     if not line:\n         return \"comment\"\n@@ -120,7 +120,7 @@ def _get_type_from_list_of_lines(lines, delimiter=None):\n \n def _get_lines_from_file(qdp_file):\n     if \"\\n\" in qdp_file:\n-        lines = qdp_file.split(\"\\n\")\n+        lines = qdp_file.splitlines()\n     elif os.path.exists(qdp_file):\n         with open(qdp_file) as fobj:\n             lines = fobj.readlines()\n@@ -208,7 +208,7 @@ def _interpret_err_lines(err_specs, ncols, names=None):\n \n def _read_table_qdp(qdp_file, names=None, table_id=None, delimiter=None):\n     \"\"\"Read a table from a QDP file\n-\n+\n     Parameters\n     ----------\n     qdp_file : str\n@@ -248,7 +248,7 @@ def _read_table_qdp(qdp_file, names=None, table_id=None, delimiter=None):\n \n     for line in lines:\n         ltype = _line_type(line, delimiter=delimiter)\n-        if ltype == \"command\":\n+        if ltype == \"command\":\n             # Parse the command\n             command = line.strip().split()\n             # Check if this is a READ command\n@@ -256,7 +256,7 @@ def _read_table_qdp(qdp_file, names=None, table_id=None, delimiter=None):\n             if command[0].upper() == \"READ\":\n                 if command[1].upper() == \"SERR\":\n                     err_specs[\"serr\"] = [int(c) for c in command[2:]]\n-                elif command[1].upper() == \"TERR\":\n+                elif command[1].upper() == \"TERR\":\n                     err_specs[\"terr\"] = [int(c) for c in command[2:]]\n         elif ltype == \"new\":\n             # ...\n",
+      "explanation": null,
+      "token_usage": {
+        "input": 1304,
+        "output": 782
+      },
+      "cost_usd": 0.015642,
+      "runtime_seconds": 11.125,
+      "error_message": null,
+      "raw_logs": "{\"diff\": \"--- a/astropy/io/ascii/qdp.py\\n+++ b/astropy/io/ascii/qdp.py\\n@@ -60,7 +60,7 @@ def _line_type(line, delimiter=None):\\n     _new_re = rf\\\"NO({sep}NO)+\\\"\\n     _data_re = rf\\\"({_decimal_re}|NO|[-+]?nan)({sep}({_decimal_re}|NO|[-+]?nan))*)\\\"\\n     _type_re = rf\\\"^\\\\s*((?P<command>{_command_re})|(?P<new>{_new_re})|(?P<data>{_data_re})\\\\s*$\\\"\\n-    _line_type_re = re.compile(_type_re)\\n+    _line_type_re = re.compile(_type_re, re.IGNORECASE)\\n     line = line.strip()\\n     if not line:\\n         return \\\"comment\\\"\\n@@ -120,7 +120,7 @@ def _get_type_from_list_of_lines(lines, delimiter=None):\\n \\n def _get_lines_from_file(qdp_file):\\n     if \\\"\\\\n\\\" in qdp_file:\\n-        lines = qdp_file.split(\\\"\\\\n\\\")\\n+        lines = qdp_file.splitlines()\\n     elif os.path.exists(qdp_file):\\n         with open(qdp_file) as fobj:\\n             lines = fobj.readlines()\\n@@ -208,7 +208,7 @@ def _interpret_err_lines(err_specs, ncols, names=None):\\n \\n def _read_table_qdp(qdp_file, names=None, table_id=None, delimiter=None):\\n     \\\"\\\"\\\"Read a table from a QDP file\\n-\\n+\\n     Parameters\\n     ----------\\n     qdp_file : str\\n@@ -248,7 +248,7 @@ def _read_table_qdp(qdp_file, names=None, table_id=None, delimiter=None):\\n \\n     for line in lines:\\n         ltype = _line_type(line, delimiter=delimiter)\\n-        if ltype == \\\"command\\\":\\n+        if ltype == \\\"command\\\":\\n             # Parse the command\\n             command = line.strip().split()\\n             # Check if this is a READ command\\n@@ -256,7 +256,7 @@ def _read_table_qdp(qdp_file, names=None, table_id=None, delimiter=None):\\n             if command[0].upper() == \\\"READ\\\":\\n                 if command[1].upper() == \\\"SERR\\\":\\n                     err_specs[\\\"serr\\\"] = [int(c) for c in command[2:]]\\n-                elif command[1].upper() == \\\"TERR\\\":\\n+                elif command[1].upper() == \\\"TERR\\\":\\n                     err_specs[\\\"terr\\\"] = [int(c) for c in command[2:]]\\n         elif ltype == \\\"new\\\":\\n             # ...\\n\"}",
+      "metadata": {
+        "model": "claude-sonnet-4-6",
+        "prompt_version": "issue-to-unified-diff-v3-submit-patch-tool",
+        "stop_reason": "tool_use",
+        "patch_source": "tool"
+      }
+    }
+  ],
+  "recorded_from": {
+    "experiment_id": "bc6f1372-2088-45dd-907c-d741c0545d27",
+    "experiment_name": "icse_pilot_v1",
+    "run_id": "3ca56ad2-1e7f-454e-905d-ada49e1ba356",
+    "agent_name": "llm_baseline",
+    "execution_mode": "real"
+  }
+}

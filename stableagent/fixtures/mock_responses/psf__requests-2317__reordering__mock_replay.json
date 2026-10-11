@@ -1,0 +1,41 @@
+{
+  "status": "success",
+  "patch": "--- a/requests/models.py\n+++ b/requests/models.py\n@@ -392,6 +392,8 @@ class PreparedRequest(RequestEncodingMixin, RequestHooksMixin):\n         \"\"\"Prepares the given HTTP method.\"\"\"\n         self.method = method\n         if self.method is not None:\n+            if isinstance(self.method, bytes):\n+                self.method = self.method.decode('utf8')\n             self.method = self.method.upper()\n",
+  "explanation": null,
+  "token_usage": {
+    "input": 1047,
+    "output": 152
+  },
+  "cost_usd": 0.005421,
+  "runtime_seconds": 2.969000000040978,
+  "error_message": null,
+  "raw_logs": "{\"diff\": \"--- a/requests/models.py\\n+++ b/requests/models.py\\n@@ -392,6 +392,8 @@ class PreparedRequest(RequestEncodingMixin, RequestHooksMixin):\\n         \\\"\\\"\\\"Prepares the given HTTP method.\\\"\\\"\\\"\\n         self.method = method\\n         if self.method is not None:\\n+            if isinstance(self.method, bytes):\\n+                self.method = self.method.decode('utf8')\\n             self.method = self.method.upper()\\n\"}",
+  "metadata": {
+    "model": "claude-sonnet-4-6",
+    "prompt_version": "issue-to-unified-diff-v3-submit-patch-tool",
+    "stop_reason": "tool_use",
+    "patch_source": "tool"
+  },
+  "variant": {
+    "transformed_text": "I am using python3.4 and python-neutronclient (2.3.9) with requests (2.4.3).  neutronclient is broken because it uses this \"args = utils.safe_encode_list(args)\" command which converts all the values to binary string, including method.\n\nmethod = builtin_str(method)\nConverts method from\nb’GET’\nto\n\"b'GET’\"\n\nWhich is the literal string, no longer a binary string.  When requests tries to use the method \"b'GET’”, it gets a 404 Not Found response.\n\nI'm not sure if this is a bug with neutronclient or a bug with requests, but I'm starting here.  Seems if requests handled the method value being a binary string, we wouldn't have any problem.\n\nmethod = builtin_str(method) problem\nIn requests/sessions.py is a command:\n\nAlso, I tried in python2.6 and this bug doesn't exist there. Some difference between 2.6 and 3.4 makes this not work right.",
+    "transformation_notes": "Shuffled 6 paragraph(s) (seed=42); CRLF normalised to LF, fenced code blocks kept whole.",
+    "params": {
+      "seed": 42
+    },
+    "generator": "deterministic",
+    "transform_version": "2",
+    "generation_mode": "real",
+    "quality_warning": false,
+    "noop": false,
+    "exclusion_reason": null,
+    "generation_cost_usd": 0.0,
+    "original_sha256": "9fdbda259c2e75551a5282e979edf4ca93ba378bee22df393fe02998991cfd1a"
+  },
+  "recorded_from": {
+    "experiment_id": "bc6f1372-2088-45dd-907c-d741c0545d27",
+    "experiment_name": "icse_pilot_v1",
+    "run_id": "d0e66ed7-3605-4246-8eaa-5915d05a49cf",
+    "agent_name": "llm_baseline",
+    "execution_mode": "real"
+  }
+}

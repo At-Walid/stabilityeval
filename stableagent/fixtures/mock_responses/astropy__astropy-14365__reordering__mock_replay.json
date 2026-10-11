@@ -1,0 +1,41 @@
+{
+  "status": "success",
+  "patch": "--- a/astropy/io/ascii/qdp.py\n+++ b/astropy/io/ascii/qdp.py\n@@ -60,7 +60,7 @@ def _line_type(line, delimiter=None):\n     _new_re = rf\"NO({_sep}NO)+\"\n     _data_re = rf\"({_decimal_re}|NO|[-+]?nan)({_sep}({_decimal_re}|NO|[-+]?nan))*)\"\n     _type_re = rf\"^\\s*((?P<command>{_command_re})|(?P<new>{_new_re})|(?P<data>{_data_re})\\s*$\"\n-    _line_type_re = re.compile(_type_re)\n+    _line_type_re = re.compile(_type_re, re.IGNORECASE)\n     line = line.strip()\n     if not line:\n         return \"comment\"\n@@ -68,7 +68,7 @@ def _line_type(line, delimiter=None):\n         return \"comment\"\n     match = _line_type_re.match(line)\n     if match is None:\n-        raise ValueError(f\"Unrecognized QDP line: {line}\")\n+        raise ValueError(f\"Unrecognized QDP line: {line!r}\")\n     for type_, val in match.groupdict().items():\n         if val is None:\n             continue\n@@ -98,7 +98,7 @@ def _get_type_from_list_of_lines(lines, delimiter=None):\n \n \n def _get_lines_from_file(qdp_file):\n-    with open(qdp_file) as fobj:\n+    with open(qdp_file, encoding=\"utf-8\") as fobj:\n         lines = fobj.readlines()\n     return lines\n \n@@ -163,7 +163,7 @@ def _read_table_qdp(qdp_file, names=None, table_id=None, delimiter=None):\n         if line_type == \"command\":\n             # The command line can have multiple commands\n             for command in line.split(\";\"):\n-                if command.strip().upper().startswith(\"READ\"):\n+                if command.strip().upper().startswith(\"READ\"):\n                     read_err_command = command.strip()\n                     err_specs = _get_err_specs(read_err_command)\n",
+  "explanation": null,
+  "token_usage": {
+    "input": 1304,
+    "output": 637
+  },
+  "cost_usd": 0.013467,
+  "runtime_seconds": 9.608999999938533,
+  "error_message": null,
+  "raw_logs": "{\"diff\": \"--- a/astropy/io/ascii/qdp.py\\n+++ b/astropy/io/ascii/qdp.py\\n@@ -60,7 +60,7 @@ def _line_type(line, delimiter=None):\\n     _new_re = rf\\\"NO({_sep}NO)+\\\"\\n     _data_re = rf\\\"({_decimal_re}|NO|[-+]?nan)({_sep}({_decimal_re}|NO|[-+]?nan))*)\\\"\\n     _type_re = rf\\\"^\\\\s*((?P<command>{_command_re})|(?P<new>{_new_re})|(?P<data>{_data_re})\\\\s*$\\\"\\n-    _line_type_re = re.compile(_type_re)\\n+    _line_type_re = re.compile(_type_re, re.IGNORECASE)\\n     line = line.strip()\\n     if not line:\\n         return \\\"comment\\\"\\n@@ -68,7 +68,7 @@ def _line_type(line, delimiter=None):\\n         return \\\"comment\\\"\\n     match = _line_type_re.match(line)\\n     if match is None:\\n-        raise ValueError(f\\\"Unrecognized QDP line: {line}\\\")\\n+        raise ValueError(f\\\"Unrecognized QDP line: {line!r}\\\")\\n     for type_, val in match.groupdict().items():\\n         if val is None:\\n             continue\\n@@ -98,7 +98,7 @@ def _get_type_from_list_of_lines(lines, delimiter=None):\\n \\n \\n def _get_lines_from_file(qdp_file):\\n-    with open(qdp_file) as fobj:\\n+    with open(qdp_file, encoding=\\\"utf-8\\\") as fobj:\\n         lines = fobj.readlines()\\n     return lines\\n \\n@@ -163,7 +163,7 @@ def _read_table_qdp(qdp_file, names=None, table_id=None, delimiter=None):\\n         if line_type == \\\"command\\\":\\n             # The command line can have multiple commands\\n             for command in line.split(\\\";\\\"):\\n-                if command.strip().upper().startswith(\\\"READ\\\"):\\n+                if command.strip().upper().startswith(\\\"READ\\\"):\\n                     read_err_command = command.strip()\\n                     err_specs = _get_err_specs(read_err_command)\\n\"}",
+  "metadata": {
+    "model": "claude-sonnet-4-6",
+    "prompt_version": "issue-to-unified-diff-v3-submit-patch-tool",
+    "stop_reason": "tool_use",
+    "patch_source": "tool"
+  },
+  "variant": {
+    "transformed_text": "Running \"qdp test.qdp\" works just fine.\n\n### Expected behavior\n\nAs many QDP files are created by hand, the expectation that all commands be all-caps should be removed.\n\n### Versions\n\n### How to Reproduce\n\nCreate a QDP file:\n```\n> cat > test.qdp\nread serr 1 2 \n1 0.5 1 0.5\n<EOF>\n\n > python\nPython 3.10.9 (main, Dec  7 2022, 02:03:23) [Clang 13.0.0 (clang-1300.0.29.30)] on darwin\nType \"help\", \"copyright\", \"credits\" or \"license\" for more information.\n>>> from astropy.table import Table\n>>> Table.read('test.qdp',format='ascii.qdp')\nWARNING: table_id not specified. Reading the first available table [astropy.io.ascii.qdp]\nTraceback (most recent call last):\n...\n    raise ValueError(f'Unrecognized QDP line: {line}')\nValueError: Unrecognized QDP line: read serr 1 2\n```\n\nPython 3.10.9 (main, Dec  7 2022, 02:03:23) [Clang 13.0.0 (clang-1300.0.29.30)]\nastropy 5.1\nNumpy 1.24.1\npyerfa 2.0.0.1\nScipy 1.10.0\nMatplotlib 3.6.3\n\nThe following qdp file should read into a `Table` with errors, rather than crashing.\n```\nread serr 1 2 \n1 0.5 1 0.5\n```\n\nascii.qdp Table format assumes QDP commands are upper case\n### Description\n\nascii.qdp assumes that commands in a QDP file are upper case, for example, for errors they must be \"READ SERR 1 2\" whereas QDP itself is not case sensitive and case use \"read serr 1 2\". ",
+    "transformation_notes": "Shuffled 10 paragraph(s) (seed=42); CRLF normalised to LF, fenced code blocks kept whole.",
+    "params": {
+      "seed": 42
+    },
+    "generator": "deterministic",
+    "transform_version": "2",
+    "generation_mode": "real",
+    "quality_warning": false,
+    "noop": false,
+    "exclusion_reason": null,
+    "generation_cost_usd": null,
+    "original_sha256": "615252d5c44819451977588671ce903d3a21c41a8bf011738e2aee39218d56c6"
+  },
+  "recorded_from": {
+    "experiment_id": "bc6f1372-2088-45dd-907c-d741c0545d27",
+    "experiment_name": "icse_pilot_v1",
+    "run_id": "e6429e55-3d7f-45c4-b976-290e13ef169b",
+    "agent_name": "llm_baseline",
+    "execution_mode": "real"
+  }
+}

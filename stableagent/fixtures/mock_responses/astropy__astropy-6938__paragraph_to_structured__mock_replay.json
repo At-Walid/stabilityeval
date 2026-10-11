@@ -1,0 +1,19 @@
+{
+  "status": "failure",
+  "patch": null,
+  "explanation": null,
+  "token_usage": {
+    "input": 1975,
+    "output": 186
+  },
+  "cost_usd": 0.0,
+  "runtime_seconds": 1.75,
+  "error_message": "Agent could not identify the relevant code from the compressed issue description.",
+  "raw_logs": "[2026-07-05T09:00:00Z] INFO  agent='mock_replay' issue=astropy__astropy-6938 transform='paragraph_to_structured'\n[2026-07-05T09:00:00Z] INFO  Loading fixture from disk\n[2026-07-05T09:00:00Z] INFO  Fixture deserialized (issue_id=astropy__astropy-6938, transform=paragraph_to_structured)\n[2026-07-05T09:00:00Z] WARN  Patch extraction failed \u2014 response did not contain a valid diff\n[2026-07-05T09:00:00Z] ERROR Status: FAILURE (runtime=1.75s)",
+  "metadata": {
+    "issue_id": "astropy__astropy-6938",
+    "transformation_name": "paragraph_to_structured",
+    "agent": "mock_replay",
+    "fixture_version": "1.0"
+  }
+}

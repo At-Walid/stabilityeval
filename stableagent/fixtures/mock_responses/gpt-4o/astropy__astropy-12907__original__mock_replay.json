@@ -1,0 +1,49 @@
+{
+  "status": "success",
+  "patch": "--- a/astropy/modeling/separable.py\n+++ b/astropy/modeling/separable.py\n@@ -45,7 +45,7 @@ def separability_matrix(model):\n     # Initialize the separability matrix\n     separability = np.zeros((n_outputs, n_inputs), dtype=bool)\n \n-    if isinstance(model, CompoundModel):\n+    if isinstance(model, CompoundModel) and not model._is_nested:\n         # For compound models, compute the separability matrix for each submodel\n         for submodel in model:\n             sub_sep = separability_matrix(submodel)\n@@ -53,6 +53,10 @@ def separability_matrix(model):\n             separability[submodel._outputs, submodel._inputs] = sub_sep\n     else:\n         # For simple models, assume full separability\n+        if isinstance(model, CompoundModel):\n+            # Flatten nested compound models\n+            model = model.flatten()\n+\n         for i in range(n_outputs):\n             for j in range(n_inputs):\n                 separability[i, j] = True",
+  "explanation": null,
+  "token_usage": {
+    "input": 511,
+    "output": 243
+  },
+  "cost_usd": 0.0037075,
+  "runtime_seconds": 6.155999999959022,
+  "error_message": null,
+  "raw_logs": "{\"diff\": \"--- a/astropy/modeling/separable.py\\n+++ b/astropy/modeling/separable.py\\n@@ -45,7 +45,7 @@ def separability_matrix(model):\\n     # Initialize the separability matrix\\n     separability = np.zeros((n_outputs, n_inputs), dtype=bool)\\n \\n-    if isinstance(model, CompoundModel):\\n+    if isinstance(model, CompoundModel) and not model._is_nested:\\n         # For compound models, compute the separability matrix for each submodel\\n         for submodel in model:\\n             sub_sep = separability_matrix(submodel)\\n@@ -53,6 +53,10 @@ def separability_matrix(model):\\n             separability[submodel._outputs, submodel._inputs] = sub_sep\\n     else:\\n         # For simple models, assume full separability\\n+        if isinstance(model, CompoundModel):\\n+            # Flatten nested compound models\\n+            model = model.flatten()\\n+\\n         for i in range(n_outputs):\\n             for j in range(n_inputs):\\n                 separability[i, j] = True\"}",
+  "metadata": {
+    "model": "gpt-4o",
+    "prompt_version": "issue-to-unified-diff-v3-submit-patch-tool",
+    "stop_reason": "tool_use",
+    "patch_source": "tool",
+    "model_snapshot": "gpt-4o-2024-08-06"
+  },
+  "control_repeats": [
+    {
+      "status": "success",
+      "patch": "--- a/astropy/modeling/separable.py\n+++ b/astropy/modeling/separable.py\n@@ -45,7 +45,7 @@ def separability_matrix(model):\n     # Initialize the separability matrix\n     separability = np.zeros((n_outputs, n_inputs), dtype=bool)\n \n-    if isinstance(model, CompoundModel):\n+    if isinstance(model, CompoundModel) and not model._is_nested:\n         # For compound models, compute the separability matrix for each submodel\n         for submodel in model:\n             sub_sep = separability_matrix(submodel)\n@@ -53,6 +53,10 @@ def separability_matrix(model):\n             separability[submodel._outputs, submodel._inputs] = sub_sep\n     else:\n         # For simple models, assume full separability\n+        if isinstance(model, CompoundModel):\n+            # Flatten nested compound models\n+            model = model.flatten()\n+\n         for i in range(n_outputs):\n             for j in range(n_inputs):\n                 separability[i, j] = True",
+      "explanation": null,
+      "token_usage": {
+        "input": 511,
+        "output": 243
+      },
+      "cost_usd": 0.0037075,
+      "runtime_seconds": 3.2189999998081475,
+      "error_message": null,
+      "raw_logs": "{\"diff\": \"--- a/astropy/modeling/separable.py\\n+++ b/astropy/modeling/separable.py\\n@@ -45,7 +45,7 @@ def separability_matrix(model):\\n     # Initialize the separability matrix\\n     separability = np.zeros((n_outputs, n_inputs), dtype=bool)\\n \\n-    if isinstance(model, CompoundModel):\\n+    if isinstance(model, CompoundModel) and not model._is_nested:\\n         # For compound models, compute the separability matrix for each submodel\\n         for submodel in model:\\n             sub_sep = separability_matrix(submodel)\\n@@ -53,6 +53,10 @@ def separability_matrix(model):\\n             separability[submodel._outputs, submodel._inputs] = sub_sep\\n     else:\\n         # For simple models, assume full separability\\n+        if isinstance(model, CompoundModel):\\n+            # Flatten nested compound models\\n+            model = model.flatten()\\n+\\n         for i in range(n_outputs):\\n             for j in range(n_inputs):\\n                 separability[i, j] = True\"}",
+      "metadata": {
+        "model": "gpt-4o",
+        "prompt_version": "issue-to-unified-diff-v3-submit-patch-tool",
+        "stop_reason": "tool_use",
+        "patch_source": "tool",
+        "model_snapshot": "gpt-4o-2024-08-06"
+      }
+    }
+  ],
+  "recorded_from": {
+    "experiment_id": "9d27f3ef-397a-41b7-b1b2-e09729288a40",
+    "experiment_name": "icse_pilot_model2",
+    "run_id": "760f37cf-ddb9-4297-b2ee-a8a8f0e0631c",
+    "agent_name": "llm_baseline",
+    "execution_mode": "real"
+  }
+}

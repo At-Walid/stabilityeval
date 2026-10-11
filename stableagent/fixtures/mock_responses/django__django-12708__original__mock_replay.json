@@ -1,0 +1,47 @@
+{
+  "status": "success",
+  "patch": "--- a/django/db/backends/base/schema.py\n+++ b/django/db/backends/base/schema.py\n@@ -378,7 +378,12 @@ class BaseDatabaseSchemaEditor:\n         constraint_names = self._constraint_names(\n             model, [f.column for f in fields], exclude=meta_constraint_names,\n             **constraint_kwargs\n         )\n+        if len(constraint_names) == 0:\n+            raise ValueError(\"Found wrong number (0) of constraints for %s(%s)\" % (\n+                model._meta.db_table,\n+                \", \".join([f.column for f in fields]),\n+            ))\n         if len(constraint_names) != 1:\n+            # Try to filter by the specific type of constraint\n             constraint_names = self._constraint_names(\n                 model, [f.column for f in fields], exclude=meta_constraint_names,\n                 **constraint_kwargs\n@@ -378,10 +383,22 @@ class BaseDatabaseSchemaEditor:\n         constraint_names = self._constraint_names(\n             model, [f.column for f in fields], exclude=meta_constraint_names,\n             **constraint_kwargs\n         )\n         if len(constraint_names) != 1:\n             raise ValueError(\"Found wrong number (%s) of constraints for %s(%s)\" % (\n                 len(constraint_names),\n                 model._meta.db_table,\n                 \", \".join([f.column for f in fields]),\n             ))\n         self.execute(self._delete_constraint_sql(sql, model, constraint_names[0]))\n",
+  "explanation": null,
+  "token_usage": {
+    "input": 1056,
+    "output": 423
+  },
+  "cost_usd": 0.009513,
+  "runtime_seconds": 6.5,
+  "error_message": null,
+  "raw_logs": "{\"diff\": \"--- a/django/db/backends/base/schema.py\\n+++ b/django/db/backends/base/schema.py\\n@@ -378,7 +378,12 @@ class BaseDatabaseSchemaEditor:\\n         constraint_names = self._constraint_names(\\n             model, [f.column for f in fields], exclude=meta_constraint_names,\\n             **constraint_kwargs\\n         )\\n+        if len(constraint_names) == 0:\\n+            raise ValueError(\\\"Found wrong number (0) of constraints for %s(%s)\\\" % (\\n+                model._meta.db_table,\\n+                \\\", \\\".join([f.column for f in fields]),\\n+            ))\\n         if len(constraint_names) != 1:\\n+            # Try to filter by the specific type of constraint\\n             constraint_names = self._constraint_names(\\n                 model, [f.column for f in fields], exclude=meta_constraint_names,\\n                 **constraint_kwargs\\n@@ -378,10 +383,22 @@ class BaseDatabaseSchemaEditor:\\n         constraint_names = self._constraint_names(\\n             model, [f.column for f in fields], exclude=meta_constraint_names,\\n             **constraint_kwargs\\n         )\\n         if len(constraint_names) != 1:\\n             raise ValueError(\\\"Found wrong number (%s) of constraints for %s(%s)\\\" % (\\n                 len(constraint_names),\\n                 model._meta.db_table,\\n                 \\\", \\\".join([f.column for f in fields]),\\n             ))\\n         self.execute(self._delete_constraint_sql(sql, model, constraint_names[0]))\\n\"}",
+  "metadata": {
+    "model": "claude-sonnet-4-6",
+    "prompt_version": "issue-to-unified-diff-v3-submit-patch-tool",
+    "stop_reason": "tool_use",
+    "patch_source": "tool"
+  },
+  "control_repeats": [
+    {
+      "status": "success",
+      "patch": "--- a/django/db/backends/base/schema.py\n+++ b/django/db/backends/base/schema.py\n@@ -378,7 +378,12 @@ class BaseDatabaseSchemaEditor:\n         constraint_names = self._constraint_names(\n             model, [f.column for f in fields], exclude=meta_constraint_names,\n             **constraint_kwargs\n         )\n+        if len(constraint_names) == 0:\n+            raise ValueError(\"Found wrong number (0) of constraints for %s(%s)\" % (\n+                model._meta.db_table,\n+                \", \".join([f.column for f in fields]),\n+            ))\n         if len(constraint_names) != 1:\n+            # Try to filter by the specific type of constraint\n             constraint_names = self._constraint_names(\n                 model, [f.column for f in fields], exclude=meta_constraint_names,\n                 **constraint_kwargs\n@@ -378,10 +383,22 @@ class BaseDatabaseSchemaEditor:\n         constraint_names = self._constraint_names(\n             model, [f.column for f in fields], exclude=meta_constraint_names,\n             **constraint_kwargs\n         )\n         if len(constraint_names) != 1:\n             raise ValueError(\"Found wrong number (%s) of constraints for %s(%s)\" % (\n                 len(constraint_names),\n                 model._meta.db_table,\n                 \", \".join([f.column for f in fields]),\n             ))\n         self.execute(self._delete_constraint_sql(sql, model, constraint_names[0]))\n",
+      "explanation": null,
+      "token_usage": {
+        "input": 1056,
+        "output": 423
+      },
+      "cost_usd": 0.009513,
+      "runtime_seconds": 6.561999999918044,
+      "error_message": null,
+      "raw_logs": "{\"diff\": \"--- a/django/db/backends/base/schema.py\\n+++ b/django/db/backends/base/schema.py\\n@@ -378,7 +378,12 @@ class BaseDatabaseSchemaEditor:\\n         constraint_names = self._constraint_names(\\n             model, [f.column for f in fields], exclude=meta_constraint_names,\\n             **constraint_kwargs\\n         )\\n+        if len(constraint_names) == 0:\\n+            raise ValueError(\\\"Found wrong number (0) of constraints for %s(%s)\\\" % (\\n+                model._meta.db_table,\\n+                \\\", \\\".join([f.column for f in fields]),\\n+            ))\\n         if len(constraint_names) != 1:\\n+            # Try to filter by the specific type of constraint\\n             constraint_names = self._constraint_names(\\n                 model, [f.column for f in fields], exclude=meta_constraint_names,\\n                 **constraint_kwargs\\n@@ -378,10 +383,22 @@ class BaseDatabaseSchemaEditor:\\n         constraint_names = self._constraint_names(\\n             model, [f.column for f in fields], exclude=meta_constraint_names,\\n             **constraint_kwargs\\n         )\\n         if len(constraint_names) != 1:\\n             raise ValueError(\\\"Found wrong number (%s) of constraints for %s(%s)\\\" % (\\n                 len(constraint_names),\\n                 model._meta.db_table,\\n                 \\\", \\\".join([f.column for f in fields]),\\n             ))\\n         self.execute(self._delete_constraint_sql(sql, model, constraint_names[0]))\\n\"}",
+      "metadata": {
+        "model": "claude-sonnet-4-6",
+        "prompt_version": "issue-to-unified-diff-v3-submit-patch-tool",
+        "stop_reason": "tool_use",
+        "patch_source": "tool"
+      }
+    }
+  ],
+  "recorded_from": {
+    "experiment_id": "bc6f1372-2088-45dd-907c-d741c0545d27",
+    "experiment_name": "icse_pilot_v1",
+    "run_id": "775090dc-9bb1-4f46-979b-90cacc1634e9",
+    "agent_name": "llm_baseline",
+    "execution_mode": "real"
+  }
+}

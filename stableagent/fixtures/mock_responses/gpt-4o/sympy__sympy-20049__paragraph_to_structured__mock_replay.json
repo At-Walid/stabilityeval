@@ -1,0 +1,40 @@
+{
+  "status": "success",
+  "patch": "--- a/sympy/physics/vector/point.py\n+++ b/sympy/physics/vector/point.py\n@@ -450,7 +450,10 @@ def vel(self, frame):\n         \"\"\"\n         Returns the velocity of the point in the given reference frame.\n         \"\"\"\n-        if not (frame in self._vel_dict):\n+        if frame in self._vel_dict:\n+            return self._vel_dict[frame]\n+        elif self._pos_dict:\n+            return self._pos_dict[next(iter(self._pos_dict))].dt(frame)\n         raise ValueError('Velocity of point ' + self.name + ' has not been'\n                          ' defined in ReferenceFrame ' + frame.name)\n         return self._vel_dict[frame]",
+  "explanation": null,
+  "token_usage": {
+    "input": 598,
+    "output": 174
+  },
+  "cost_usd": 0.003235,
+  "runtime_seconds": 1.4369999999180436,
+  "error_message": null,
+  "raw_logs": "{\"diff\": \"--- a/sympy/physics/vector/point.py\\n+++ b/sympy/physics/vector/point.py\\n@@ -450,7 +450,10 @@ def vel(self, frame):\\n         \\\"\\\"\\\"\\n         Returns the velocity of the point in the given reference frame.\\n         \\\"\\\"\\\"\\n-        if not (frame in self._vel_dict):\\n+        if frame in self._vel_dict:\\n+            return self._vel_dict[frame]\\n+        elif self._pos_dict:\\n+            return self._pos_dict[next(iter(self._pos_dict))].dt(frame)\\n         raise ValueError('Velocity of point ' + self.name + ' has not been'\\n                          ' defined in ReferenceFrame ' + frame.name)\\n         return self._vel_dict[frame]\"}",
+  "metadata": {
+    "model": "gpt-4o",
+    "prompt_version": "issue-to-unified-diff-v3-submit-patch-tool",
+    "stop_reason": "tool_use",
+    "patch_source": "tool",
+    "model_snapshot": "gpt-4o-2024-08-06"
+  },
+  "variant": {
+    "transformed_text": "## Summary\nPoint.vel() should calculate velocity between reference frames when orientation is specified, similar to how angular velocity calculation works.\n\n## Steps to Reproduce\n```\r\nIn [1]: import sympy as sm                                                                               \r\n\r\nIn [2]: import sympy.physics.mechanics as me                                                             \r\n\r\nIn [3]: A = me.ReferenceFrame('A')                                                                       \r\n\r\nIn [5]: q = me.dynamicsymbols('q')                                                                       \r\n\r\nIn [6]: B = A.orientnew('B', 'Axis', (q, A.x))                                                           \r\n\r\nIn [7]: B.ang_vel_in(A)                                                                                  \r\nOut[7]: q'*A.x\r\n\r\nIn [9]: P = me.Point('P')                                                                                \r\n\r\nIn [10]: Q = me.Point('Q')                                                                               \r\n\r\nIn [11]: r = q*A.x + 2*q*A.y                                                                             \r\n\r\nIn [12]: Q.set_pos(P, r)                                                                                 \r\n\r\nIn [13]: Q.vel(A)                                                                                        \r\n---------------------------------------------------------------------------\r\nValueError                                Traceback (most recent call last)\r\n<ipython-input-13-0fc8041904cc> in <module>\r\n----> 1 Q.vel(A)\r\n\r\n~/miniconda3/lib/python3.6/site-packages/sympy/physics/vector/point.py in vel(self, frame)\r\n    453         if not (frame in self._vel_dict):\r\n    454             raise ValueError('Velocity of point ' + self.name + ' has not been'\r\n--> 455                              ' defined in ReferenceFrame ' + frame.name)\r\n    456         return self._vel_dict[frame]\r\n    457 \r\n\r\nValueError: Velocity of point Q has not been defined in ReferenceFrame A\r\n```\n\n## Expected Behavior\nThe `Q.vel(A)` should return:\n\n```\r\nIn [14]: r.dt(A)                                                                                         \r\nOut[14]: q'*A.x + 2*q'*A.y\r\n```\n\n## Actual Behavior\nNot specified\n\n## Environment\nNot specified",
+    "transformation_notes": "Extracted the core issue into Summary. Preserved the code example as Steps to Reproduce. Placed the expected result code blocks in Expected Behavior section. No information was provided about actual behavior or environment, so those sections are marked as 'Not specified'. The user's reasoning about consistency with angular velocity behavior was incorporated into Summary but not duplicated in other sections. [quality check passed on attempt 1/2]",
+    "params": {},
+    "generator": "claude-haiku-4-5-20251001",
+    "transform_version": "5",
+    "generation_mode": "real",
+    "quality_warning": false,
+    "noop": false,
+    "exclusion_reason": null,
+    "generation_cost_usd": 0.001678,
+    "original_sha256": "c8bd4b93e36d77f9d011cb645c12a4512ee3a42bd7b7e4660c47f41d70058b3c"
+  },
+  "recorded_from": {
+    "experiment_id": "9d27f3ef-397a-41b7-b1b2-e09729288a40",
+    "experiment_name": "icse_pilot_model2",
+    "run_id": "22c1bc0e-a597-4690-919c-72956830339a",
+    "agent_name": "llm_baseline",
+    "execution_mode": "real"
+  }
+}

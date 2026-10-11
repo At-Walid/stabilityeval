@@ -1,0 +1,49 @@
+{
+  "status": "success",
+  "patch": "--- a/astropy/wcs/wcs.py\n+++ b/astropy/wcs/wcs.py\n@@ -1264,6 +1264,10 @@\n             if len(args) == 0:\n                 raise TypeError(\n                     \"For a 0-D array, you should pass \"\n                     \"a 1-D array for each axis, followed by an origin.\")\n+\n+            # If all input arrays are empty, return empty arrays\n+            if all(len(arg) == 0 for arg in args):\n+                return tuple([] for _ in range(self.naxis))\n \n             return _return_list_of_arrays(axes, origin)\n \n",
+  "explanation": null,
+  "token_usage": {
+    "input": 775,
+    "output": 155
+  },
+  "cost_usd": 0.0034875,
+  "runtime_seconds": 2.202999999979511,
+  "error_message": null,
+  "raw_logs": "{\"diff\": \"--- a/astropy/wcs/wcs.py\\n+++ b/astropy/wcs/wcs.py\\n@@ -1264,6 +1264,10 @@\\n             if len(args) == 0:\\n                 raise TypeError(\\n                     \\\"For a 0-D array, you should pass \\\"\\n                     \\\"a 1-D array for each axis, followed by an origin.\\\")\\n+\\n+            # If all input arrays are empty, return empty arrays\\n+            if all(len(arg) == 0 for arg in args):\\n+                return tuple([] for _ in range(self.naxis))\\n \\n             return _return_list_of_arrays(axes, origin)\\n \\n\"}",
+  "metadata": {
+    "model": "gpt-4o",
+    "prompt_version": "issue-to-unified-diff-v3-submit-patch-tool",
+    "stop_reason": "tool_use",
+    "patch_source": "tool",
+    "model_snapshot": "gpt-4o-2024-08-06"
+  },
+  "control_repeats": [
+    {
+      "status": "success",
+      "patch": "--- a/astropy/wcs/wcs.py\n+++ b/astropy/wcs/wcs.py\n@@ -1264,6 +1264,10 @@\n             if len(args) == self.naxis + 1:\n                 axes = args[:-1]\n                 origin = args[-1]\n+\n+                # If any of the axes are empty, return empty arrays\n+                if any(len(axis) == 0 for axis in axes):\n+                    return tuple([] for _ in range(self.naxis))\n \n                 if not all(len(axis) == len(axes[0]) for axis in axes):\n                     raise ValueError(\"When providing pixel coordinates as separate arrays, \"\n",
+      "explanation": null,
+      "token_usage": {
+        "input": 775,
+        "output": 158
+      },
+      "cost_usd": 0.0035175,
+      "runtime_seconds": 2.1409999998286366,
+      "error_message": null,
+      "raw_logs": "{\"diff\": \"--- a/astropy/wcs/wcs.py\\n+++ b/astropy/wcs/wcs.py\\n@@ -1264,6 +1264,10 @@\\n             if len(args) == self.naxis + 1:\\n                 axes = args[:-1]\\n                 origin = args[-1]\\n+\\n+                # If any of the axes are empty, return empty arrays\\n+                if any(len(axis) == 0 for axis in axes):\\n+                    return tuple([] for _ in range(self.naxis))\\n \\n                 if not all(len(axis) == len(axes[0]) for axis in axes):\\n                     raise ValueError(\\\"When providing pixel coordinates as separate arrays, \\\"\\n\"}",
+      "metadata": {
+        "model": "gpt-4o",
+        "prompt_version": "issue-to-unified-diff-v3-submit-patch-tool",
+        "stop_reason": "tool_use",
+        "patch_source": "tool",
+        "model_snapshot": "gpt-4o-2024-08-06"
+      }
+    }
+  ],
+  "recorded_from": {
+    "experiment_id": "9d27f3ef-397a-41b7-b1b2-e09729288a40",
+    "experiment_name": "icse_pilot_model2",
+    "run_id": "e4e6930a-e830-4d86-b92c-edfc3e5189bc",
+    "agent_name": "llm_baseline",
+    "execution_mode": "real"
+  }
+}

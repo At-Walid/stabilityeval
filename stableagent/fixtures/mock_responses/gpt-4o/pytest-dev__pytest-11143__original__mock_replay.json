@@ -1,0 +1,49 @@
+{
+  "status": "success",
+  "patch": "--- a/src/_pytest/assertion/rewrite.py\n+++ b/src/_pytest/assertion/rewrite.py\n@@ -757,7 +757,7 @@\n         return False\n \n     def is_rewrite_disabled(self, docstring: Optional[str]) -> bool:\n-        return \"PYTEST_DONT_REWRITE\" in docstring\n+        return isinstance(docstring, str) and \"PYTEST_DONT_REWRITE\" in docstring\n \n     def _write_pyc(self, co: CodeType, source_stat: os.stat_result, pyc: Path) -> None:\n         if self.config.getoption(\"assertmode\") == \"rewrite\":",
+  "explanation": null,
+  "token_usage": {
+    "input": 1991,
+    "output": 145
+  },
+  "cost_usd": 0.0064275,
+  "runtime_seconds": 1.4839999999385327,
+  "error_message": null,
+  "raw_logs": "{\"diff\": \"--- a/src/_pytest/assertion/rewrite.py\\n+++ b/src/_pytest/assertion/rewrite.py\\n@@ -757,7 +757,7 @@\\n         return False\\n \\n     def is_rewrite_disabled(self, docstring: Optional[str]) -> bool:\\n-        return \\\"PYTEST_DONT_REWRITE\\\" in docstring\\n+        return isinstance(docstring, str) and \\\"PYTEST_DONT_REWRITE\\\" in docstring\\n \\n     def _write_pyc(self, co: CodeType, source_stat: os.stat_result, pyc: Path) -> None:\\n         if self.config.getoption(\\\"assertmode\\\") == \\\"rewrite\\\":\"}",
+  "metadata": {
+    "model": "gpt-4o",
+    "prompt_version": "issue-to-unified-diff-v3-submit-patch-tool",
+    "stop_reason": "tool_use",
+    "patch_source": "tool",
+    "model_snapshot": "gpt-4o-2024-08-06"
+  },
+  "control_repeats": [
+    {
+      "status": "success",
+      "patch": "--- a/src/_pytest/assertion/rewrite.py\n+++ b/src/_pytest/assertion/rewrite.py\n@@ -757,7 +757,7 @@\n         return False\n \n     def is_rewrite_disabled(self, docstring: Optional[str]) -> bool:\n-        return \"PYTEST_DONT_REWRITE\" in docstring\n+        return docstring is not None and \"PYTEST_DONT_REWRITE\" in docstring\n \n     def _write_pyc(self, co: CodeType, source_stat: os.stat_result, pyc: Path) -> None:\n         if self.config.getoption(\"assertmode\") == \"rewrite\":",
+      "explanation": null,
+      "token_usage": {
+        "input": 1991,
+        "output": 144
+      },
+      "cost_usd": 0.0064175,
+      "runtime_seconds": 1.3440000000409782,
+      "error_message": null,
+      "raw_logs": "{\"diff\": \"--- a/src/_pytest/assertion/rewrite.py\\n+++ b/src/_pytest/assertion/rewrite.py\\n@@ -757,7 +757,7 @@\\n         return False\\n \\n     def is_rewrite_disabled(self, docstring: Optional[str]) -> bool:\\n-        return \\\"PYTEST_DONT_REWRITE\\\" in docstring\\n+        return docstring is not None and \\\"PYTEST_DONT_REWRITE\\\" in docstring\\n \\n     def _write_pyc(self, co: CodeType, source_stat: os.stat_result, pyc: Path) -> None:\\n         if self.config.getoption(\\\"assertmode\\\") == \\\"rewrite\\\":\"}",
+      "metadata": {
+        "model": "gpt-4o",
+        "prompt_version": "issue-to-unified-diff-v3-submit-patch-tool",
+        "stop_reason": "tool_use",
+        "patch_source": "tool",
+        "model_snapshot": "gpt-4o-2024-08-06"
+      }
+    }
+  ],
+  "recorded_from": {
+    "experiment_id": "9d27f3ef-397a-41b7-b1b2-e09729288a40",
+    "experiment_name": "icse_pilot_model2",
+    "run_id": "01f645f8-3576-485a-87c2-1c57b9cc4549",
+    "agent_name": "llm_baseline",
+    "execution_mode": "real"
+  }
+}

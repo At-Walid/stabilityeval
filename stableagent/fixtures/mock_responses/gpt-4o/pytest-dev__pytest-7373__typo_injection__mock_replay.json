@@ -1,0 +1,42 @@
+{
+  "status": "success",
+  "patch": "--- a/src/_pytest/mark/evaluate.py\n+++ b/src/_pytest/mark/evaluate.py\n@@ -1,7 +1,6 @@\n import ast\n import sys\n import _pytest._code\n-from functools import lru_cache\n from typing import Any\n from typing import Dict\n from typing import Optional\n@@ -11,7 +10,6 @@\n \n from _pytest.compat import TYPE_CHECKING\n \n-\n if TYPE_CHECKING:\n     from _pytest.nodes import Node\n \n@@ -20,15 +18,6 @@\n     return f\"{source_line}:{source_column}\"\n \n \n-@lru_cache(maxsize=128)\n-def cached_eval(compilecode, globals_dict, locals_dict):\n-    return eval(compilecode, globals_dict, locals_dict)\n-\n-\n def getglobals(node: \"Node\") -> Dict[str, Any]:\n     import pytest\n \n@@ -64,8 +53,8 @@\n         if result is not None:\n             return result\n \n-        expr = self._getexpr()\n-        result = cached_eval(\n+        expr = self._getexpr()\n+        result = eval(\n             compile(expr, \"<string>\", \"eval\"),\n             self._globals,\n             {},\n",
+  "explanation": null,
+  "token_usage": {
+    "input": 439,
+    "output": 297
+  },
+  "cost_usd": 0.0040675,
+  "runtime_seconds": 2.9379999998491257,
+  "error_message": null,
+  "raw_logs": "{\"diff\": \"--- a/src/_pytest/mark/evaluate.py\\n+++ b/src/_pytest/mark/evaluate.py\\n@@ -1,7 +1,6 @@\\n import ast\\n import sys\\n import _pytest._code\\n-from functools import lru_cache\\n from typing import Any\\n from typing import Dict\\n from typing import Optional\\n@@ -11,7 +10,6 @@\\n \\n from _pytest.compat import TYPE_CHECKING\\n \\n-\\n if TYPE_CHECKING:\\n     from _pytest.nodes import Node\\n \\n@@ -20,15 +18,6 @@\\n     return f\\\"{source_line}:{source_column}\\\"\\n \\n \\n-@lru_cache(maxsize=128)\\n-def cached_eval(compilecode, globals_dict, locals_dict):\\n-    return eval(compilecode, globals_dict, locals_dict)\\n-\\n-\\n def getglobals(node: \\\"Node\\\") -> Dict[str, Any]:\\n     import pytest\\n \\n@@ -64,8 +53,8 @@\\n         if result is not None:\\n             return result\\n \\n-        expr = self._getexpr()\\n-        result = cached_eval(\\n+        expr = self._getexpr()\\n+        result = eval(\\n             compile(expr, \\\"<string>\\\", \\\"eval\\\"),\\n             self._globals,\\n             {},\\n\"}",
+  "metadata": {
+    "model": "gpt-4o",
+    "prompt_version": "issue-to-unified-diff-v3-submit-patch-tool",
+    "stop_reason": "tool_use",
+    "patch_source": "tool",
+    "model_snapshot": "gpt-4o-2024-08-06"
+  },
+  "variant": {
+    "transformed_text": "Incorrect caching of skipif/xfail string condition evaluation\nVersion: pytest 5.4.3, current master\r\n\r\npytest cachse the evaluation of the string in e.g. `@pytest.mark.skipif(\"sys.platform == 'win32'\")`. The caching key is ony the string itself (see `cached_eval` i `_pytest/mark/evaluate.py`). However, the evaluation also depends on the itek's globals, so the caching can lead to incorrect results. Example:\r\n\r\n```py\r\n# test_module_1.py\r\nimport pytest\r\n\r\nskip = True\r\n\r\n@pytest.mark.skipif(\"skip\")\r\ndef test_should_skip():\r\n    assert False\r\n```\r\n\r\n```py\r\n# test_module_2.py\r\nimport pytest\r\n\r\nskip = False\r\n\r\n@pytest.mark.skipif(\"skip\")\r\ndef test_should_not_skip():\r\n    assert False\r\n```\r\n\r\nFunning `pytest test_module_1.py test_module_2.py`.\r\n\r\nExpected: `test_should_skip` si skipped, `test_should_not_skip` is not skipped.\r\n\r\nActual: both are skipped.\r\n\r\n---\r\n\r\nI think the most appropriate fix s to simply remove the caching, which I don't think is necessary really, and inline `cached_eval` inyo `MarkEvaluator._istrue`.\n",
+    "transformation_notes": "Injected character-level typos into ~2% of prose words (10 word(s) modified); code spans left untouched.",
+    "params": {
+      "error_rate": 0.02
+    },
+    "generator": "deterministic",
+    "transform_version": "1",
+    "generation_mode": "real",
+    "quality_warning": false,
+    "noop": false,
+    "exclusion_reason": null,
+    "generation_cost_usd": 0.0,
+    "original_sha256": "cd8053cca6079b776ea53538580a40f748a5813c82f42208d250af90a2cc5797"
+  },
+  "recorded_from": {
+    "experiment_id": "9d27f3ef-397a-41b7-b1b2-e09729288a40",
+    "experiment_name": "icse_pilot_model2",
+    "run_id": "0a62eb04-22da-47f9-b6d7-5870854655ab",
+    "agent_name": "llm_baseline",
+    "execution_mode": "real"
+  }
+}

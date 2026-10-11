@@ -1,0 +1,49 @@
+{
+  "status": "success",
+  "patch": "--- a/requests/adapters.py\n+++ b/requests/adapters.py\n@@ -10,6 +10,7 @@\n import os.path\n import socket\n from .models import Response\n+from .exceptions import ConnectionError\n from .packages.urllib3.poolmanager import PoolManager, ProxyManager\n from .packages.urllib3.response import HTTPResponse\n from .packages.urllib3.util import Timeout as TimeoutSauce\n@@ -330,7 +331,11 @@\n \n         except (ProtocolError, socket.error) as err:\n             # Wrap exceptions from the underlying urllib3 library\n-            raise ConnectionError(err, request=request)\n+            if isinstance(err, socket.error):\n+                err = ConnectionError(f'Socket error: {err}', request=request)\n+            else:\n+                err = ConnectionError(err, request=request)\n+            raise err\n \n         except MaxRetryError as e:\n             if isinstance(e.reason, ConnectTimeoutError):",
+  "explanation": null,
+  "token_usage": {
+    "input": 934,
+    "output": 214
+  },
+  "cost_usd": 0.004475,
+  "runtime_seconds": 2.077999999979511,
+  "error_message": null,
+  "raw_logs": "{\"diff\": \"--- a/requests/adapters.py\\n+++ b/requests/adapters.py\\n@@ -10,6 +10,7 @@\\n import os.path\\n import socket\\n from .models import Response\\n+from .exceptions import ConnectionError\\n from .packages.urllib3.poolmanager import PoolManager, ProxyManager\\n from .packages.urllib3.response import HTTPResponse\\n from .packages.urllib3.util import Timeout as TimeoutSauce\\n@@ -330,7 +331,11 @@\\n \\n         except (ProtocolError, socket.error) as err:\\n             # Wrap exceptions from the underlying urllib3 library\\n-            raise ConnectionError(err, request=request)\\n+            if isinstance(err, socket.error):\\n+                err = ConnectionError(f'Socket error: {err}', request=request)\\n+            else:\\n+                err = ConnectionError(err, request=request)\\n+            raise err\\n \\n         except MaxRetryError as e:\\n             if isinstance(e.reason, ConnectTimeoutError):\"}",
+  "metadata": {
+    "model": "gpt-4o",
+    "prompt_version": "issue-to-unified-diff-v3-submit-patch-tool",
+    "stop_reason": "tool_use",
+    "patch_source": "tool",
+    "model_snapshot": "gpt-4o-2024-08-06"
+  },
+  "control_repeats": [
+    {
+      "status": "success",
+      "patch": "--- a/requests/adapters.py\n+++ b/requests/adapters.py\n@@ -10,6 +10,7 @@\n import os.path\n import socket\n import struct\n+import errno\n \n from .models import Response\n from .packages.urllib3.poolmanager import PoolManager, proxy_from_url\n@@ -24,6 +25,7 @@\n from .compat import urlparse, basestring\n from .utils import (DEFAULT_CA_BUNDLE_PATH, extract_zipped_paths,\n                      get_encoding_from_headers)\n+from .exceptions import ConnectionError\n \n try:\n     from .packages.urllib3.contrib.socks import SOCKSProxyManager\n@@ -242,7 +244,12 @@\n \n         except (ProtocolError, socket.error) as err:\n             # Wrap exceptions from the underlying urllib3 library\n-            raise ConnectionError(err, request=request)\n+            if isinstance(err, socket.error) and err.errno == errno.ECONNRESET:\n+                raise ConnectionError(\"Connection reset by peer\", request=request)\n+            else:\n+                raise ConnectionError(err, request=request)\n \n         except MaxRetryError as e:\n             if isinstance(e.reason, ConnectTimeoutError):\n",
+      "explanation": null,
+      "token_usage": {
+        "input": 934,
+        "output": 269
+      },
+      "cost_usd": 0.005025,
+      "runtime_seconds": 3.375,
+      "error_message": null,
+      "raw_logs": "{\"diff\": \"--- a/requests/adapters.py\\n+++ b/requests/adapters.py\\n@@ -10,6 +10,7 @@\\n import os.path\\n import socket\\n import struct\\n+import errno\\n \\n from .models import Response\\n from .packages.urllib3.poolmanager import PoolManager, proxy_from_url\\n@@ -24,6 +25,7 @@\\n from .compat import urlparse, basestring\\n from .utils import (DEFAULT_CA_BUNDLE_PATH, extract_zipped_paths,\\n                      get_encoding_from_headers)\\n+from .exceptions import ConnectionError\\n \\n try:\\n     from .packages.urllib3.contrib.socks import SOCKSProxyManager\\n@@ -242,7 +244,12 @@\\n \\n         except (ProtocolError, socket.error) as err:\\n             # Wrap exceptions from the underlying urllib3 library\\n-            raise ConnectionError(err, request=request)\\n+            if isinstance(err, socket.error) and err.errno == errno.ECONNRESET:\\n+                raise ConnectionError(\\\"Connection reset by peer\\\", request=request)\\n+            else:\\n+                raise ConnectionError(err, request=request)\\n \\n         except MaxRetryError as e:\\n             if isinstance(e.reason, ConnectTimeoutError):\\n\"}",
+      "metadata": {
+        "model": "gpt-4o",
+        "prompt_version": "issue-to-unified-diff-v3-submit-patch-tool",
+        "stop_reason": "tool_use",
+        "patch_source": "tool",
+        "model_snapshot": "gpt-4o-2024-08-06"
+      }
+    }
+  ],
+  "recorded_from": {
+    "experiment_id": "9d27f3ef-397a-41b7-b1b2-e09729288a40",
+    "experiment_name": "icse_pilot_model2",
+    "run_id": "8ff4e106-9e33-4bc8-b72b-f1a8ace14ecd",
+    "agent_name": "llm_baseline",
+    "execution_mode": "real"
+  }
+}

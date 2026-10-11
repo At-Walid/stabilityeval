@@ -1,0 +1,42 @@
+{
+  "status": "success",
+  "patch": "--- a/astropy/modeling/separable.py\n+++ b/astropy/modeling/separable.py\n@@ -45,7 +45,7 @@ def separability_matrix(model):\n     n_outputs = sum(m.n_outputs for m in model)\n \n     matrix = np.zeros((n_inputs, n_outputs), dtype=bool)\n-    input_offset = 0\n+    input_offset = output_offset = 0\n \n     for m in model:\n         submatrix = separability_matrix(m)\n@@ -53,8 +53,8 @@ def separability_matrix(model):\n         n_sub_outputs = m.n_outputs\n \n         matrix[input_offset:input_offset + n_sub_inputs,\n-               output_offset:output_offset + n_sub_outputs] = submatrix\n-        input_offset += n_sub_inputs\n+               output_offset:output_offset + n_sub_outputs] = submatrix\n+        input_offset += n_sub_inputs\n         output_offset += n_sub_outputs\n \n     return matrix\n",
+  "explanation": null,
+  "token_usage": {
+    "input": 506,
+    "output": 221
+  },
+  "cost_usd": 0.003475,
+  "runtime_seconds": 2.171000000089407,
+  "error_message": null,
+  "raw_logs": "{\"diff\": \"--- a/astropy/modeling/separable.py\\n+++ b/astropy/modeling/separable.py\\n@@ -45,7 +45,7 @@ def separability_matrix(model):\\n     n_outputs = sum(m.n_outputs for m in model)\\n \\n     matrix = np.zeros((n_inputs, n_outputs), dtype=bool)\\n-    input_offset = 0\\n+    input_offset = output_offset = 0\\n \\n     for m in model:\\n         submatrix = separability_matrix(m)\\n@@ -53,8 +53,8 @@ def separability_matrix(model):\\n         n_sub_outputs = m.n_outputs\\n \\n         matrix[input_offset:input_offset + n_sub_inputs,\\n-               output_offset:output_offset + n_sub_outputs] = submatrix\\n-        input_offset += n_sub_inputs\\n+               output_offset:output_offset + n_sub_outputs] = submatrix\\n+        input_offset += n_sub_inputs\\n         output_offset += n_sub_outputs\\n \\n     return matrix\\n\"}",
+  "metadata": {
+    "model": "gpt-4o",
+    "prompt_version": "issue-to-unified-diff-v3-submit-patch-tool",
+    "stop_reason": "tool_use",
+    "patch_source": "tool",
+    "model_snapshot": "gpt-4o-2024-08-06"
+  },
+  "variant": {
+    "transformed_text": "```python\n>>> separability_matrix(cm)\narray([[ True, False],\n       [False,  True]])\n```\n\nIf I make the model more complex:\n```python\n>>> separability_matrix(m.Pix2Sky_TAN() & m.Linear1D(10) & m.Linear1D(5))\narray([[ True,  True, False, False],\n       [ True,  True, False, False],\n       [False, False,  True, False],\n       [False, False, False,  True]])\n```\n\nIf however, I nest these compound models:\n```python\n>>> separability_matrix(m.Pix2Sky_TAN() & cm)\narray([[ True,  True, False, False],\n       [ True,  True, False, False],\n       [False, False,  True,  True],\n       [False, False,  True,  True]])\n```\nSuddenly the inputs and outputs are no longer separable?\n\nThis feels like a bug to me, but I might be missing something?\n\nIt's separability matrix as you might expect is a diagonal:\n\nThe output matrix is again, as expected, the outputs and inputs to the linear models are separable and independent of each other.\n\nModeling's `separability_matrix` does not compute separability correctly for nested CompoundModels\nConsider the following model:\n\n```python\nfrom astropy.modeling import models as m\nfrom astropy.modeling.separable import separability_matrix\n\ncm = m.Linear1D(10) & m.Linear1D(5)\n```",
+    "transformation_notes": "Shuffled 8 paragraph(s) (seed=42); CRLF normalised to LF, fenced code blocks kept whole.",
+    "params": {
+      "seed": 42
+    },
+    "generator": "deterministic",
+    "transform_version": "2",
+    "generation_mode": "real",
+    "quality_warning": false,
+    "noop": false,
+    "exclusion_reason": null,
+    "generation_cost_usd": null,
+    "original_sha256": "c01334ec1b21a089c650cf2e7b96ab974469076bf1260d23885799e1f0a7551f"
+  },
+  "recorded_from": {
+    "experiment_id": "9d27f3ef-397a-41b7-b1b2-e09729288a40",
+    "experiment_name": "icse_pilot_model2",
+    "run_id": "d434178a-4881-4533-88d2-ca977548e64b",
+    "agent_name": "llm_baseline",
+    "execution_mode": "real"
+  }
+}

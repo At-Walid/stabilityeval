@@ -1,0 +1,42 @@
+{
+  "status": "success",
+  "patch": "--- a/requests/adapters.py\n+++ b/requests/adapters.py\n@@ -10,6 +10,7 @@ import os\n import socket\n import struct\n import sys\n+from socket import error as SocketError\n \n from .models import Response\n from .packages.urllib3.poolmanager import PoolManager, proxy_from_url\n@@ -24,6 +25,7 @@ from .compat import urlparse, basestring, integer_types\n from .utils import (DEFAULT_CA_BUNDLE_PATH, extract_zipped_paths,\n                     get_encoding_from_headers)\n from .structures import CaseInsensitiveDict\n+from .exceptions import ConnectionError\n \n try:\n     from .packages.urllib3.contrib.socks import SOCKSProxyManager\n@@ -293,7 +295,11 @@ class HTTPAdapter(BaseAdapter):\n \n         except (ProtocolError, socket.error) as err:\n             raise ConnectionError(err, request=request)\n-\n+\n+        except SocketError as err:\n+            if err.errno == 104:  # Connection reset by peer\n+                raise ConnectionError(err, request=request)\n+\n         except MaxRetryError as e:\n             if isinstance(e.reason, ConnectTimeoutError):\n                 raise ConnectTimeout(e, request=request)",
+  "explanation": null,
+  "token_usage": {
+    "input": 935,
+    "output": 275
+  },
+  "cost_usd": 0.0050875,
+  "runtime_seconds": 2.156999999890104,
+  "error_message": null,
+  "raw_logs": "{\"diff\": \"--- a/requests/adapters.py\\n+++ b/requests/adapters.py\\n@@ -10,6 +10,7 @@ import os\\n import socket\\n import struct\\n import sys\\n+from socket import error as SocketError\\n \\n from .models import Response\\n from .packages.urllib3.poolmanager import PoolManager, proxy_from_url\\n@@ -24,6 +25,7 @@ from .compat import urlparse, basestring, integer_types\\n from .utils import (DEFAULT_CA_BUNDLE_PATH, extract_zipped_paths,\\n                     get_encoding_from_headers)\\n from .structures import CaseInsensitiveDict\\n+from .exceptions import ConnectionError\\n \\n try:\\n     from .packages.urllib3.contrib.socks import SOCKSProxyManager\\n@@ -293,7 +295,11 @@ class HTTPAdapter(BaseAdapter):\\n \\n         except (ProtocolError, socket.error) as err:\\n             raise ConnectionError(err, request=request)\\n-\\n+\\n+        except SocketError as err:\\n+            if err.errno == 104:  # Connection reset by peer\\n+                raise ConnectionError(err, request=request)\\n+\\n         except MaxRetryError as e:\\n             if isinstance(e.reason, ConnectTimeoutError):\\n                 raise ConnectTimeout(e, request=request)\"}",
+  "metadata": {
+    "model": "gpt-4o",
+    "prompt_version": "issue-to-unified-diff-v3-submit-patch-tool",
+    "stop_reason": "tool_use",
+    "patch_source": "tool",
+    "model_snapshot": "gpt-4o-2024-08-06"
+  },
+  "variant": {
+    "transformed_text": "socket.error exception not caught/wrapped in a requests exception (ConnectionError perhaps?)\nI just noticed a case where I had a socket reset on mf, and was raised to me as a raw socket error as opposed to something like a requests.exceptions.ConnectionError:\n\n```\n  File \"/home/rtdean/***/***/***/***/***/***.py\", line 67, in dir_parse\n    root = ElementTree.fromstring(response.text)\n  File \"/home/rtdean/.pyenv/versions/2.7.6/lib/python2.7/site-packages/requests-2.3.0-py2.7.egg/requests/models.py\", line 721, in text\n    if not self.content:\n  File \"/home/rtdean/.pyenv/versions/2.7.6/lib/python2.7/site-packages/requests-2.3.0-py2.7.egg/requests/models.py\", line 694, in content\n    self._content = bytes().join(self.iter_content(CONTENT_CHUNK_SIZE)) or bytes()\n  File \"/home/rtdean/.pyenv/versions/2.7.6/lib/python2.7/site-packages/requests-2.3.0-py2.7.egg/requests/models.py\", line 627, in generate\n    for chunk in self.raw.stream(chunk_size, decode_content=True):\n  File \"/home/rtdean/.pyenv/versions/2.7.6/lib/python2.7/site-packages/requests-2.3.0-py2.7.egg/requests/packages/urllib3/response.py\", line 240, in stream\n    data = self.read(amt=amt, decode_content=decode_content)\n  File \"/home/rtdean/.pyenv/versions/2.7.6/lib/python2.7/site-packages/requests-2.3.0-py2.7.egg/requests/packages/urllib3/response.py\", line 187, in read\n    data = self._fp.read(amt)\n  File \"/home/rtdean/.pyenv/versions/2.7.6/lib/python2.7/httplib.py\", line 543, in read\n    return self._read_chunked(amt)\n  File \"/home/rtdean/.pyenv/versions/2.7.6/lib/python2.7/httplib.py\", line 612, in _read_chunked\n    value.append(self._safe_read(chunk_left))\n  File \"/home/rtdean/.pyenv/versions/2.7.6/lib/python2.7/httplib.py\", line 658, in _safe_read\n    chunk = self.fp.read(min(amt, MAXAMOUNT))\n  File \"/home/rtdean/.pyenv/versions/2.7.6/lib/python2.7/socket.py\", line 380, in read\n    data = self._sock.recv(left)\n  File \"/home/rtdean/.pyenv/versions/2.7.6/lib/python2.7/site-packages/gevent-1.0.1-py2.7-linux-x86_64.egg/gevent/socket.py\", line 385, in recv\n    return sock.recv(*args)\nsocket.error: [Errno 104] Connection reset by peer\n```\n\nNot sure if this is by accident or design... in general, I guess I'd expect a requests exception when using requests, but I can start looking for socket errors and tje like as well.\n\n",
+    "transformation_notes": "Injected character-level typos into ~2% of prose words (2 word(s) modified); code spans left untouched.",
+    "params": {
+      "error_rate": 0.02
+    },
+    "generator": "deterministic",
+    "transform_version": "1",
+    "generation_mode": "real",
+    "quality_warning": false,
+    "noop": false,
+    "exclusion_reason": null,
+    "generation_cost_usd": 0.0,
+    "original_sha256": "68364fcb5e168c51619a74fe0026d874a7f62dda4c796e61c9f9a9c808c56a6d"
+  },
+  "recorded_from": {
+    "experiment_id": "9d27f3ef-397a-41b7-b1b2-e09729288a40",
+    "experiment_name": "icse_pilot_model2",
+    "run_id": "7c45d0a3-ce6a-4e34-9bd9-0a42407a3538",
+    "agent_name": "llm_baseline",
+    "execution_mode": "real"
+  }
+}

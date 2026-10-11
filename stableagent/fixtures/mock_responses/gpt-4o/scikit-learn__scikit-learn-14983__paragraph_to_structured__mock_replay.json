@@ -1,0 +1,40 @@
+{
+  "status": "success",
+  "patch": "--- a/sklearn/model_selection/_split.py\n+++ b/sklearn/model_selection/_split.py\n@@ -1000,6 +1000,10 @@ class RepeatedKFold:\n         self.random_state = random_state\n         self._rng = check_random_state(self.random_state)\n \n+    def __repr__(self):\n+        return f\"{self.__class__.__name__}(n_splits={self.n_splits}, \" \\\n+               f\"n_repeats={self.n_repeats}, random_state={self.random_state})\"\n+\n     def split(self, X, y=None, groups=None):\n         \"\"\"Generate indices to split data into training and test set.\n \n@@ -1100,6 +1104,10 @@ class RepeatedStratifiedKFold:\n         self.random_state = random_state\n         self._rng = check_random_state(self.random_state)\n \n+    def __repr__(self):\n+        return f\"{self.__class__.__name__}(n_splits={self.n_splits}, \" \\\n+               f\"n_repeats={self.n_repeats}, random_state={self.random_state})\"\n+\n     def split(self, X, y, groups=None):\n         \"\"\"Generate indices to split data into training and test set.\"\"\"\n         from ._validation import _num_samples",
+  "explanation": null,
+  "token_usage": {
+    "input": 582,
+    "output": 309
+  },
+  "cost_usd": 0.004545,
+  "runtime_seconds": 2.2030000002123415,
+  "error_message": null,
+  "raw_logs": "{\"diff\": \"--- a/sklearn/model_selection/_split.py\\n+++ b/sklearn/model_selection/_split.py\\n@@ -1000,6 +1000,10 @@ class RepeatedKFold:\\n         self.random_state = random_state\\n         self._rng = check_random_state(self.random_state)\\n \\n+    def __repr__(self):\\n+        return f\\\"{self.__class__.__name__}(n_splits={self.n_splits}, \\\" \\\\\\n+               f\\\"n_repeats={self.n_repeats}, random_state={self.random_state})\\\"\\n+\\n     def split(self, X, y=None, groups=None):\\n         \\\"\\\"\\\"Generate indices to split data into training and test set.\\n \\n@@ -1100,6 +1104,10 @@ class RepeatedStratifiedKFold:\\n         self.random_state = random_state\\n         self._rng = check_random_state(self.random_state)\\n \\n+    def __repr__(self):\\n+        return f\\\"{self.__class__.__name__}(n_splits={self.n_splits}, \\\" \\\\\\n+               f\\\"n_repeats={self.n_repeats}, random_state={self.random_state})\\\"\\n+\\n     def split(self, X, y, groups=None):\\n         \\\"\\\"\\\"Generate indices to split data into training and test set.\\\"\\\"\\\"\\n         from ._validation import _num_samples\"}",
+  "metadata": {
+    "model": "gpt-4o",
+    "prompt_version": "issue-to-unified-diff-v3-submit-patch-tool",
+    "stop_reason": "tool_use",
+    "patch_source": "tool",
+    "model_snapshot": "gpt-4o-2024-08-06"
+  },
+  "variant": {
+    "transformed_text": "## Summary\n`RepeatedKFold` and `RepeatedStratifiedKFold` do not show correct __repr__ string.\n\n## Steps to Reproduce\n```python\r\n>>> from sklearn.model_selection import RepeatedKFold, RepeatedStratifiedKFold\r\n>>> repr(RepeatedKFold())\r\n>>> repr(RepeatedStratifiedKFold())\r\n```\n\n## Expected Behavior\n```python\r\n>>> repr(RepeatedKFold())\r\nRepeatedKFold(n_splits=5, n_repeats=10, random_state=None)\r\n>>> repr(RepeatedStratifiedKFold())\r\nRepeatedStratifiedKFold(n_splits=5, n_repeats=10, random_state=None)\r\n```\n\n## Actual Behavior\n```python\r\n>>> repr(RepeatedKFold())\r\n'<sklearn.model_selection._split.RepeatedKFold object at 0x0000016421AA4288>'\r\n>>> repr(RepeatedStratifiedKFold())\r\n'<sklearn.model_selection._split.RepeatedStratifiedKFold object at 0x0000016420E115C8>'\r\n```\n\n## Environment\n```\r\nSystem:\r\n    python: 3.7.4 (default, Aug  9 2019, 18:34:13) [MSC v.1915 64 bit (AMD64)]\r\nexecutable: D:\\anaconda3\\envs\\xyz\\python.exe\r\n   machine: Windows-10-10.0.16299-SP0\r\n\r\nBLAS:\r\n    macros:\r\n  lib_dirs:\r\ncblas_libs: cblas\r\n\r\nPython deps:\r\n       pip: 19.2.2\r\nsetuptools: 41.0.1\r\n   sklearn: 0.21.2\r\n     numpy: 1.16.4\r\n     scipy: 1.3.1\r\n    Cython: None\r\n    pandas: 0.24.2\r\n```",
+    "transformation_notes": "Reformatted the issue into the five required sections. The original issue description was already well-structured with clear sections (Description, Steps/Code to Reproduce, Expected Results, Actual Results, Versions), so the transformation involved mapping these to the standard bug report format and placing code placeholders exactly as they appeared in the input. [quality check passed on attempt 1/2]",
+    "params": {},
+    "generator": "claude-haiku-4-5-20251001",
+    "transform_version": "5",
+    "generation_mode": "real",
+    "quality_warning": false,
+    "noop": false,
+    "exclusion_reason": null,
+    "generation_cost_usd": 0.001563,
+    "original_sha256": "ca3d0c700c131e4b74bc7b9370f8e9c38093b25298dc682251e7c5185877f222"
+  },
+  "recorded_from": {
+    "experiment_id": "9d27f3ef-397a-41b7-b1b2-e09729288a40",
+    "experiment_name": "icse_pilot_model2",
+    "run_id": "ce220946-7cdb-45e9-9dfc-b00edb1ddc8f",
+    "agent_name": "llm_baseline",
+    "execution_mode": "real"
+  }
+}

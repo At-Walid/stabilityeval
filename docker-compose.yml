@@ -1,0 +1,17 @@
+# docker compose up        -> GUI on http://localhost:8501 (replay mode, no API key needed)
+# docker compose run --rm stableagent stableagent run --config configs/icse_pilot.json --estimate
+#
+# Live mode: export ANTHROPIC_API_KEY and/or OPENAI_API_KEY in your shell (or put them in a .env
+# file next to this file) before `docker compose up`; keys are passed at run time and never
+# stored in the image. The database and exports are kept in ./results.
+services:
+  stableagent:
+    image: stableagent:1.0.0
+    build: .
+    ports:
+      - "8501:8501"
+    volumes:
+      - ./results:/app/results
+    environment:
+      ANTHROPIC_API_KEY: ${ANTHROPIC_API_KEY:-}
+      OPENAI_API_KEY: ${OPENAI_API_KEY:-}

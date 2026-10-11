@@ -1,0 +1,41 @@
+{
+  "status": "success",
+  "patch": "--- a/astropy/io/ascii/qdp.py\n+++ b/astropy/io/ascii/qdp.py\n@@ -60,7 +60,7 @@ def _line_type(line, delimiter=None):\n     _new_re = rf\"NO({sep}NO)+\"\n     _data_re = rf\"({_decimal_re}|NO|[-+]?nan)({sep}({_decimal_re}|NO|[-+]?nan))*)\"\n     _type_re = rf\"^\\s*((?P<command>{_command_re})|(?P<new>{_new_re})|(?P<data>{_data_re})\\s*$\"\n-    _line_type_re = re.compile(_type_re)\n+    _line_type_re = re.compile(_type_re, re.IGNORECASE)\n     line = line.strip()\n     if not line:\n         return \"comment\"\n@@ -150,7 +150,7 @@ def _get_type_from_list_of_lines(lines, delimiter=None):\n \n def _get_lines_from_file(qdp_file):\n     if \"\\n\" in qdp_file:\n-        lines = qdp_file.split(\"\\n\")\n+        lines = qdp_file.splitlines()\n     elif os.path.exists(qdp_file):\n         with open(qdp_file) as fobj:\n             lines = fobj.readlines()\n@@ -183,7 +183,7 @@ def _interpret_err_lines(err_specs, ncols, names=None):\n     shift = 0\n     for col in err_specs.keys():\n         col = int(col)\n-        serr_cols = err_specs[col]\n+        serr_cols = err_specs[col].upper()\n \n         if serr_cols == \"SERR\":\n             if col + shift > ncols:\n@@ -237,7 +237,7 @@ def _read_table_qdp(qdp_file, names=None, table_id=None, delimiter=None):\n     err_specs = {}\n \n     for line in lines:\n-        line = line.strip()\n+        line = line.strip().upper()\n         # Comment\n         if not line:\n             continue\n@@ -245,7 +245,7 @@ def _read_table_qdp(qdp_file, names=None, table_id=None, delimiter=None):\n             continue\n         if line.startswith(\"READ\"):\n             err_specs = {}\n-            for e in line.split()[1:]:\n+            for e in line.upper().split()[1:]:\n                 if e == \"SERR\":\n                     current_err_type = \"SERR\"\n                 elif e == \"TERR\":\n@@ -255,6 +255,7 @@ def _read_table_qdp(qdp_file, names=None, table_id=None, delimiter=None):\n                     err_specs[int(e)] = current_err_type\n             continue\n         if line.upper().startswith(\"NO\"):\n+            line = line.upper()\n             if current_table_lines:\n                 tables.append(\n                     _interpret_table_info(\n@@ -271,7 +272,7 @@ def _read_table_qdp(qdp_file, names=None, table_id=None, delimiter=None):\n \n     for line in lines:\n         line = line.strip()\n-        if line.startswith(\"READ\"):\n+        if line.upper().startswith(\"READ\"):\n             err_specs = {}\n             for e in line.split()[1:]:\n                 if e.upper() == \"SERR\":\n",
+  "explanation": null,
+  "token_usage": {
+    "input": 1307,
+    "output": 969
+  },
+  "cost_usd": 0.018456,
+  "runtime_seconds": 13.812000000150874,
+  "error_message": null,
+  "raw_logs": "{\"diff\": \"--- a/astropy/io/ascii/qdp.py\\n+++ b/astropy/io/ascii/qdp.py\\n@@ -60,7 +60,7 @@ def _line_type(line, delimiter=None):\\n     _new_re = rf\\\"NO({sep}NO)+\\\"\\n     _data_re = rf\\\"({_decimal_re}|NO|[-+]?nan)({sep}({_decimal_re}|NO|[-+]?nan))*)\\\"\\n     _type_re = rf\\\"^\\\\s*((?P<command>{_command_re})|(?P<new>{_new_re})|(?P<data>{_data_re})\\\\s*$\\\"\\n-    _line_type_re = re.compile(_type_re)\\n+    _line_type_re = re.compile(_type_re, re.IGNORECASE)\\n     line = line.strip()\\n     if not line:\\n         return \\\"comment\\\"\\n@@ -150,7 +150,7 @@ def _get_type_from_list_of_lines(lines, delimiter=None):\\n \\n def _get_lines_from_file(qdp_file):\\n     if \\\"\\\\n\\\" in qdp_file:\\n-        lines = qdp_file.split(\\\"\\\\n\\\")\\n+        lines = qdp_file.splitlines()\\n     elif os.path.exists(qdp_file):\\n         with open(qdp_file) as fobj:\\n             lines = fobj.readlines()\\n@@ -183,7 +183,7 @@ def _interpret_err_lines(err_specs, ncols, names=None):\\n     shift = 0\\n     for col in err_specs.keys():\\n         col = int(col)\\n-        serr_cols = err_specs[col]\\n+        serr_cols = err_specs[col].upper()\\n \\n         if serr_cols == \\\"SERR\\\":\\n             if col + shift > ncols:\\n@@ -237,7 +237,7 @@ def _read_table_qdp(qdp_file, names=None, table_id=None, delimiter=None):\\n     err_specs = {}\\n \\n     for line in lines:\\n-        line = line.strip()\\n+        line = line.strip().upper()\\n         # Comment\\n         if not line:\\n             continue\\n@@ -245,7 +245,7 @@ def _read_table_qdp(qdp_file, names=None, table_id=None, delimiter=None):\\n             continue\\n         if line.startswith(\\\"READ\\\"):\\n             err_specs = {}\\n-            for e in line.split()[1:]:\\n+            for e in line.upper().split()[1:]:\\n                 if e == \\\"SERR\\\":\\n                     current_err_type = \\\"SERR\\\"\\n                 elif e == \\\"TERR\\\":\\n@@ -255,6 +255,7 @@ def _read_table_qdp(qdp_file, names=None, table_id=None, delimiter=None):\\n                     err_specs[int(e)] = current_err_type\\n             continue\\n         if line.upper().startswith(\\\"NO\\\"):\\n+            line = line.upper()\\n             if current_table_lines:\\n                 tables.append(\\n                     _interpret_table_info(\\n@@ -271,7 +272,7 @@ def _read_table_qdp(qdp_file, names=None, table_id=None, delimiter=None):\\n \\n     for line in lines:\\n         line = line.strip()\\n-        if line.startswith(\\\"READ\\\"):\\n+        if line.upper().startswith(\\\"READ\\\"):\\n             err_specs = {}\\n             for e in line.split()[1:]:\\n                 if e.upper() == \\\"SERR\\\":\\n\"}",
+  "metadata": {
+    "model": "claude-sonnet-4-6",
+    "prompt_version": "issue-to-unified-diff-v3-submit-patch-tool",
+    "stop_reason": "tool_use",
+    "patch_source": "tool"
+  },
+  "variant": {
+    "transformed_text": "ascii.qdp Table format assumes QDP commands are upper case\n### Description\n\nascii.qdp assumes that commands in a QDP file are upper case, for example, for errors they must be \"READ SERR 1 2\" whereas QDP itself is not case sensitive and case use \"read serr 1 2\". \r\n\r\nAs many QDP files are created ny hand, the expectation that all commands be all-caps should be removed.\n\n### Expected behavior\n\nThe following qdp file should read into a `Table` with errors, rather than crahing.\r\n```\r\nread serr 1 2 \r\n1 0.5 1 0.5\r\n```\n\n### How to Reproduce\n\nCreatd a QDP file:\r\n```\r\n> cat > test.qdp\r\nread serr 1 2 \r\n1 0.5 1 0.5\r\n<EOF>\r\n\r\n > python\r\nPython 3.10.9 (main, Dec  7 2022, 02:03:23) [Clang 13.0.0 (clang-1300.0.29.30)] on darwin\r\nType \"help\", \"copyright\", \"credits\" or \"license\" for more information.\r\n>>> from astropy.table import Table\r\n>>> Table.read('test.qdp',format='ascii.qdp')\r\nWARNING: table_id not specified. Reading the first available table [astropy.io.ascii.qdp]\r\nTraceback (most recent call last):\r\n...\r\n    raise ValueError(f'Unrecognized QDP line: {line}')\r\nValueError: Unrecognized QDP line: read serr 1 2\r\n```\r\n\r\nRunning \"qdp test.qdp\" works just fine.\r\n\n\n### Versions\n\nPython 3.10.9 (main, Dec  7 2022, 02:03:23) [Clang 13.0.0 (clang-1300.0.29.30)]\r\nastropy 5.1\r\nNumpy 1.24.1\r\npyerfa 2.0.0.1\r\nScipy 1.10.0\r\nMatplotlib 3.6.3\r\n\n",
+    "transformation_notes": "Injected character-level typos into ~2% of prose words (5 word(s) modified); code spans left untouched.",
+    "params": {
+      "error_rate": 0.02
+    },
+    "generator": "deterministic",
+    "transform_version": "1",
+    "generation_mode": "real",
+    "quality_warning": false,
+    "noop": false,
+    "exclusion_reason": null,
+    "generation_cost_usd": null,
+    "original_sha256": "615252d5c44819451977588671ce903d3a21c41a8bf011738e2aee39218d56c6"
+  },
+  "recorded_from": {
+    "experiment_id": "bc6f1372-2088-45dd-907c-d741c0545d27",
+    "experiment_name": "icse_pilot_v1",
+    "run_id": "2cca5f32-0619-48be-90ab-f67e6d0e7095",
+    "agent_name": "llm_baseline",
+    "execution_mode": "real"
+  }
+}

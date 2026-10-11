@@ -1,0 +1,49 @@
+{
+  "status": "success",
+  "patch": "--- a/pylint/lint/run.py\n+++ b/pylint/lint/run.py\n@@ -133,7 +133,10 @@\n         )\n         linter.load_default_plugins()\n \n-        args = _config_initialization(\n+        try:\n+            args = _config_initialization(\n+                linter, argv, config)\n+        except _UnrecognizedOptionError as e:\n+            print(e)\n+            sys.exit(2)\n \n         # initialize linter with command line options\n         linter.load_command_line_configuration(args)",
+  "explanation": null,
+  "token_usage": {
+    "input": 689,
+    "output": 132
+  },
+  "cost_usd": 0.0030425,
+  "runtime_seconds": 1.4060000001918525,
+  "error_message": null,
+  "raw_logs": "{\"diff\": \"--- a/pylint/lint/run.py\\n+++ b/pylint/lint/run.py\\n@@ -133,7 +133,10 @@\\n         )\\n         linter.load_default_plugins()\\n \\n-        args = _config_initialization(\\n+        try:\\n+            args = _config_initialization(\\n+                linter, argv, config)\\n+        except _UnrecognizedOptionError as e:\\n+            print(e)\\n+            sys.exit(2)\\n \\n         # initialize linter with command line options\\n         linter.load_command_line_configuration(args)\"}",
+  "metadata": {
+    "model": "gpt-4o",
+    "prompt_version": "issue-to-unified-diff-v3-submit-patch-tool",
+    "stop_reason": "tool_use",
+    "patch_source": "tool",
+    "model_snapshot": "gpt-4o-2024-08-06"
+  },
+  "control_repeats": [
+    {
+      "status": "success",
+      "patch": "--- a/pylint/lint/run.py\n+++ b/pylint/lint/run.py\n@@ -132,7 +132,10 @@\n         )\n         linter.load_default_plugins()\n \n-        args = _config_initialization(\n+        try:\n+            args = _config_initialization(\n+                linter, argv, config)\n+        except _UnrecognizedOptionError as e:\n+            print(e)\n+            sys.exit(2)\n \n         # initialize linter with config file\n         linter.read_config_file()",
+      "explanation": null,
+      "token_usage": {
+        "input": 689,
+        "output": 129
+      },
+      "cost_usd": 0.0030125,
+      "runtime_seconds": 1.6099999998696148,
+      "error_message": null,
+      "raw_logs": "{\"diff\": \"--- a/pylint/lint/run.py\\n+++ b/pylint/lint/run.py\\n@@ -132,7 +132,10 @@\\n         )\\n         linter.load_default_plugins()\\n \\n-        args = _config_initialization(\\n+        try:\\n+            args = _config_initialization(\\n+                linter, argv, config)\\n+        except _UnrecognizedOptionError as e:\\n+            print(e)\\n+            sys.exit(2)\\n \\n         # initialize linter with config file\\n         linter.read_config_file()\"}",
+      "metadata": {
+        "model": "gpt-4o",
+        "prompt_version": "issue-to-unified-diff-v3-submit-patch-tool",
+        "stop_reason": "tool_use",
+        "patch_source": "tool",
+        "model_snapshot": "gpt-4o-2024-08-06"
+      }
+    }
+  ],
+  "recorded_from": {
+    "experiment_id": "9d27f3ef-397a-41b7-b1b2-e09729288a40",
+    "experiment_name": "icse_pilot_model2",
+    "run_id": "c4ac13ae-615a-4f1e-9edf-f154ef208d75",
+    "agent_name": "llm_baseline",
+    "execution_mode": "real"
+  }
+}

@@ -1,0 +1,40 @@
+{
+  "status": "success",
+  "patch": "--- a/django/contrib/messages/storage/base.py\n+++ b/django/contrib/messages/storage/base.py\n@@ -106,7 +106,7 @@ class Message:\n         self.level = level\n         self.message = message\n         self.extra_tags = extra_tags\n-        self.extra_tags = extra_tags if extra_tags else None\n+        self.extra_tags = extra_tags if extra_tags is not None else None\n \n     def __eq__(self, other):\n         return isinstance(other, Message) and all(getattr(self, attr) == getattr(other, attr) for attr in self.__dict__)\n--- a/django/contrib/messages/storage/cookie.py\n+++ b/django/contrib/messages/storage/cookie.py\n@@ -28,7 +28,7 @@ class MessageEncoder(json.JSONEncoder):\n         message_dict = {\n             'message': obj.message,\n             'level': obj.level,\n-            'extra_tags': obj.extra_tags or None,\n+            'extra_tags': obj.extra_tags if obj.extra_tags is not None else None,\n             'tags': obj.tags,\n         }\n         return message_dict\n@@ -50,7 +50,7 @@ class MessageDecoder(json.JSONDecoder):\n             message = Message(\n                 level=decoded['level'],\n                 message=decoded['message'],\n-                extra_tags=decoded.get('extra_tags') or None,\n+                extra_tags=decoded.get('extra_tags') if decoded.get('extra_tags') is not None else None,\n             )\n             return message\n         return super().decode(s)",
+  "explanation": null,
+  "token_usage": {
+    "input": 466,
+    "output": 346
+  },
+  "cost_usd": 0.004625,
+  "runtime_seconds": 3.594000000040978,
+  "error_message": null,
+  "raw_logs": "{\"diff\": \"--- a/django/contrib/messages/storage/base.py\\n+++ b/django/contrib/messages/storage/base.py\\n@@ -106,7 +106,7 @@ class Message:\\n         self.level = level\\n         self.message = message\\n         self.extra_tags = extra_tags\\n-        self.extra_tags = extra_tags if extra_tags else None\\n+        self.extra_tags = extra_tags if extra_tags is not None else None\\n \\n     def __eq__(self, other):\\n         return isinstance(other, Message) and all(getattr(self, attr) == getattr(other, attr) for attr in self.__dict__)\\n--- a/django/contrib/messages/storage/cookie.py\\n+++ b/django/contrib/messages/storage/cookie.py\\n@@ -28,7 +28,7 @@ class MessageEncoder(json.JSONEncoder):\\n         message_dict = {\\n             'message': obj.message,\\n             'level': obj.level,\\n-            'extra_tags': obj.extra_tags or None,\\n+            'extra_tags': obj.extra_tags if obj.extra_tags is not None else None,\\n             'tags': obj.tags,\\n         }\\n         return message_dict\\n@@ -50,7 +50,7 @@ class MessageDecoder(json.JSONDecoder):\\n             message = Message(\\n                 level=decoded['level'],\\n                 message=decoded['message'],\\n-                extra_tags=decoded.get('extra_tags') or None,\\n+                extra_tags=decoded.get('extra_tags') if decoded.get('extra_tags') is not None else None,\\n             )\\n             return message\\n         return super().decode(s)\"}",
+  "metadata": {
+    "model": "gpt-4o",
+    "prompt_version": "issue-to-unified-diff-v3-submit-patch-tool",
+    "stop_reason": "tool_use",
+    "patch_source": "tool",
+    "model_snapshot": "gpt-4o-2024-08-06"
+  },
+  "variant": {
+    "transformed_text": "Messages framework incorrectly serializes/deserializes extra_tags when it's an empty string\nDescription\n\t\nWhen a message is serialised and then deserialised with any of the built in storage backends, extra_tags==\"\" is converted to extra_tags==None. This is because MessageEncoder checks for the truthiness of extra_tags rather than checking it is not None.\nTo replicate this bug\n>>> from django.conf import settings\n>>> settings.configure() # Just to allow the following import\n>>> from django.contrib.messages.storage.base import Message\n>>> from django.contrib.messages.storage.cookie import MessageEncoder, MessageDecoder\n>>> original_message = Message(10, \"Here is a message\", extra_tags=\"\")\n>>> encoded_message = MessageEncoder().encode(original_message)\n>>> decoded_message = MessageDecoder().decode(encoded_message)\n>>> original_message.extra_tags == \"\"\nTrue\n>>> decoded_message.extra_tags is None\nTrue\nEffect of the bug in application behaviour\nThis error occurred in the wild with a template tag similar to the following:\n{% if x not in message.extra_tags %}\nWhen the message was displayed as part of a redirect, it had been serialised and deserialized which meant that extra_tags was None instead of the empty string. This caused an error.\nIt's important to note that this bug affects all of the standard API (messages.debug, messages.info etc. all have a default value of extra_tags equal to \"\").",
+    "transformation_notes": "Rewrote only the sentences with emotional or informal language. [quality check passed on attempt 1/2]",
+    "params": {},
+    "generator": "claude-haiku-4-5-20251001",
+    "transform_version": "4",
+    "generation_mode": "real",
+    "quality_warning": false,
+    "noop": false,
+    "exclusion_reason": null,
+    "generation_cost_usd": 0.000977,
+    "original_sha256": "5370589f1c868ff26fda4d4e9a0b44eee3e4021db7065c5d26a35deeda54895e"
+  },
+  "recorded_from": {
+    "experiment_id": "9d27f3ef-397a-41b7-b1b2-e09729288a40",
+    "experiment_name": "icse_pilot_model2",
+    "run_id": "9e687ae0-3bc5-4f57-949b-57ff6da89cc4",
+    "agent_name": "llm_baseline",
+    "execution_mode": "real"
+  }
+}

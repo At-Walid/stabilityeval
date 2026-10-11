@@ -1,0 +1,49 @@
+{
+  "status": "success",
+  "patch": "--- a/django/contrib/messages/storage/base.py\n+++ b/django/contrib/messages/storage/base.py\n@@ -106,7 +106,7 @@ class Message:\n         self.level = level\n         self.message = message\n         self.extra_tags = extra_tags\n-        self.tags = self._prepare_tags(extra_tags)\n+        self.tags = self._prepare_tags(extra_tags if extra_tags is not None else '')\n \n     def _prepare_tags(self, extra_tags=None):\n         \"\"\"\n--- a/django/contrib/messages/storage/cookie.py\n+++ b/django/contrib/messages/storage/cookie.py\n@@ -11,7 +11,7 @@ class MessageEncoder(json.JSONEncoder):\n         message_dict = {\n             'message': obj.message,\n             'level': obj.level,\n-            'tags': obj.extra_tags or '',\n+            'tags': obj.extra_tags if obj.extra_tags is not None else '',\n         }\n         if obj.extra_data:\n             message_dict['extra_data'] = obj.extra_data\n@@ -33,7 +33,7 @@ class MessageDecoder(json.JSONDecoder):\n             message = Message(\n                 d['level'],\n                 d['message'],\n-                extra_tags=d.get('tags') or None,\n+                extra_tags=d.get('tags') if d.get('tags') is not None else '',\n                 extra_data=d.get('extra_data'),\n             )\n             return message",
+  "explanation": null,
+  "token_usage": {
+    "input": 468,
+    "output": 324
+  },
+  "cost_usd": 0.00441,
+  "runtime_seconds": 2.469000000040978,
+  "error_message": null,
+  "raw_logs": "{\"diff\": \"--- a/django/contrib/messages/storage/base.py\\n+++ b/django/contrib/messages/storage/base.py\\n@@ -106,7 +106,7 @@ class Message:\\n         self.level = level\\n         self.message = message\\n         self.extra_tags = extra_tags\\n-        self.tags = self._prepare_tags(extra_tags)\\n+        self.tags = self._prepare_tags(extra_tags if extra_tags is not None else '')\\n \\n     def _prepare_tags(self, extra_tags=None):\\n         \\\"\\\"\\\"\\n--- a/django/contrib/messages/storage/cookie.py\\n+++ b/django/contrib/messages/storage/cookie.py\\n@@ -11,7 +11,7 @@ class MessageEncoder(json.JSONEncoder):\\n         message_dict = {\\n             'message': obj.message,\\n             'level': obj.level,\\n-            'tags': obj.extra_tags or '',\\n+            'tags': obj.extra_tags if obj.extra_tags is not None else '',\\n         }\\n         if obj.extra_data:\\n             message_dict['extra_data'] = obj.extra_data\\n@@ -33,7 +33,7 @@ class MessageDecoder(json.JSONDecoder):\\n             message = Message(\\n                 d['level'],\\n                 d['message'],\\n-                extra_tags=d.get('tags') or None,\\n+                extra_tags=d.get('tags') if d.get('tags') is not None else '',\\n                 extra_data=d.get('extra_data'),\\n             )\\n             return message\"}",
+  "metadata": {
+    "model": "gpt-4o",
+    "prompt_version": "issue-to-unified-diff-v3-submit-patch-tool",
+    "stop_reason": "tool_use",
+    "patch_source": "tool",
+    "model_snapshot": "gpt-4o-2024-08-06"
+  },
+  "control_repeats": [
+    {
+      "status": "success",
+      "patch": "--- a/django/contrib/messages/storage/base.py\n+++ b/django/contrib/messages/storage/base.py\n@@ -106,7 +106,7 @@ class Message:\n         self.level = level\n         self.message = message\n         self.extra_tags = extra_tags\n-        self.tags = self._get_tags()\n+        self.tags = self._get_tags() if extra_tags is not None else ''\n \n     def _get_tags(self):\n         \"\"\"\n--- a/django/contrib/messages/storage/cookie.py\n+++ b/django/contrib/messages/storage/cookie.py\n@@ -11,7 +11,7 @@ class MessageEncoder(json.JSONEncoder):\n         message_dict = {\n             'message': obj.message,\n             'level': obj.level,\n-            'extra_tags': obj.extra_tags or None,\n+            'extra_tags': obj.extra_tags if obj.extra_tags is not None else None,\n             'tags': obj.tags,\n         }\n         return message_dict\n@@ -28,7 +28,7 @@ class MessageDecoder(json.JSONDecoder):\n         level = message_dict['level']\n         message = message_dict['message']\n         extra_tags = message_dict.get('extra_tags', None)\n-        return Message(level, message, extra_tags=extra_tags)\n+        return Message(level, message, extra_tags=extra_tags if extra_tags is not None else '')\n \n \n class CookieStorage(BaseStorage):",
+      "explanation": null,
+      "token_usage": {
+        "input": 468,
+        "output": 322
+      },
+      "cost_usd": 0.00439,
+      "runtime_seconds": 2.1409999998286366,
+      "error_message": null,
+      "raw_logs": "{\"diff\": \"--- a/django/contrib/messages/storage/base.py\\n+++ b/django/contrib/messages/storage/base.py\\n@@ -106,7 +106,7 @@ class Message:\\n         self.level = level\\n         self.message = message\\n         self.extra_tags = extra_tags\\n-        self.tags = self._get_tags()\\n+        self.tags = self._get_tags() if extra_tags is not None else ''\\n \\n     def _get_tags(self):\\n         \\\"\\\"\\\"\\n--- a/django/contrib/messages/storage/cookie.py\\n+++ b/django/contrib/messages/storage/cookie.py\\n@@ -11,7 +11,7 @@ class MessageEncoder(json.JSONEncoder):\\n         message_dict = {\\n             'message': obj.message,\\n             'level': obj.level,\\n-            'extra_tags': obj.extra_tags or None,\\n+            'extra_tags': obj.extra_tags if obj.extra_tags is not None else None,\\n             'tags': obj.tags,\\n         }\\n         return message_dict\\n@@ -28,7 +28,7 @@ class MessageDecoder(json.JSONDecoder):\\n         level = message_dict['level']\\n         message = message_dict['message']\\n         extra_tags = message_dict.get('extra_tags', None)\\n-        return Message(level, message, extra_tags=extra_tags)\\n+        return Message(level, message, extra_tags=extra_tags if extra_tags is not None else '')\\n \\n \\n class CookieStorage(BaseStorage):\"}",
+      "metadata": {
+        "model": "gpt-4o",
+        "prompt_version": "issue-to-unified-diff-v3-submit-patch-tool",
+        "stop_reason": "tool_use",
+        "patch_source": "tool",
+        "model_snapshot": "gpt-4o-2024-08-06"
+      }
+    }
+  ],
+  "recorded_from": {
+    "experiment_id": "9d27f3ef-397a-41b7-b1b2-e09729288a40",
+    "experiment_name": "icse_pilot_model2",
+    "run_id": "ca568fa8-0e4e-42fb-afb8-72fc7453f277",
+    "agent_name": "llm_baseline",
+    "execution_mode": "real"
+  }
+}

@@ -1,0 +1,6 @@
+"""Placeholder unit tests. Replace with real tests as modules are implemented."""
+
+def test_project_importable():
+    """Verify the package can be imported."""
+    import stableagent
+    assert stableagent is not None

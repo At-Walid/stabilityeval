@@ -1,0 +1,19 @@
+{
+  "status": "success",
+  "patch": "--- a/astropy/io/ascii/fastbasic.py\n+++ b/astropy/io/ascii/fastbasic.py\n@@ -212,7 +212,10 @@ class FastBasic:\n     def _convert_value(self, value):\n-        return float(value)\n+        try:\n+            return float(value)\n+        except ValueError:\n+            return float(value.replace('D', 'E').replace('d', 'e'))\n",
+  "explanation": "Added a fallback that converts the Fortran `D` exponent to `E` before parsing so FITS float values in D-exponent notation no longer raise ValueError.",
+  "token_usage": {
+    "input": 2096,
+    "output": 481
+  },
+  "cost_usd": 0.0,
+  "runtime_seconds": 7.49,
+  "error_message": null,
+  "raw_logs": "[2026-07-05T09:00:00Z] INFO  agent='mock_replay' issue=astropy__astropy-6938 transform='paraphrase'\n[2026-07-05T09:00:00Z] INFO  Loading fixture from disk\n[2026-07-05T09:00:00Z] INFO  Fixture deserialized (issue_id=astropy__astropy-6938, transform=paraphrase)\n[2026-07-05T09:00:00Z] INFO  Patch extracted successfully (runtime=7.49s)\n[2026-07-05T09:00:00Z] INFO  Status: SUCCESS",
+  "metadata": {
+    "issue_id": "astropy__astropy-6938",
+    "transformation_name": "paraphrase",
+    "agent": "mock_replay",
+    "fixture_version": "1.0"
+  }
+}

@@ -1,0 +1,39 @@
+{
+  "status": "success",
+  "patch": "--- a/sklearn/model_selection/_split.py\n+++ b/sklearn/model_selection/_split.py\n@@ -1197,6 +1197,9 @@ class RepeatedKFold(_RepeatedSplits):\n     See Also\n     --------\n     RepeatedStratifiedKFold: Repeats Stratified K-Fold n times.\n+\n+    def __repr__(self):\n+        return _build_repr(self)\n     \"\"\"\n \n     def __init__(self, n_splits=5, n_repeats=10, random_state=None):\n",
+  "explanation": null,
+  "token_usage": {
+    "input": 1412,
+    "output": 177
+  },
+  "cost_usd": 0.006891,
+  "runtime_seconds": 3.031999999890104,
+  "error_message": null,
+  "raw_logs": "{\"diff\": \"--- a/sklearn/model_selection/_split.py\\n+++ b/sklearn/model_selection/_split.py\\n@@ -1197,6 +1197,9 @@ class RepeatedKFold(_RepeatedSplits):\\n     See Also\\n     --------\\n     RepeatedStratifiedKFold: Repeats Stratified K-Fold n times.\\n+\\n+    def __repr__(self):\\n+        return _build_repr(self)\\n     \\\"\\\"\\\"\\n \\n     def __init__(self, n_splits=5, n_repeats=10, random_state=None):\\n\"}",
+  "metadata": {
+    "model": "claude-sonnet-4-6",
+    "prompt_version": "issue-to-unified-diff-v3-submit-patch-tool",
+    "stop_reason": "tool_use",
+    "patch_source": "tool"
+  },
+  "variant": {
+    "transformed_text": "```json\n{\n  \"transformed_text\": \"The `RepeatedKFold` and `RepeatedStratifiedKFold` classes display an incorrect \\_\\_repr\\_\\_ string representation.\\n\\n#### Steps to Reproduce\\n\\n\n```python\r\n>>> from sklearn.model_selection import RepeatedKFold, RepeatedStratifiedKFold\r\n>>> repr(RepeatedKFold())\r\n>>> repr(RepeatedStratifiedKFold())\r\n```\n\\n\\n#### What Should Happen\\n\\n\n```python\r\n>>> repr(RepeatedKFold())\r\nRepeatedKFold(n_splits=5, n_repeats=10, random_state=None)\r\n>>> repr(RepeatedStratifiedKFold())\r\nRepeatedStratifiedKFold(n_splits=5, n_repeats=10, random_state=None)\r\n```\n\\n\\n#### What Actually Happens\\n\\n\n```python\r\n>>> repr(RepeatedKFold())\r\n'<sklearn.model_selection._split.RepeatedKFold object at 0x0000016421AA4288>'\r\n>>> repr(RepeatedStratifiedKFold())\r\n'<sklearn.model_selection._split.RepeatedStratifiedKFold object at 0x0000016420E115C8>'\r\n```\n\\n\\n#### Environment Information\\n\n```\r\nSystem:\r\n    python: 3.7.4 (default, Aug  9 2019, 18:34:13) [MSC v.1915 64 bit (AMD64)]\r\nexecutable: D:\\anaconda3\\envs\\xyz\\python.exe\r\n   machine: Windows-10-10.0.16299-SP0\r\n\r\nBLAS:\r\n    macros:\r\n  lib_dirs:\r\ncblas_libs: cblas\r\n\r\nPython deps:\r\n       pip: 19.2.2\r\nsetuptools: 41.0.1\r\n   sklearn: 0.21.2\r\n     numpy: 1.16.4\r\n     scipy: 1.3.1\r\n    Cython: None\r\n    pandas: 0.24.2\r\n```\n\",\n  \"transformation_notes\": \"Restructured the issue description by rephrasing the title to describe what the classes do incorrectly, renaming section headers (Steps/Code to Reproduce → Steps to Reproduce, Expected Results → What Should Happen, Actual Results → What Actually Happens, Versions → Environment Information) while maintaining all code placeholders verbatim and preserving the complete technical meaning of the bug report.\"\n}\n```",
+    "transformation_notes": "LLM returned non-JSON response; using raw output. [quality check passed on attempt 1/2]",
+    "params": {},
+    "generator": "claude-haiku-4-5-20251001",
+    "transform_version": "4",
+    "generation_mode": "real",
+    "quality_warning": false,
+    "noop": false,
+    "exclusion_reason": null,
+    "generation_cost_usd": 0.001506,
+    "original_sha256": "ca3d0c700c131e4b74bc7b9370f8e9c38093b25298dc682251e7c5185877f222"
+  },
+  "recorded_from": {
+    "experiment_id": "bc6f1372-2088-45dd-907c-d741c0545d27",
+    "experiment_name": "icse_pilot_v1",
+    "run_id": "7bfe8c7c-6c72-45e5-b09e-db40549e74e0",
+    "agent_name": "llm_baseline",
+    "execution_mode": "real"
+  }
+}

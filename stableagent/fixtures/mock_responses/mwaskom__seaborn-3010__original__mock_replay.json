@@ -1,0 +1,47 @@
+{
+  "status": "success",
+  "patch": "--- a/seaborn/_stats/regression.py\n+++ b/seaborn/_stats/regression.py\n@@ -24,6 +24,7 @@ class PolyFit(Stat):\n \n     def _fit_predict(self, data):\n \n+        data = data.dropna(subset=[\"x\", \"y\"])\n         x = data[\"x\"]\n         y = data[\"y\"]\n         if x.nunique() <= self.order:\n",
+  "explanation": null,
+  "token_usage": {
+    "input": 2238,
+    "output": 147
+  },
+  "cost_usd": 0.008919,
+  "runtime_seconds": 3.875,
+  "error_message": null,
+  "raw_logs": "{\"diff\": \"--- a/seaborn/_stats/regression.py\\n+++ b/seaborn/_stats/regression.py\\n@@ -24,6 +24,7 @@ class PolyFit(Stat):\\n \\n     def _fit_predict(self, data):\\n \\n+        data = data.dropna(subset=[\\\"x\\\", \\\"y\\\"])\\n         x = data[\\\"x\\\"]\\n         y = data[\\\"y\\\"]\\n         if x.nunique() <= self.order:\\n\"}",
+  "metadata": {
+    "model": "claude-sonnet-4-6",
+    "prompt_version": "issue-to-unified-diff-v3-submit-patch-tool",
+    "stop_reason": "tool_use",
+    "patch_source": "tool"
+  },
+  "control_repeats": [
+    {
+      "status": "success",
+      "patch": "--- a/seaborn/_stats/regression.py\n+++ b/seaborn/_stats/regression.py\n@@ -24,6 +24,7 @@ class PolyFit(Stat):\n \n     def _fit_predict(self, data):\n \n+        data = data.dropna(subset=[\"x\", \"y\"])\n         x = data[\"x\"]\n         y = data[\"y\"]\n         if x.nunique() <= self.order:\n",
+      "explanation": null,
+      "token_usage": {
+        "input": 2238,
+        "output": 147
+      },
+      "cost_usd": 0.008919,
+      "runtime_seconds": 3.890000000130385,
+      "error_message": null,
+      "raw_logs": "{\"diff\": \"--- a/seaborn/_stats/regression.py\\n+++ b/seaborn/_stats/regression.py\\n@@ -24,6 +24,7 @@ class PolyFit(Stat):\\n \\n     def _fit_predict(self, data):\\n \\n+        data = data.dropna(subset=[\\\"x\\\", \\\"y\\\"])\\n         x = data[\\\"x\\\"]\\n         y = data[\\\"y\\\"]\\n         if x.nunique() <= self.order:\\n\"}",
+      "metadata": {
+        "model": "claude-sonnet-4-6",
+        "prompt_version": "issue-to-unified-diff-v3-submit-patch-tool",
+        "stop_reason": "tool_use",
+        "patch_source": "tool"
+      }
+    }
+  ],
+  "recorded_from": {
+    "experiment_id": "bc6f1372-2088-45dd-907c-d741c0545d27",
+    "experiment_name": "icse_pilot_v1",
+    "run_id": "bd8afe39-2f82-437d-a192-4993a5db8358",
+    "agent_name": "llm_baseline",
+    "execution_mode": "real"
+  }
+}

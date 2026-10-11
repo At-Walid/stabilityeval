@@ -1,0 +1,40 @@
+{
+  "status": "success",
+  "patch": "--- a/src/_pytest/mark/evaluate.py\n+++ b/src/_pytest/mark/evaluate.py\n@@ -1,7 +1,6 @@\n import ast\n import sys\n import _pytest._code\n-from functools import lru_cache\n from typing import Any\n from typing import Dict\n from typing import Optional\n@@ -11,7 +10,6 @@\n from typing import Union\n \n import pytest\n-from _pytest.compat import nullcontext\n from _pytest.config import Config\n from _pytest.config import _strtobool\n from _pytest.pathlib import import_path\n@@ -20,7 +18,6 @@\n \n \n def _is_ast_node(x: Any) -> bool:\n-    return isinstance(x, (ast.AST, ast.expr))\n+    return isinstance(x, ast.AST)\n \n \n def _format_annotation(annotation: Any) -> str:\n@@ -47,7 +44,6 @@\n \n \n class MarkEvaluator:\n-    def __init__(self, item, mark):\n+    def __init__(self, item, mark):\n         self.item = item\n         self.mark = mark\n \n@@ -55,7 +51,7 @@\n         self._is_true = None\n \n     def _istrue(self) -> bool:\n-        if self._is_true is None:\n+        if self._is_true is None:\n             self._is_true = self._evaluate_condition(self.mark.args[0])\n         return self._is_true\n \n@@ -63,7 +59,7 @@\n         if isinstance(condition, str):\n             # String condition.\n             try:\n-                return eval(condition, self.item.obj.__globals__, {})\n+                return eval(condition, self.item.obj.__globals__, {})\n             except Exception as e:\n                 raise pytest.fail(f\"Error evaluating {condition!r}: {e}\")\n         elif callable(condition):\n@@ -71,18 +67,6 @@\n             return condition()\n         else:\n             return bool(condition)\n-\n-\n-@lru_cache(maxsize=128)\n-def cached_eval(expr: str, globals: Dict[str, Any]) -> Any:\n-    code = compile(expr, \"<string>\", \"eval\")\n-    return eval(code, globals, {})\n-\n-\n-def _istrue_cached(condition: Union[str, bool, None], item) -> bool:\n-    if isinstance(condition, str):\n-        return cached_eval(condition, item.obj.__globals__)\n-    return bool(condition)\n \n \n def _getglobals(obj) -> Dict[str, Any]:",
+  "explanation": null,
+  "token_usage": {
+    "input": 429,
+    "output": 599
+  },
+  "cost_usd": 0.0070625,
+  "runtime_seconds": 4.594000000040978,
+  "error_message": null,
+  "raw_logs": "{\"diff\": \"--- a/src/_pytest/mark/evaluate.py\\n+++ b/src/_pytest/mark/evaluate.py\\n@@ -1,7 +1,6 @@\\n import ast\\n import sys\\n import _pytest._code\\n-from functools import lru_cache\\n from typing import Any\\n from typing import Dict\\n from typing import Optional\\n@@ -11,7 +10,6 @@\\n from typing import Union\\n \\n import pytest\\n-from _pytest.compat import nullcontext\\n from _pytest.config import Config\\n from _pytest.config import _strtobool\\n from _pytest.pathlib import import_path\\n@@ -20,7 +18,6 @@\\n \\n \\n def _is_ast_node(x: Any) -> bool:\\n-    return isinstance(x, (ast.AST, ast.expr))\\n+    return isinstance(x, ast.AST)\\n \\n \\n def _format_annotation(annotation: Any) -> str:\\n@@ -47,7 +44,6 @@\\n \\n \\n class MarkEvaluator:\\n-    def __init__(self, item, mark):\\n+    def __init__(self, item, mark):\\n         self.item = item\\n         self.mark = mark\\n \\n@@ -55,7 +51,7 @@\\n         self._is_true = None\\n \\n     def _istrue(self) -> bool:\\n-        if self._is_true is None:\\n+        if self._is_true is None:\\n             self._is_true = self._evaluate_condition(self.mark.args[0])\\n         return self._is_true\\n \\n@@ -63,7 +59,7 @@\\n         if isinstance(condition, str):\\n             # String condition.\\n             try:\\n-                return eval(condition, self.item.obj.__globals__, {})\\n+                return eval(condition, self.item.obj.__globals__, {})\\n             except Exception as e:\\n                 raise pytest.fail(f\\\"Error evaluating {condition!r}: {e}\\\")\\n         elif callable(condition):\\n@@ -71,18 +67,6 @@\\n             return condition()\\n         else:\\n             return bool(condition)\\n-\\n-\\n-@lru_cache(maxsize=128)\\n-def cached_eval(expr: str, globals: Dict[str, Any]) -> Any:\\n-    code = compile(expr, \\\"<string>\\\", \\\"eval\\\")\\n-    return eval(code, globals, {})\\n-\\n-\\n-def _istrue_cached(condition: Union[str, bool, None], item) -> bool:\\n-    if isinstance(condition, str):\\n-        return cached_eval(condition, item.obj.__globals__)\\n-    return bool(condition)\\n \\n \\n def _getglobals(obj) -> Dict[str, Any]:\"}",
+  "metadata": {
+    "model": "gpt-4o",
+    "prompt_version": "issue-to-unified-diff-v3-submit-patch-tool",
+    "stop_reason": "tool_use",
+    "patch_source": "tool",
+    "model_snapshot": "gpt-4o-2024-08-06"
+  },
+  "variant": {
+    "transformed_text": "Incorrect caching of skipif/xfail string condition evaluation\nVersion: pytest 5.4.3, current master\n\npytest caches the evaluation of the string in e.g. `@pytest.mark.skipif(\"sys.platform == 'win32'\")`. The caching key is only the string itself (see `cached_eval` in `_pytest/mark/evaluate.py`). However, the evaluation also depends on the item's globals, so the caching can lead to incorrect results. Example:\n\n```py\r\n# test_module_1.py\r\nimport pytest\r\n\r\nskip = True\r\n\r\n@pytest.mark.skipif(\"skip\")\r\ndef test_should_skip():\r\n    assert False\r\n```\n\n```py\r\n# test_module_2.py\r\nimport pytest\r\n\r\nskip = False\r\n\r\n@pytest.mark.skipif(\"skip\")\r\ndef test_should_not_skip():\r\n    assert False\r\n```\n\nRunning `pytest test_module_1.py test_module_2.py`.\n\nExpected: `test_should_skip` is skipped, `test_should_not_skip` is not skipped.\n\nActual: both are skipped.\n\n---\n\nI think the most appropriate fix is to simply remove the caching, which is not necessary, and inline `cached_eval` into `MarkEvaluator._istrue`.",
+    "transformation_notes": "Rewrote only the sentences with emotional or informal language. [quality check passed on attempt 1/2]",
+    "params": {},
+    "generator": "claude-haiku-4-5-20251001",
+    "transform_version": "4",
+    "generation_mode": "real",
+    "quality_warning": false,
+    "noop": false,
+    "exclusion_reason": null,
+    "generation_cost_usd": 0.001507,
+    "original_sha256": "cd8053cca6079b776ea53538580a40f748a5813c82f42208d250af90a2cc5797"
+  },
+  "recorded_from": {
+    "experiment_id": "9d27f3ef-397a-41b7-b1b2-e09729288a40",
+    "experiment_name": "icse_pilot_model2",
+    "run_id": "c4327445-9a59-43ec-bfaa-f89aeb6e27f3",
+    "agent_name": "llm_baseline",
+    "execution_mode": "real"
+  }
+}

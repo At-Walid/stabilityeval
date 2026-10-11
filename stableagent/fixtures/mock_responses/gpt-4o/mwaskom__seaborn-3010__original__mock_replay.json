@@ -1,0 +1,49 @@
+{
+  "status": "success",
+  "patch": "--- a/seaborn/_stats/regression.py\n+++ b/seaborn/_stats/regression.py\n@@ -27,7 +27,9 @@\n         x = data[self.x]\n         y = data[self.y]\n \n-        if x.isna().any() or y.isna().any():\n+        # Drop missing values\n+        valid = x.notna() & y.notna()\n+        x, y = x[valid], y[valid]\n \n         if not len(x):\n             xx = yy = []\n",
+  "explanation": null,
+  "token_usage": {
+    "input": 1372,
+    "output": 128
+  },
+  "cost_usd": 0.00471,
+  "runtime_seconds": 1.2650000001303852,
+  "error_message": null,
+  "raw_logs": "{\"diff\": \"--- a/seaborn/_stats/regression.py\\n+++ b/seaborn/_stats/regression.py\\n@@ -27,7 +27,9 @@\\n         x = data[self.x]\\n         y = data[self.y]\\n \\n-        if x.isna().any() or y.isna().any():\\n+        # Drop missing values\\n+        valid = x.notna() & y.notna()\\n+        x, y = x[valid], y[valid]\\n \\n         if not len(x):\\n             xx = yy = []\\n\"}",
+  "metadata": {
+    "model": "gpt-4o",
+    "prompt_version": "issue-to-unified-diff-v3-submit-patch-tool",
+    "stop_reason": "tool_use",
+    "patch_source": "tool",
+    "model_snapshot": "gpt-4o-2024-08-06"
+  },
+  "control_repeats": [
+    {
+      "status": "success",
+      "patch": "--- a/seaborn/_stats/regression.py\n+++ b/seaborn/_stats/regression.py\n@@ -27,7 +27,9 @@\n         x = data[self.x]\n         y = data[self.y]\n \n-        if x.isna().any() or y.isna().any():\n+        # Drop missing values\n+        valid = x.notna() & y.notna()\n+        x, y = x[valid], y[valid]\n \n         if not len(x):\n             xx = yy = []\n",
+      "explanation": null,
+      "token_usage": {
+        "input": 1372,
+        "output": 128
+      },
+      "cost_usd": 0.00471,
+      "runtime_seconds": 1.125,
+      "error_message": null,
+      "raw_logs": "{\"diff\": \"--- a/seaborn/_stats/regression.py\\n+++ b/seaborn/_stats/regression.py\\n@@ -27,7 +27,9 @@\\n         x = data[self.x]\\n         y = data[self.y]\\n \\n-        if x.isna().any() or y.isna().any():\\n+        # Drop missing values\\n+        valid = x.notna() & y.notna()\\n+        x, y = x[valid], y[valid]\\n \\n         if not len(x):\\n             xx = yy = []\\n\"}",
+      "metadata": {
+        "model": "gpt-4o",
+        "prompt_version": "issue-to-unified-diff-v3-submit-patch-tool",
+        "stop_reason": "tool_use",
+        "patch_source": "tool",
+        "model_snapshot": "gpt-4o-2024-08-06"
+      }
+    }
+  ],
+  "recorded_from": {
+    "experiment_id": "9d27f3ef-397a-41b7-b1b2-e09729288a40",
+    "experiment_name": "icse_pilot_model2",
+    "run_id": "a16ecc9a-d3d8-4894-97ee-bf930adafb71",
+    "agent_name": "llm_baseline",
+    "execution_mode": "real"
+  }
+}

@@ -1,0 +1,87 @@
+{
+  "experiment_name": "icse_pilot_model2",
+  "description": "ICSE 2027 pilot, second model: the 20 pilot issues and the exact variants of the pilot (experiment bc6f1372), LLM Baseline on GPT-4o, 6 transforms, 1 control repeat. To use another model, change provider and model only (e.g. anthropic / claude-haiku-4-5-20251001); the key variable follows the provider.",
+  "execution_mode": "real",
+  "agents": [
+    {
+      "name": "llm_baseline",
+      "version": "1.0",
+      "params": {
+        "provider": "openai",
+        "model": "gpt-4o",
+        "temperature": 0.0,
+        "max_tokens": 4096,
+        "timeout_seconds": 120,
+        "cost_cap_usd": 0.5
+      }
+    }
+  ],
+  "issues": {
+    "source": "swebench_lite",
+    "issue_ids": [
+      "astropy__astropy-12907",
+      "astropy__astropy-14365",
+      "astropy__astropy-7746",
+      "django__django-12708",
+      "django__django-15347",
+      "django__django-15814",
+      "matplotlib__matplotlib-23964",
+      "matplotlib__matplotlib-24970",
+      "mwaskom__seaborn-3010",
+      "mwaskom__seaborn-3190",
+      "psf__requests-2148",
+      "psf__requests-2317",
+      "pylint-dev__pylint-6506",
+      "pylint-dev__pylint-7993",
+      "pytest-dev__pytest-11143",
+      "pytest-dev__pytest-7373",
+      "scikit-learn__scikit-learn-14087",
+      "scikit-learn__scikit-learn-14983",
+      "sympy__sympy-20049",
+      "sympy__sympy-24102"
+    ]
+  },
+  "transformations": [
+    {
+      "name": "paraphrase",
+      "enabled": true,
+      "params": {}
+    },
+    {
+      "name": "verbosity_reduction",
+      "enabled": true,
+      "params": {
+        "target_ratio": 0.5
+      }
+    },
+    {
+      "name": "typo_injection",
+      "enabled": true,
+      "params": {
+        "error_rate": 0.02
+      }
+    },
+    {
+      "name": "reordering",
+      "enabled": true,
+      "params": {
+        "seed": 42
+      }
+    },
+    {
+      "name": "paragraph_to_structured",
+      "enabled": true,
+      "params": {}
+    },
+    {
+      "name": "neutralize_emotional",
+      "enabled": true,
+      "params": {}
+    }
+  ],
+  "runs_per_variant": 1,
+  "control_repeats": 1,
+  "reuse_variants_from": "bc6f1372-2088-45dd-907c-d741c0545d27",
+  "cost_limit_usd": 4.0,
+  "output_dir": "./results/icse_pilot_model2"
+}

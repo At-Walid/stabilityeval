@@ -1,0 +1,49 @@
+{
+  "status": "success",
+  "patch": "--- a/requests/sessions.py\n+++ b/requests/sessions.py\n@@ -327,7 +327,10 @@ class Session(SessionRedirectMixin):\n \n         method = str(method)\n \n-        method = builtin_str(method)\n+        if isinstance(method, bytes):\n+            method = method.decode('utf-8')\n+        else:\n+            method = builtin_str(method)\n \n         # Create the Request.\n         req = Request(\n",
+  "explanation": null,
+  "token_usage": {
+    "input": 397,
+    "output": 110
+  },
+  "cost_usd": 0.0020925,
+  "runtime_seconds": 1.296000000089407,
+  "error_message": null,
+  "raw_logs": "{\"diff\": \"--- a/requests/sessions.py\\n+++ b/requests/sessions.py\\n@@ -327,7 +327,10 @@ class Session(SessionRedirectMixin):\\n \\n         method = str(method)\\n \\n-        method = builtin_str(method)\\n+        if isinstance(method, bytes):\\n+            method = method.decode('utf-8')\\n+        else:\\n+            method = builtin_str(method)\\n \\n         # Create the Request.\\n         req = Request(\\n\"}",
+  "metadata": {
+    "model": "gpt-4o",
+    "prompt_version": "issue-to-unified-diff-v3-submit-patch-tool",
+    "stop_reason": "tool_use",
+    "patch_source": "tool",
+    "model_snapshot": "gpt-4o-2024-08-06"
+  },
+  "control_repeats": [
+    {
+      "status": "success",
+      "patch": "--- a/requests/sessions.py\n+++ b/requests/sessions.py\n@@ -1,5 +1,6 @@\n import collections\n import logging\n+import six\n \n from .auth import _basic_auth_str\n from .compat import cookielib, is_py3, urljoin, urlparse, Mapping, OrderedDict\n@@ -400,7 +401,7 @@ class Session(SessionRedirectMixin):\n         :rtype: requests.Response\n         \"\"\"\n \n-        method = builtin_str(method)\n+        method = builtin_str(method) if not isinstance(method, six.binary_type) else method.decode('utf-8')\n \n         # Create the Request.\n         req = Request(\n",
+      "explanation": null,
+      "token_usage": {
+        "input": 397,
+        "output": 159
+      },
+      "cost_usd": 0.0025825,
+      "runtime_seconds": 1.5150000001303852,
+      "error_message": null,
+      "raw_logs": "{\"diff\": \"--- a/requests/sessions.py\\n+++ b/requests/sessions.py\\n@@ -1,5 +1,6 @@\\n import collections\\n import logging\\n+import six\\n \\n from .auth import _basic_auth_str\\n from .compat import cookielib, is_py3, urljoin, urlparse, Mapping, OrderedDict\\n@@ -400,7 +401,7 @@ class Session(SessionRedirectMixin):\\n         :rtype: requests.Response\\n         \\\"\\\"\\\"\\n \\n-        method = builtin_str(method)\\n+        method = builtin_str(method) if not isinstance(method, six.binary_type) else method.decode('utf-8')\\n \\n         # Create the Request.\\n         req = Request(\\n\"}",
+      "metadata": {
+        "model": "gpt-4o",
+        "prompt_version": "issue-to-unified-diff-v3-submit-patch-tool",
+        "stop_reason": "tool_use",
+        "patch_source": "tool",
+        "model_snapshot": "gpt-4o-2024-08-06"
+      }
+    }
+  ],
+  "recorded_from": {
+    "experiment_id": "9d27f3ef-397a-41b7-b1b2-e09729288a40",
+    "experiment_name": "icse_pilot_model2",
+    "run_id": "162356b2-24c2-4037-b6b5-554b550e8046",
+    "agent_name": "llm_baseline",
+    "execution_mode": "real"
+  }
+}

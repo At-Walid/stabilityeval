@@ -1,0 +1,41 @@
+{
+  "status": "success",
+  "patch": "--- a/astropy/modeling/separable.py\n+++ b/astropy/modeling/separable.py\n@@ -290,7 +290,7 @@ def _cstack(left, right):\n     noutp = _compute_n_outputs(left, right)\n \n     if isinstance(left, Model):\n-        cleft = _coord_matrix(left, 'left', noutp)\n+        cleft = _coord_matrix(left, 'left', noutp)  # noqa: E501\n     else:\n         cleft = np.zeros((noutp, left.shape[1]))\n         cleft[: left.shape[0], : left.shape[1]] = left\n@@ -298,7 +298,7 @@ def _cstack(left, right):\n         cleft = np.zeros((noutp, left.shape[1]))\n         cleft[: left.shape[0], : left.shape[1]] = left\n     if isinstance(right, Model):\n-        cright = _coord_matrix(right, 'right', noutp)\n+        cright = _coord_matrix(right, 'right', noutp)  # noqa: E501\n     else:\n         cright = np.zeros((noutp, right.shape[1]))\n         cright[noutp - right.shape[0]:, noutp - right.shape[1]:] = right\n",
+  "explanation": null,
+  "token_usage": {
+    "input": 1168,
+    "output": 368
+  },
+  "cost_usd": 0.009024,
+  "runtime_seconds": 5.25,
+  "error_message": null,
+  "raw_logs": "{\"diff\": \"--- a/astropy/modeling/separable.py\\n+++ b/astropy/modeling/separable.py\\n@@ -290,7 +290,7 @@ def _cstack(left, right):\\n     noutp = _compute_n_outputs(left, right)\\n \\n     if isinstance(left, Model):\\n-        cleft = _coord_matrix(left, 'left', noutp)\\n+        cleft = _coord_matrix(left, 'left', noutp)  # noqa: E501\\n     else:\\n         cleft = np.zeros((noutp, left.shape[1]))\\n         cleft[: left.shape[0], : left.shape[1]] = left\\n@@ -298,7 +298,7 @@ def _cstack(left, right):\\n         cleft = np.zeros((noutp, left.shape[1]))\\n         cleft[: left.shape[0], : left.shape[1]] = left\\n     if isinstance(right, Model):\\n-        cright = _coord_matrix(right, 'right', noutp)\\n+        cright = _coord_matrix(right, 'right', noutp)  # noqa: E501\\n     else:\\n         cright = np.zeros((noutp, right.shape[1]))\\n         cright[noutp - right.shape[0]:, noutp - right.shape[1]:] = right\\n\"}",
+  "metadata": {
+    "model": "claude-sonnet-4-6",
+    "prompt_version": "issue-to-unified-diff-v3-submit-patch-tool",
+    "stop_reason": "tool_use",
+    "patch_source": "tool"
+  },
+  "variant": {
+    "transformed_text": "```python\n>>> separability_matrix(cm)\narray([[ True, False],\n       [False,  True]])\n```\n\nIf I make the model more complex:\n```python\n>>> separability_matrix(m.Pix2Sky_TAN() & m.Linear1D(10) & m.Linear1D(5))\narray([[ True,  True, False, False],\n       [ True,  True, False, False],\n       [False, False,  True, False],\n       [False, False, False,  True]])\n```\n\nIf however, I nest these compound models:\n```python\n>>> separability_matrix(m.Pix2Sky_TAN() & cm)\narray([[ True,  True, False, False],\n       [ True,  True, False, False],\n       [False, False,  True,  True],\n       [False, False,  True,  True]])\n```\nSuddenly the inputs and outputs are no longer separable?\n\nThis feels like a bug to me, but I might be missing something?\n\nIt's separability matrix as you might expect is a diagonal:\n\nThe output matrix is again, as expected, the outputs and inputs to the linear models are separable and independent of each other.\n\nModeling's `separability_matrix` does not compute separability correctly for nested CompoundModels\nConsider the following model:\n\n```python\nfrom astropy.modeling import models as m\nfrom astropy.modeling.separable import separability_matrix\n\ncm = m.Linear1D(10) & m.Linear1D(5)\n```",
+    "transformation_notes": "Shuffled 8 paragraph(s) (seed=42); CRLF normalised to LF, fenced code blocks kept whole.",
+    "params": {
+      "seed": 42
+    },
+    "generator": "deterministic",
+    "transform_version": "2",
+    "generation_mode": "real",
+    "quality_warning": false,
+    "noop": false,
+    "exclusion_reason": null,
+    "generation_cost_usd": null,
+    "original_sha256": "c01334ec1b21a089c650cf2e7b96ab974469076bf1260d23885799e1f0a7551f"
+  },
+  "recorded_from": {
+    "experiment_id": "bc6f1372-2088-45dd-907c-d741c0545d27",
+    "experiment_name": "icse_pilot_v1",
+    "run_id": "6725fea2-4831-4ea7-8658-af4d3f8c04d8",
+    "agent_name": "llm_baseline",
+    "execution_mode": "real"
+  }
+}
